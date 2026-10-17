@@ -216,6 +216,22 @@ void GroupMenu::updatePosition(gint wx, gint wy)
 		}
 	}
 
+	int gap = Settings::previewGap;
+
+	if (gap > 0)
+	{
+		XfceScreenPosition position = xfce_panel_plugin_get_screen_position(Plugin::mXfPlugin);
+
+		if (xfce_screen_position_is_top(position))
+			wy += gap;
+		else if (xfce_screen_position_is_bottom(position))
+			wy -= gap;
+		else if (xfce_screen_position_is_left(position))
+			wx += gap;
+		else if (xfce_screen_position_is_right(position))
+			wx -= gap;
+	}
+
 #ifdef ENABLE_WAYLAND
 	if (gtk_layer_is_supported())
 	{
@@ -228,6 +244,16 @@ void GroupMenu::updatePosition(gint wx, gint wy)
 	{
 		gtk_window_move(GTK_WINDOW(mWindow), wx, wy);
 	}
+}
+
+void GroupMenu::reposition()
+{
+	if (!mVisible)
+		return;
+
+	gint wx, wy;
+	xfce_panel_plugin_position_widget(Plugin::mXfPlugin, mWindow, mGroup->mButton, &wx, &wy);
+	updatePosition(wx, wy);
 }
 
 void GroupMenu::hide()

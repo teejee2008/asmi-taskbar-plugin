@@ -40,6 +40,7 @@ public:
 	void popup();
 	void updateOrientation();
 	void updatePosition(gint wx, gint wy);
+	void reposition();
 	void hide();
 	void showPreviewsChanged();
 

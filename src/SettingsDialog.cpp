@@ -319,6 +319,15 @@ namespace SettingsDialog
 			}),
 			nullptr);
 
+		GObject* previewGapButton = gtk_builder_get_object(builder, "previewGapButton");
+		gtk_spin_button_set_value(GTK_SPIN_BUTTON(previewGapButton), Settings::previewGap);
+		g_object_bind_property(showPreviews, "active", previewGapButton, "sensitive", G_BINDING_SYNC_CREATE);
+		g_signal_connect(previewGapButton, "value-changed",
+			G_CALLBACK(+[](GtkSpinButton* _previewGapButton) {
+				Settings::previewGap.set(gtk_spin_button_get_value_as_int(_previewGapButton));
+			}),
+			nullptr);
+
 		// =====================================================================
 
 		GObject* keyComboActiveWarning = gtk_builder_get_object(builder, "c_keyComboActiveWarning");

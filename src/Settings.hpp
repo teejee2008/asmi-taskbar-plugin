@@ -42,6 +42,7 @@ namespace Settings
 	const int maxIconSize = 128;
 	const int defPreviewWidth = 288;
 	const int defPreviewHeight = 162;
+	const int defPreviewGap = 0;
 	const int defDockItemSpacing = 4;
 
 	extern State<bool> forceIconSize;
@@ -54,6 +55,7 @@ namespace Settings
 	extern State<bool> showPreviews;
 	extern State<int> previewWidth;
 	extern State<int> previewHeight;
+	extern State<int> previewGap;
 	extern State<bool> showWindowCount;
 	extern State<bool> disableLauncherCounts;
 	extern State<int> middleButtonBehavior;

@@ -56,6 +56,7 @@ namespace Settings
 	State<int> dockSize;
 	State<int> previewWidth;
 	State<int> previewHeight;
+	State<int> previewGap;
 	State<int> previewSleep;
 
 	void init()
@@ -121,6 +122,19 @@ namespace Settings
 
 				Dock::mGroups.forEach([](std::pair<std::shared_ptr<AppInfo>, std::shared_ptr<Group>> g) -> void {
 					g.second->mGroupMenu.showPreviewsChanged();
+				});
+			});
+
+		intValue = g_key_file_has_key(file, "user", "previewGap", nullptr)
+			? g_key_file_get_integer(file, "user", "previewGap", nullptr)
+			: defPreviewGap;
+		previewGap.setup(CLAMP(intValue, 0, 64),
+			[](int _previewGap) -> void {
+				g_key_file_set_integer(mFile.get(), "user", "previewGap", _previewGap);
+				saveFile();
+
+				Dock::mGroups.forEach([](std::pair<std::shared_ptr<AppInfo>, std::shared_ptr<Group>> g) -> void {
+					g.second->mGroupMenu.reposition();
 				});
 			});
 
