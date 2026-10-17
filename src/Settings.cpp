@@ -40,6 +40,7 @@ namespace Settings
 	State<int> indicatorStyle;
 	State<int> inactiveIndicatorStyle;
 	State<int> indicatorSpacing;
+	State<int> dockItemSpacing;
 	State<bool> indicatorColorFromTheme;
 	State<std::shared_ptr<GdkRGBA>> indicatorColor;
 	State<std::shared_ptr<GdkRGBA>> inactiveColor;
@@ -215,6 +216,17 @@ namespace Settings
 		indicatorSpacing.setup(CLAMP(g_key_file_get_integer(file, "user", "indicatorSpacing", nullptr), 0, 64),
 			[](int _indicatorSpacing) -> void {
 				g_key_file_set_integer(mFile.get(), "user", "indicatorSpacing", _indicatorSpacing);
+				saveFile();
+
+				Dock::onPanelResize();
+			});
+
+		intValue = g_key_file_has_key(file, "user", "dockItemSpacing", nullptr)
+			? g_key_file_get_integer(file, "user", "dockItemSpacing", nullptr)
+			: Settings::defDockItemSpacing;
+		dockItemSpacing.setup(CLAMP(intValue, 0, 64),
+			[](int _dockItemSpacing) -> void {
+				g_key_file_set_integer(mFile.get(), "user", "dockItemSpacing", _dockItemSpacing);
 				saveFile();
 
 				Dock::onPanelResize();

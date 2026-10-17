@@ -175,7 +175,7 @@ namespace Dock
 		if (size != -1)
 			mPanelSize = size;
 
-		gtk_box_set_spacing(GTK_BOX(mBox), mPanelSize / 10);
+		gtk_box_set_spacing(GTK_BOX(mBox), Settings::dockItemSpacing);
 
 		if (Settings::forceIconSize)
 			mIconSize = Settings::iconSize;

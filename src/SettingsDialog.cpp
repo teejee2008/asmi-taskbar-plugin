@@ -225,6 +225,14 @@ namespace SettingsDialog
 			}),
 			dialog);
 
+		GObject* dockItemSpacing = gtk_builder_get_object(builder, "dockItemSpacingButton");
+		gtk_spin_button_set_value(GTK_SPIN_BUTTON(dockItemSpacing), Settings::dockItemSpacing);
+		g_signal_connect(dockItemSpacing, "value-changed",
+			G_CALLBACK(+[](GtkSpinButton* _dockItemSpacing) {
+				Settings::dockItemSpacing.set(gtk_spin_button_get_value_as_int(_dockItemSpacing));
+			}),
+			dialog);
+
 		GObject* customIndicatorColors = gtk_builder_get_object(builder, "g_customIndicatorColors");
 		gtk_widget_set_sensitive(GTK_WIDGET(customIndicatorColors), !Settings::indicatorColorFromTheme);
 

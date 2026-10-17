@@ -42,6 +42,7 @@ namespace Settings
 	const int maxIconSize = 128;
 	const int defPreviewWidth = 288;
 	const int defPreviewHeight = 162;
+	const int defDockItemSpacing = 4;
 
 	extern State<bool> forceIconSize;
 	extern State<int> iconSize;
@@ -61,6 +62,7 @@ namespace Settings
 	extern State<int> indicatorStyle;
 	extern State<int> inactiveIndicatorStyle;
 	extern State<int> indicatorSpacing;
+	extern State<int> dockItemSpacing;
 	extern State<bool> indicatorColorFromTheme;
 	extern State<std::shared_ptr<GdkRGBA>> indicatorColor;
 	extern State<std::shared_ptr<GdkRGBA>> inactiveColor;
