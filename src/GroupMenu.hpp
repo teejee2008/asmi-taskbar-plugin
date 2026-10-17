@@ -24,6 +24,7 @@
 #include <gtk/gtk.h>
 
 #include <iostream>
+#include <vector>
 
 class Group;
 class GroupMenuItem;
@@ -39,6 +40,8 @@ public:
 
 	void popup();
 	void updateOrientation();
+	void updateLayout();
+	int lineCapacity(bool horizontal);
 	void updatePosition(gint wx, gint wy);
 	void reposition();
 	void hide();
@@ -50,6 +53,8 @@ public:
 
 	GtkWidget* mWindow;
 	GtkWidget* mBox;
+
+	std::vector<GtkWidget*> mItems;
 
 	bool mVisible;
 	bool mMouseHover;

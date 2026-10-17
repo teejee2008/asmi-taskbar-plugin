@@ -25,6 +25,9 @@
 #include "GroupMenuItem.hpp"
 #include "Plugin.hpp"
 
+// Vertical space kept free above and below the preview popup.
+static const int PREVIEW_MARGIN = 8;
+
 static GtkWidget*
 create_window()
 {
@@ -127,7 +130,8 @@ GroupMenu::~GroupMenu()
 
 void GroupMenu::add(GroupMenuItem* menuItem)
 {
-	gtk_box_pack_end(GTK_BOX(mBox), GTK_WIDGET(menuItem->mItem), false, true, 0);
+	mItems.push_back(GTK_WIDGET(menuItem->mItem));
+	updateLayout();
 
 	if (mVisible)
 		mPopupIdle.start();
@@ -135,7 +139,15 @@ void GroupMenu::add(GroupMenuItem* menuItem)
 
 void GroupMenu::remove(GroupMenuItem* menuItem)
 {
-	gtk_container_remove(GTK_CONTAINER(mBox), GTK_WIDGET(menuItem->mItem));
+	GtkWidget* item = GTK_WIDGET(menuItem->mItem);
+
+	GtkWidget* parent = gtk_widget_get_parent(item);
+	if (parent != nullptr)
+		gtk_container_remove(GTK_CONTAINER(parent), item);
+
+	mItems.erase(std::remove(mItems.begin(), mItems.end(), item), mItems.end());
+	updateLayout();
+
 	gtk_window_resize(GTK_WINDOW(mWindow), 1, 1);
 
 	if (mGroup->mWindowsCount < (Settings::noWindowsListIfSingle ? 2 : 1))
@@ -152,16 +164,16 @@ void GroupMenu::popup()
 		gint wx, wy;
 		mVisible = true;
 
-		updateOrientation();
-
-		// Update the previews before showing the window
+		// Update the previews before measuring and showing the window
 		if (Settings::showPreviews)
 		{
 			mGroup->mWindows.forEach([](GroupWindow* w) -> void {
 				w->mGroupMenuItem->updatePreview();
 			});
-			gtk_window_resize(GTK_WINDOW(mWindow), 1, 1);
 		}
+
+		updateLayout();
+		gtk_window_resize(GTK_WINDOW(mWindow), 1, 1);
 
 		xfce_panel_plugin_position_widget(Plugin::mXfPlugin, mWindow, mGroup->mButton, &wx, &wy);
 		updatePosition(wx, wy);
@@ -172,9 +184,11 @@ void GroupMenu::popup()
 void GroupMenu::updateOrientation()
 {
 	XfcePanelPluginMode panelMode = xfce_panel_plugin_get_mode(Plugin::mXfPlugin);
-	bool horizontal = Settings::showPreviews && panelMode == XFCE_PANEL_PLUGIN_MODE_HORIZONTAL;
+	bool previewsHorizontal = Settings::showPreviews && panelMode == XFCE_PANEL_PLUGIN_MODE_HORIZONTAL;
 
-	if (horizontal)
+	// On horizontal panels the previews form rows that stack vertically; on vertical
+	// panels they form columns that sit side by side. The window list is a single column.
+	if (Settings::showPreviews && !previewsHorizontal)
 		gtk_orientable_set_orientation(GTK_ORIENTABLE(mBox), GTK_ORIENTATION_HORIZONTAL);
 	else
 		gtk_orientable_set_orientation(GTK_ORIENTABLE(mBox), GTK_ORIENTATION_VERTICAL);
@@ -182,10 +196,103 @@ void GroupMenu::updateOrientation()
 	Help::Gtk::cssClassRemove(mBox, "docklike-horizontal");
 	Help::Gtk::cssClassRemove(mBox, "docklike-vertical");
 	Help::Gtk::cssClassRemove(mBox, "docklike-previews");
-	Help::Gtk::cssClassAdd(mBox, horizontal ? "docklike-horizontal" : "docklike-vertical");
+	Help::Gtk::cssClassAdd(mBox, previewsHorizontal ? "docklike-horizontal" : "docklike-vertical");
 
 	if (Settings::showPreviews)
 		Help::Gtk::cssClassAdd(mBox, "docklike-previews");
+}
+
+int GroupMenu::lineCapacity(bool horizontal)
+{
+	GdkDisplay* display = gdk_display_get_default();
+	GdkWindow* window = mGroup->mButton != nullptr
+		? gtk_widget_get_window(mGroup->mButton) : nullptr;
+	GdkMonitor* monitor = window != nullptr
+		? gdk_display_get_monitor_at_window(display, window)
+		: gdk_display_get_primary_monitor(display);
+
+	if (monitor == nullptr)
+		return 1;
+
+	GdkRectangle geometry;
+	gdk_monitor_get_geometry(monitor, &geometry);
+
+	gint available = (horizontal ? geometry.width : geometry.height) - 2 * PREVIEW_MARGIN;
+	if (available <= 0)
+		return 1;
+
+	gint itemSize = 0;
+	for (GtkWidget* item : mItems)
+	{
+		gint minimum, natural;
+		if (horizontal)
+			gtk_widget_get_preferred_width(item, &minimum, &natural);
+		else
+			gtk_widget_get_preferred_height(item, &minimum, &natural);
+		itemSize = std::max(itemSize, natural);
+	}
+
+	if (itemSize <= 0)
+		itemSize = horizontal ? Settings::previewWidth : Settings::previewHeight;
+
+	return std::max(1, available / itemSize);
+}
+
+void GroupMenu::updateLayout()
+{
+	updateOrientation();
+
+	bool previews = Settings::showPreviews;
+	bool horizontal = previews
+		&& xfce_panel_plugin_get_mode(Plugin::mXfPlugin) == XFCE_PANEL_PLUGIN_MODE_HORIZONTAL;
+
+	// Measure the items before detaching them; only previews wrap.
+	int capacity = previews ? lineCapacity(horizontal) : (int)mItems.size();
+	if (capacity < 1)
+		capacity = 1;
+
+	// Detach the items; their GroupMenuItem keeps a reference to each widget.
+	for (GtkWidget* item : mItems)
+	{
+		GtkWidget* parent = gtk_widget_get_parent(item);
+		if (parent != nullptr)
+			gtk_container_remove(GTK_CONTAINER(parent), item);
+	}
+
+	// Drop the previous lines; the items were detached above.
+	GList* children = gtk_container_get_children(GTK_CONTAINER(mBox));
+	for (GList* n = children; n != nullptr; n = n->next)
+		gtk_widget_destroy(GTK_WIDGET(n->data));
+	g_list_free(children);
+
+	// Keep the first line closest to the panel; later lines grow away from it.
+	XfceScreenPosition position = xfce_panel_plugin_get_screen_position(Plugin::mXfPlugin);
+	bool fromEnd = horizontal ? xfce_screen_position_is_bottom(position)
+							  : xfce_screen_position_is_right(position);
+	GtkOrientation lineOrientation = horizontal ? GTK_ORIENTATION_HORIZONTAL : GTK_ORIENTATION_VERTICAL;
+
+	GtkWidget* line = nullptr;
+	for (size_t i = 0; i < mItems.size(); i++)
+	{
+		if (i % capacity == 0)
+		{
+			line = gtk_box_new(lineOrientation, 0);
+			if (fromEnd)
+				gtk_box_pack_end(GTK_BOX(mBox), line, false, true, 0);
+			else
+				gtk_box_pack_start(GTK_BOX(mBox), line, false, true, 0);
+			gtk_widget_show(line);
+		}
+		gtk_box_pack_start(GTK_BOX(line), mItems[i], false, true, 0);
+	}
+
+	// Keep a line so an empty menu still has a valid size.
+	if (line == nullptr)
+	{
+		line = gtk_box_new(lineOrientation, 0);
+		gtk_box_pack_start(GTK_BOX(mBox), line, false, true, 0);
+		gtk_widget_show(line);
+	}
 }
 
 void GroupMenu::updatePosition(gint wx, gint wy)
