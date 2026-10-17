@@ -19,6 +19,8 @@
 #include "Group.hpp"
 #include "Hotkeys.hpp"
 
+#include <pango/pangocairo.h>
+
 static GtkTargetEntry entries[1] = {{(gchar*)"application/docklike_group", 0, 0}};
 static GtkTargetList* targetList = gtk_target_list_new(entries, 1);
 
@@ -28,6 +30,16 @@ static std::string getDragId(const std::shared_ptr<AppInfo>& appInfo)
 		return "name:" + appInfo->mName;
 
 	return "id:" + appInfo->mId;
+}
+
+static double srgbToLinear(double c)
+{
+	return c <= 0.03928 ? c / 12.92 : pow((c + 0.055) / 1.055, 2.4);
+}
+
+static double relativeLuminance(const double* rgba)
+{
+	return 0.2126 * srgbToLinear(rgba[0]) + 0.7152 * srgbToLinear(rgba[1]) + 0.0722 * srgbToLinear(rgba[2]);
 }
 
 static std::shared_ptr<Group> getDragGroup(const std::string& dragId)
@@ -721,6 +733,58 @@ void Group::onDraw(cairo_t* cr)
 				cairo_arc(cr, x, y, radius, 0.0, 2.0 * M_PI);
 				cairo_fill(cr);
 			}
+		}
+		break;
+	}
+
+	case STYLE_BADGE:
+	{
+		if (mWindowsCount > 0)
+		{
+			gchar text[16];
+			if (mWindowsCount > 99)
+				g_strlcpy(text, "99+", sizeof(text));
+			else
+				g_snprintf(text, sizeof(text), "%u", (unsigned)mWindowsCount);
+
+			double margin = std::max(1.0, h * 0.04);
+			double padding = std::max(1.0, h * 0.05);
+			double fontSize = std::max(5.0, h * 0.24);
+
+			PangoLayout* layout = pango_cairo_create_layout(cr);
+			pango_layout_set_text(layout, text, -1);
+
+			PangoFontDescription* desc = pango_font_description_new();
+			pango_font_description_set_weight(desc, PANGO_WEIGHT_BOLD);
+			pango_font_description_set_absolute_size(desc, fontSize * PANGO_SCALE);
+			pango_layout_set_font_description(layout, desc);
+			pango_font_description_free(desc);
+
+			int tw = 0, th = 0;
+			pango_layout_get_pixel_size(layout, &tw, &th);
+
+			double bh = th + 2 * padding;
+			double bw = std::max((double)tw + 2 * padding, bh);
+			double x = w - margin - bw;
+			double y = margin;
+			double r = bh / 2.;
+
+			cairo_new_sub_path(cr);
+			cairo_arc(cr, x + bw - r, y + r, r, -M_PI / 2., M_PI / 2.);
+			cairo_arc(cr, x + r, y + r, r, M_PI / 2., 3. * M_PI / 2.);
+			cairo_close_path(cr);
+
+			cairo_set_source_rgba(cr, rgba[0], rgba[1], rgba[2], rgba[3]);
+			cairo_fill(cr);
+
+			double luminance = relativeLuminance(rgba);
+			double textColor = luminance > 0.179 ? 0.0 : 1.0;
+			cairo_set_source_rgba(cr, textColor, textColor, textColor, 1);
+
+			cairo_move_to(cr, x + (bw - tw) / 2., y + padding);
+			pango_cairo_show_layout(cr, layout);
+
+			g_object_unref(layout);
 		}
 		break;
 	}
