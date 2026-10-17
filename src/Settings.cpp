@@ -19,6 +19,7 @@
 #include "Settings.hpp"
 #include "Hotkeys.hpp"
 #include "LauncherEntry.hpp"
+#include "Overview.hpp"
 
 namespace Settings
 {
@@ -35,6 +36,9 @@ namespace Settings
 	State<bool> onlyDisplayScreen;
 	State<bool> showPreviews;
 	State<int> middleButtonBehavior;
+	State<bool> hotCornerEnabled;
+	State<int> hotCornerCorner;
+	State<int> hotCornerDelay;
 
 	State<int> indicatorOrientation;
 	State<int> indicatorStyle;
@@ -179,6 +183,30 @@ namespace Settings
 			[](int _middleButtonBehavior) -> void {
 				g_key_file_set_integer(mFile.get(), "user", "middleButtonBehavior", _middleButtonBehavior);
 				saveFile();
+			});
+
+		hotCornerEnabled.setup(g_key_file_get_boolean(file, "user", "hotCornerEnabled", nullptr),
+			[](bool _hotCornerEnabled) -> void {
+				g_key_file_set_boolean(mFile.get(), "user", "hotCornerEnabled", _hotCornerEnabled);
+				saveFile();
+				Overview::updateSettings();
+			});
+
+		hotCornerCorner.setup(CLAMP(g_key_file_get_integer(file, "user", "hotCornerCorner", nullptr), 0, 3),
+			[](int _hotCornerCorner) -> void {
+				g_key_file_set_integer(mFile.get(), "user", "hotCornerCorner", _hotCornerCorner);
+				saveFile();
+				Overview::updateSettings();
+			});
+
+		intValue = g_key_file_has_key(file, "user", "hotCornerDelay", nullptr)
+			? g_key_file_get_integer(file, "user", "hotCornerDelay", nullptr)
+			: defHotCornerDelay;
+		hotCornerDelay.setup(CLAMP(intValue, 0, 5000),
+			[](int _hotCornerDelay) -> void {
+				g_key_file_set_integer(mFile.get(), "user", "hotCornerDelay", _hotCornerDelay);
+				saveFile();
+				Overview::updateSettings();
 			});
 
 		indicatorOrientation.setup(g_key_file_get_integer(file, "user", "indicatorOrientation", nullptr),

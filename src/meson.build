@@ -17,6 +17,8 @@ plugin_sources = [
   'Hotkeys.hpp',
   'LauncherEntry.cpp',
   'LauncherEntry.hpp',
+  'Overview.cpp',
+  'Overview.hpp',
   'Plugin.cpp',
   'Plugin.hpp',
   'register.c',

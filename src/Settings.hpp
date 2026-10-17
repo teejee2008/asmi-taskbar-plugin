@@ -44,6 +44,7 @@ namespace Settings
 	const int defPreviewHeight = 162;
 	const int defPreviewGap = 0;
 	const int defDockItemSpacing = 4;
+	const int defHotCornerDelay = 200;
 
 	extern State<bool> forceIconSize;
 	extern State<int> iconSize;
@@ -59,6 +60,9 @@ namespace Settings
 	extern State<bool> showWindowCount;
 	extern State<bool> disableLauncherCounts;
 	extern State<int> middleButtonBehavior;
+	extern State<bool> hotCornerEnabled;
+	extern State<int> hotCornerCorner;
+	extern State<int> hotCornerDelay;
 
 	extern State<int> indicatorOrientation;
 	extern State<int> indicatorStyle;

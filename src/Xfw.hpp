@@ -41,6 +41,8 @@ namespace Xfw
 	XfwWindow* getActiveWindow();
 	std::string getGroupName(GroupWindow* groupWindow);
 
+	cairo_surface_t* getWindowPreview(XfwWindow* window, int width, int height, int scaleFactor);
+
 	void close(GroupWindow* groupWindow, guint32 timestamp);
 	void activate(GroupWindow* groupWindow, guint32 timestamp);
 

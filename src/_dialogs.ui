@@ -38,6 +38,13 @@
     <property name="page_increment">4</property>
     <property name="value">4</property>
   </object>
+  <object class="GtkAdjustment" id="hotCornerDelayAdjustment">
+    <property name="lower">0</property>
+    <property name="upper">5000</property>
+    <property name="step_increment">50</property>
+    <property name="page_increment">100</property>
+    <property name="value">200</property>
+  </object>
   <object class="GtkImage" id="i_close">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
@@ -653,6 +660,67 @@
                               <packing>
                                 <property name="left_attach">1</property>
                                 <property name="top_attach">6</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkCheckButton" id="c_hotCornerEnabled">
+                                <property name="label" translatable="yes">Enable hot-corner for window overview:</property>
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="receives_default">False</property>
+                                <property name="halign">start</property>
+                                <property name="use_underline">True</property>
+                                <property name="draw_indicator">True</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">0</property>
+                                <property name="top_attach">7</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkComboBoxText" id="co_hotCornerCorner">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="hexpand">True</property>
+                                <property name="halign">end</property>
+                                <items>
+                                  <item translatable="yes">Top left</item>
+                                  <item translatable="yes">Top right</item>
+                                  <item translatable="yes">Bottom left</item>
+                                  <item translatable="yes">Bottom right</item>
+                                </items>
+                              </object>
+                              <packing>
+                                <property name="left_attach">1</property>
+                                <property name="top_attach">7</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkLabel">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="halign">start</property>
+                                <property name="label" translatable="yes">Hot-corner activation delay (ms):</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">0</property>
+                                <property name="top_attach">8</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkSpinButton" id="hotCornerDelayButton">
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="adjustment">hotCornerDelayAdjustment</property>
+                                <property name="editable">True</property>
+                                <property name="numeric">True</property>
+                                <property name="digits">0</property>
+                                <property name="hexpand">True</property>
+                                <property name="halign">end</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">1</property>
+                                <property name="top_attach">8</property>
                               </packing>
                             </child>
                           </object>

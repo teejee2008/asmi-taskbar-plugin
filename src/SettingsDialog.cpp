@@ -191,6 +191,30 @@ namespace SettingsDialog
 			}),
 			dialog);
 
+		GObject* hotCornerEnabled = gtk_builder_get_object(builder, "c_hotCornerEnabled");
+		GObject* hotCornerCorner = gtk_builder_get_object(builder, "co_hotCornerCorner");
+		GObject* hotCornerDelay = gtk_builder_get_object(builder, "hotCornerDelayButton");
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(hotCornerEnabled), Settings::hotCornerEnabled);
+		g_object_bind_property(hotCornerEnabled, "active", hotCornerCorner, "sensitive", G_BINDING_SYNC_CREATE);
+		g_object_bind_property(hotCornerEnabled, "active", hotCornerDelay, "sensitive", G_BINDING_SYNC_CREATE);
+		g_signal_connect(hotCornerEnabled, "toggled",
+			G_CALLBACK(+[](GtkToggleButton* _hotCornerEnabled) {
+				Settings::hotCornerEnabled.set(gtk_toggle_button_get_active(_hotCornerEnabled));
+			}),
+			nullptr);
+		gtk_combo_box_set_active(GTK_COMBO_BOX(hotCornerCorner), Settings::hotCornerCorner);
+		g_signal_connect(hotCornerCorner, "changed",
+			G_CALLBACK(+[](GtkComboBox* _hotCornerCorner, GtkWidget* g) {
+				Settings::hotCornerCorner.set(gtk_combo_box_get_active(GTK_COMBO_BOX(_hotCornerCorner)));
+			}),
+			dialog);
+		gtk_spin_button_set_value(GTK_SPIN_BUTTON(hotCornerDelay), Settings::hotCornerDelay);
+		g_signal_connect(hotCornerDelay, "value-changed",
+			G_CALLBACK(+[](GtkSpinButton* _hotCornerDelay) {
+				Settings::hotCornerDelay.set(gtk_spin_button_get_value_as_int(_hotCornerDelay));
+			}),
+			nullptr);
+
 		// =====================================================================
 
 		GObject* indicatorOrientation = gtk_builder_get_object(builder, "co_indicatorOrientation");

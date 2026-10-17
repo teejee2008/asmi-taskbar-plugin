@@ -16,11 +16,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifdef ENABLE_X11
-#include <gdk/gdkx.h>
-#include <libxfce4windowing/xfw-x11.h>
-#endif
-
 #include "GroupMenuItem.hpp"
 
 static GtkTargetEntry entries[1] = {{(gchar*)"any", 0, 0}};
@@ -204,74 +199,13 @@ void GroupMenuItem::updatePreview()
 	if (mGroupWindow->getState(XFW_WINDOW_STATE_MINIMIZED))
 		return; // minimized windows never need a new thumbnail
 
-#ifdef ENABLE_X11
-	// This needs work to survive porting to GTK4 and/or Wayland.
-	// GDK doesn't expose an API to get a foreign window on X11 anymore (so X11 code).
-	// Wayland may never have a public protocol for obtaining a preview of a foreign window,
-	// which goes against its security principles (so private protocol).
-	if (GDK_IS_X11_DISPLAY(Plugin::mDisplay))
+	gint scaleFactor = gtk_widget_get_scale_factor(GTK_WIDGET(mPreview));
+	cairo_surface_t* surface = Xfw::getWindowPreview(mGroupWindow->mXfwWindow,
+		Settings::previewWidth, Settings::previewHeight, scaleFactor);
+
+	if (surface != nullptr)
 	{
-		GdkWindow* window;
-		GdkPixbuf* pixbuf;
-		GdkPixbuf* thumbnail;
-
-		window = gdk_x11_window_foreign_new_for_display(Plugin::mDisplay,
-			xfw_window_x11_get_xid(mGroupWindow->mXfwWindow));
-
-		if (window != nullptr)
-		{
-			// we're probably not doing anything wrong at our level, but things can go wrong in cairo when
-			// multiple windows are closed and thumbnails are shown (#71), so let's catch X11 errors for it
-			GdkDisplay* display = gdk_display_get_default();
-			gdk_x11_display_error_trap_push(display);
-			pixbuf = gdk_pixbuf_get_from_window(window, 0, 0, gdk_window_get_width(window), gdk_window_get_height(window));
-			gdk_x11_display_error_trap_pop_ignored(display);
-
-			if (pixbuf != nullptr)
-			{
-				gint scale_factor = gtk_widget_get_scale_factor(GTK_WIDGET(mPreview));
-
-				gint previewWidth = Settings::previewWidth * scale_factor;
-				gint previewHeight = Settings::previewHeight * scale_factor;
-
-				gint pixbufWidth = gdk_pixbuf_get_width(pixbuf);
-				gint pixbufHeight = gdk_pixbuf_get_height(pixbuf);
-
-				/* calculate the new dimensions */
-				gdouble wRatio = (gdouble)pixbufWidth / (gdouble)previewWidth;
-				gdouble hRatio = (gdouble)pixbufHeight / (gdouble)previewHeight;
-
-				if (hRatio > wRatio)
-				{
-					pixbufWidth = MAX(1, pixbufWidth / hRatio);
-					pixbufHeight = MIN(pixbufHeight, previewHeight);
-				}
-				else
-				{
-					pixbufWidth = MIN(pixbufWidth, previewWidth);
-					pixbufHeight = MAX(1, pixbufHeight / wRatio);
-				}
-
-				thumbnail = gdk_pixbuf_scale_simple(pixbuf, pixbufWidth, pixbufHeight, GDK_INTERP_BILINEAR);
-
-				GdkPixbuf* sized = gdk_pixbuf_new(GDK_COLORSPACE_RGB, true, 8, previewWidth, previewHeight);
-				gint thumbWidth = gdk_pixbuf_get_width(thumbnail);
-				gint thumbHeight = gdk_pixbuf_get_height(thumbnail);
-				gint xOffset = (previewWidth - thumbWidth) / 2;
-				gint yOffset = (previewHeight - thumbHeight) / 2;
-				gdk_pixbuf_composite(thumbnail, sized, xOffset, yOffset, thumbWidth, thumbHeight, xOffset, yOffset, 1, 1, GDK_INTERP_BILINEAR, 255);
-
-				cairo_surface_t* surface = gdk_cairo_surface_create_from_pixbuf(sized, scale_factor, nullptr);
-
-				gtk_image_set_from_surface(mPreview, surface);
-
-				cairo_surface_destroy(surface);
-				g_object_unref(sized);
-				g_object_unref(thumbnail);
-				g_object_unref(pixbuf);
-			}
-			g_object_unref(window);
-		}
+		gtk_image_set_from_surface(mPreview, surface);
+		cairo_surface_destroy(surface);
 	}
-#endif
 }

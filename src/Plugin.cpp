@@ -22,6 +22,7 @@
 #include "Helpers.hpp"
 #include "Hotkeys.hpp"
 #include "LauncherEntry.hpp"
+#include "Overview.hpp"
 #include "Plugin.hpp"
 
 namespace Plugin
@@ -45,6 +46,7 @@ namespace Plugin
 		LauncherEntry::init();
 		Theme::init();
 		Hotkeys::init();
+		Overview::init();
 
 		gtk_container_add(GTK_CONTAINER(mXfPlugin), Dock::mBox);
 		xfce_panel_plugin_set_expand(mXfPlugin, Settings::expandDock);
@@ -95,6 +97,7 @@ namespace Plugin
 		g_signal_connect(G_OBJECT(mXfPlugin), "free-data",
 			G_CALLBACK(+[](XfcePanelPlugin* plugin) {
 				LauncherEntry::finalize();
+				Overview::finalize();
 				Xfw::finalize();
 				Dock::mGroups.clear();
 				AppInfos::finalize();
