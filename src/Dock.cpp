@@ -207,5 +207,7 @@ namespace Dock
 			else
 				gtk_widget_set_size_request(mBox, -1, Settings::dockSize);
 		}
+
+		mGroups.forEach([](std::pair<std::shared_ptr<AppInfo>, std::shared_ptr<Group>> g) -> void { g.second->resize(); });
 	}
 } // namespace Dock

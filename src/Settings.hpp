@@ -60,6 +60,7 @@ namespace Settings
 	extern State<int> indicatorOrientation;
 	extern State<int> indicatorStyle;
 	extern State<int> inactiveIndicatorStyle;
+	extern State<int> indicatorSpacing;
 	extern State<bool> indicatorColorFromTheme;
 	extern State<std::shared_ptr<GdkRGBA>> indicatorColor;
 	extern State<std::shared_ptr<GdkRGBA>> inactiveColor;

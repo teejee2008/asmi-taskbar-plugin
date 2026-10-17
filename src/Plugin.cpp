@@ -66,6 +66,12 @@ namespace Plugin
 			}),
 			nullptr);
 
+		g_signal_connect(G_OBJECT(GTK_WIDGET(mXfPlugin)), "screen-position-changed",
+			G_CALLBACK(+[](XfcePanelPlugin* plugin, XfceScreenPosition position) {
+				Dock::onPanelResize();
+			}),
+			nullptr);
+
 		g_signal_connect(G_OBJECT(mXfPlugin), "configure-plugin",
 			G_CALLBACK(+[](XfcePanelPlugin* plugin) {
 				SettingsDialog::popup();

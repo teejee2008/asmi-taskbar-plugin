@@ -217,6 +217,14 @@ namespace SettingsDialog
 			}),
 			dialog);
 
+		GObject* indicatorSpacing = gtk_builder_get_object(builder, "indicatorSpacingButton");
+		gtk_spin_button_set_value(GTK_SPIN_BUTTON(indicatorSpacing), Settings::indicatorSpacing);
+		g_signal_connect(indicatorSpacing, "value-changed",
+			G_CALLBACK(+[](GtkSpinButton* _indicatorSpacing) {
+				Settings::indicatorSpacing.set(gtk_spin_button_get_value_as_int(_indicatorSpacing));
+			}),
+			dialog);
+
 		GObject* customIndicatorColors = gtk_builder_get_object(builder, "g_customIndicatorColors");
 		gtk_widget_set_sensitive(GTK_WIDGET(customIndicatorColors), !Settings::indicatorColorFromTheme);
 

@@ -17,6 +17,13 @@
     <property name="page_increment">10</property>
     <property name="value">162</property>
   </object>
+  <object class="GtkAdjustment" id="indicatorSpacingAdjustment">
+    <property name="lower">0</property>
+    <property name="upper">64</property>
+    <property name="step_increment">1</property>
+    <property name="page_increment">4</property>
+    <property name="value">0</property>
+  </object>
   <object class="GtkImage" id="i_close">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
@@ -560,6 +567,31 @@
                               <packing>
                                 <property name="left_attach">1</property>
                                 <property name="top_attach">3</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkLabel">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="halign">start</property>
+                                <property name="label" translatable="yes">Indicator spacing:</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">0</property>
+                                <property name="top_attach">4</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkSpinButton" id="indicatorSpacingButton">
+                                <property name="visible">True</property>
+                                <property name="can_focus">True</property>
+                                <property name="adjustment">indicatorSpacingAdjustment</property>
+                                <property name="numeric">True</property>
+                                <property name="digits">0</property>
+                              </object>
+                              <packing>
+                                <property name="left_attach">1</property>
+                                <property name="top_attach">4</property>
                               </packing>
                             </child>
                             <child>

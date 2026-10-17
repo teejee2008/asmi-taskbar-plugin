@@ -64,6 +64,34 @@ static PangoLayout* createCountLayout(cairo_t* cr, unsigned int count, double fo
 	return layout;
 }
 
+static int resolveIndicatorOrientation()
+{
+	int orientation = Settings::indicatorOrientation;
+
+	if (orientation == ORIENTATION_AUTOMATIC)
+	{
+		XfcePanelPluginMode panelMode = xfce_panel_plugin_get_mode(Plugin::mXfPlugin);
+		XfceScreenPosition screenPosition = xfce_panel_plugin_get_screen_position(Plugin::mXfPlugin);
+
+		if (panelMode == XFCE_PANEL_PLUGIN_MODE_VERTICAL || panelMode == XFCE_PANEL_PLUGIN_MODE_DESKBAR)
+		{
+			if (xfce_screen_position_is_left(screenPosition))
+				orientation = ORIENTATION_LEFT;
+			else if (xfce_screen_position_is_right(screenPosition))
+				orientation = ORIENTATION_RIGHT;
+		}
+		else
+		{
+			if (xfce_screen_position_is_top(screenPosition))
+				orientation = ORIENTATION_TOP;
+			else if (xfce_screen_position_is_bottom(screenPosition))
+				orientation = ORIENTATION_BOTTOM;
+		}
+	}
+
+	return orientation;
+}
+
 static std::shared_ptr<Group> getDragGroup(const std::string& dragId)
 {
 	return Dock::mGroups.findIf(
@@ -424,6 +452,30 @@ void Group::resize()
 		gtk_image_set_pixel_size(GTK_IMAGE(mImage), Dock::mIconSize);
 
 	gtk_widget_set_valign(mImage, GTK_ALIGN_CENTER);
+	gtk_widget_set_halign(mImage, GTK_ALIGN_CENTER);
+
+	// Push the icon away from the indicator edge by the configured spacing
+	int indicatorSpacing = Settings::indicatorSpacing;
+	int indicatorSpacingMargin = indicatorSpacing * 2;
+	gtk_widget_set_margin_top(mImage, 0);
+	gtk_widget_set_margin_bottom(mImage, 0);
+	gtk_widget_set_margin_start(mImage, 0);
+	gtk_widget_set_margin_end(mImage, 0);
+
+	if (indicatorSpacingMargin > 0)
+	{
+		int orientation = resolveIndicatorOrientation();
+
+		if (orientation == ORIENTATION_BOTTOM)
+			gtk_widget_set_margin_bottom(mImage, indicatorSpacingMargin);
+		else if (orientation == ORIENTATION_TOP)
+			gtk_widget_set_margin_top(mImage, indicatorSpacingMargin);
+		else if (orientation == ORIENTATION_RIGHT)
+			gtk_widget_set_margin_end(mImage, indicatorSpacingMargin);
+		else if (orientation == ORIENTATION_LEFT)
+			gtk_widget_set_margin_start(mImage, indicatorSpacingMargin);
+	}
+
 	gtk_widget_queue_draw(mButton);
 
 	updateIconGeometry();
@@ -471,30 +523,7 @@ void Group::onDraw(cairo_t* cr)
 	const double DOT_RADIUS = h * 0.065;
 	const double CIRCLE_WEIGHT = 0.0375;
 
-	int orientation = Settings::indicatorOrientation;
-	// Orientation based on panel mode and position
-	// Mimics Windows 10 style, indicator stays on outside
-	// TODO: make this a hidden setting now
-	if (orientation == ORIENTATION_AUTOMATIC)
-	{
-		XfcePanelPluginMode panelMode = xfce_panel_plugin_get_mode(Plugin::mXfPlugin);
-		XfceScreenPosition screenPosition = xfce_panel_plugin_get_screen_position(Plugin::mXfPlugin);
-
-		if (panelMode == XFCE_PANEL_PLUGIN_MODE_VERTICAL || panelMode == XFCE_PANEL_PLUGIN_MODE_DESKBAR)
-		{
-			if (xfce_screen_position_is_left(screenPosition))
-				orientation = ORIENTATION_LEFT;
-			else if (xfce_screen_position_is_right(screenPosition))
-				orientation = ORIENTATION_RIGHT;
-		}
-		else
-		{
-			if (xfce_screen_position_is_top(screenPosition))
-				orientation = ORIENTATION_TOP;
-			else if (xfce_screen_position_is_bottom(screenPosition))
-				orientation = ORIENTATION_BOTTOM;
-		}
-	}
+	int orientation = resolveIndicatorOrientation();
 
 	int indicator_style = Settings::inactiveIndicatorStyle;
 	if (mActive)

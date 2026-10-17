@@ -39,6 +39,7 @@ namespace Settings
 	State<int> indicatorOrientation;
 	State<int> indicatorStyle;
 	State<int> inactiveIndicatorStyle;
+	State<int> indicatorSpacing;
 	State<bool> indicatorColorFromTheme;
 	State<std::shared_ptr<GdkRGBA>> indicatorColor;
 	State<std::shared_ptr<GdkRGBA>> inactiveColor;
@@ -170,7 +171,7 @@ namespace Settings
 				g_key_file_set_integer(mFile.get(), "user", "indicatorOrientation", _indicatorOrientation);
 				saveFile();
 
-				Dock::drawGroups();
+				Dock::onPanelResize();
 			});
 
 		forceIconSize.setup(g_key_file_get_boolean(file, "user", "forceIconSize", nullptr),
@@ -209,6 +210,14 @@ namespace Settings
 				saveFile();
 
 				Dock::drawGroups();
+			});
+
+		indicatorSpacing.setup(CLAMP(g_key_file_get_integer(file, "user", "indicatorSpacing", nullptr), 0, 64),
+			[](int _indicatorSpacing) -> void {
+				g_key_file_set_integer(mFile.get(), "user", "indicatorSpacing", _indicatorSpacing);
+				saveFile();
+
+				Dock::onPanelResize();
 			});
 
 		indicatorColorFromTheme.setup(g_key_file_get_boolean(file, "user", "indicatorColorFromTheme", nullptr),
