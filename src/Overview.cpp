@@ -18,7 +18,8 @@
 
 #include "Overview.hpp"
 
-#include "GroupWindow.hpp"
+#include "Dock.hpp"
+#include "GroupMenuItem.hpp"
 #include "Helpers.hpp"
 #include "Plugin.hpp"
 #include "Settings.hpp"
@@ -32,6 +33,10 @@ static const int TRIGGER_MARGIN = 4;
 static const int POLL_INTERVAL = 50;
 // Space kept free around the preview grid.
 static const int OVERVIEW_PADDING = 12;
+// The overview lets the title ellipsize to the preview width instead of
+// keeping the fixed width it has in the dock menu, so long titles never widen
+// the item.
+static const int OVERVIEW_LABEL_MAX_CHARS = 1;
 
 namespace Overview
 {
@@ -42,6 +47,7 @@ namespace Overview
 		Help::Gtk::Timeout mPollTimeout;
 		gulong mWindowOpenedId = 0;
 		gulong mWindowClosedId = 0;
+		gulong mActiveWindowChangedId = 0;
 		bool mVisible = false;
 		gint64 mCornerSince = -1;
 
@@ -53,97 +59,70 @@ namespace Overview
 			return window;
 		}
 
-		void clearItems()
+		// Reuse the dock item widgets (with their close button and preview) by
+		// reparenting them into the overview.
+		void addWindowItem(GroupWindow* window)
 		{
+			GroupMenuItem* menuItem = window->mGroupMenuItem;
+			menuItem->updateLabel();
+
+			if (Settings::showPreviews)
+			{
+				menuItem->updatePreview();
+				gtk_label_set_ellipsize(menuItem->mLabel, PANGO_ELLIPSIZE_END);
+				gtk_label_set_max_width_chars(menuItem->mLabel, OVERVIEW_LABEL_MAX_CHARS);
+			}
+
+			GtkWidget* item = GTK_WIDGET(menuItem->mItem);
+
+			GtkWidget* parent = gtk_widget_get_parent(item);
+			if (parent != nullptr)
+				gtk_container_remove(GTK_CONTAINER(parent), item);
+
+			// Keep each preview at its natural (Preview size) dimensions
+			// instead of letting the flow box stretch it to fill the cell.
+			gtk_widget_set_halign(item, GTK_ALIGN_CENTER);
+			gtk_widget_set_valign(item, GTK_ALIGN_CENTER);
+
+			gtk_flow_box_insert(GTK_FLOW_BOX(mFlowBox), item, -1);
+			gtk_widget_show(item);
+		}
+
+		bool populate()
+		{
+			bool added = false;
+
+			Dock::mGroups.forEach([&added](std::pair<std::shared_ptr<AppInfo>, std::shared_ptr<Group>> group) -> void {
+				group.second->mWindows.forEach([&added](GroupWindow* window) -> void {
+					addWindowItem(window);
+					added = true;
+				});
+			});
+
+			return added;
+		}
+
+		// Give the items back to their group menus. updateLayout() detaches each
+		// item from its current parent (the overview) before packing it again.
+		void restoreItems()
+		{
+			Dock::mGroups.forEach([](std::pair<std::shared_ptr<AppInfo>, std::shared_ptr<Group>> group) -> void {
+				group.second->mWindows.forEach([](GroupWindow* window) -> void {
+					GtkWidget* item = GTK_WIDGET(window->mGroupMenuItem->mItem);
+					gtk_widget_set_halign(item, GTK_ALIGN_FILL);
+					gtk_widget_set_valign(item, GTK_ALIGN_FILL);
+					gtk_label_set_max_width_chars(window->mGroupMenuItem->mLabel, -1);
+				});
+				group.second->mGroupMenu.updateLayout();
+			});
+
+			// updateLayout() only detaches the items from the flow box child
+			// wrappers; the empty wrappers would otherwise pile up and push the
+			// grid down on every opening.
 			GList* children = gtk_container_get_children(GTK_CONTAINER(mFlowBox));
 			for (GList* it = children; it != nullptr; it = it->next)
 				gtk_widget_destroy(GTK_WIDGET(it->data));
 			g_list_free(children);
-		}
-
-		GtkWidget* createItem(GroupWindow* window)
-		{
-			GtkWidget* item = gtk_event_box_new();
-			Help::Gtk::cssClassAdd(item, "menu_item");
-			Help::Gtk::cssClassAdd(item, "overview_item");
-
-			GtkWidget* box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 2);
-			gtk_container_add(GTK_CONTAINER(item), box);
-
-			GtkWidget* preview = gtk_image_new();
-			Help::Gtk::cssClassAdd(preview, "preview");
-			gtk_box_pack_start(GTK_BOX(box), preview, false, false, 0);
-
-			gint scaleFactor = gtk_widget_get_scale_factor(preview);
-			cairo_surface_t* surface = Xfw::getWindowPreview(window->mXfwWindow,
-				Settings::previewWidth, Settings::previewHeight, scaleFactor);
-			if (surface != nullptr)
-			{
-				gtk_image_set_from_surface(GTK_IMAGE(preview), surface);
-				cairo_surface_destroy(surface);
-			}
-
-			GtkWidget* label = gtk_label_new(xfw_window_get_name(window->mXfwWindow));
-			Help::Gtk::cssClassAdd(label, "title");
-			gtk_label_set_ellipsize(GTK_LABEL(label), PANGO_ELLIPSIZE_END);
-			gtk_label_set_max_width_chars(GTK_LABEL(label), 30);
-			gtk_box_pack_start(GTK_BOX(box), label, false, false, 0);
-
-			if (Xfw::getActiveWindow() == window->mXfwWindow)
-				Help::Gtk::cssClassAdd(item, "active_menu_item");
-
-			g_signal_connect(G_OBJECT(item), "button-press-event",
-				G_CALLBACK(+[](GtkWidget* widget, GdkEventButton* event, GroupWindow* w) {
-					if (event->button == GDK_BUTTON_PRIMARY)
-					{
-						w->activate(event->time);
-						hide();
-					}
-					else if (event->button == GDK_BUTTON_MIDDLE)
-						Xfw::close(w, event->time);
-					else if (event->button == GDK_BUTTON_SECONDARY)
-					{
-						GtkWidget* menu = GTK_WIDGET(g_object_ref_sink(xfw_window_action_menu_new(w->mXfwWindow)));
-						xfce_panel_plugin_register_menu(Plugin::mXfPlugin, GTK_MENU(menu));
-						g_signal_connect(G_OBJECT(menu), "deactivate",
-							G_CALLBACK(+[](GtkMenuShell* _menu, gpointer _data) {
-								g_object_unref(_menu);
-							}),
-							nullptr);
-						gtk_menu_popup_at_pointer(GTK_MENU(menu), (GdkEvent*)event);
-					}
-					return true;
-				}),
-				window);
-
-			g_signal_connect(G_OBJECT(item), "enter-notify-event",
-				G_CALLBACK(+[](GtkWidget* widget, GdkEventCrossing* event, gpointer _data) {
-					Help::Gtk::cssClassAdd(widget, "hover_menu_item");
-					gtk_widget_queue_draw(widget);
-					return true;
-				}),
-				nullptr);
-
-			g_signal_connect(G_OBJECT(item), "leave-notify-event",
-				G_CALLBACK(+[](GtkWidget* widget, GdkEvent* event, gpointer _data) {
-					Help::Gtk::cssClassRemove(widget, "hover_menu_item");
-					gtk_widget_queue_draw(widget);
-					return true;
-				}),
-				nullptr);
-
-			return item;
-		}
-
-		void populate()
-		{
-			clearItems();
-
-			Xfw::mGroupWindows.forEach([](std::pair<XfwWindow*, std::shared_ptr<GroupWindow>> pair) -> void {
-				gtk_flow_box_insert(GTK_FLOW_BOX(mFlowBox), createItem(pair.second.get()), -1);
-			});
-
-			gtk_widget_show_all(mFlowBox);
 		}
 
 		GdkMonitor* pointerMonitor(gint pointerX, gint pointerY)
@@ -300,6 +279,9 @@ namespace Overview
 
 		mFlowBox = gtk_flow_box_new();
 		gtk_flow_box_set_selection_mode(GTK_FLOW_BOX(mFlowBox), GTK_SELECTION_NONE);
+		// Equal-sized cells keep the grid regular even though previews and
+		// windows without a preview have different natural sizes.
+		gtk_flow_box_set_homogeneous(GTK_FLOW_BOX(mFlowBox), TRUE);
 		gtk_flow_box_set_column_spacing(GTK_FLOW_BOX(mFlowBox), 6);
 		gtk_flow_box_set_row_spacing(GTK_FLOW_BOX(mFlowBox), 6);
 		Help::Gtk::cssClassAdd(mFlowBox, "menu");
@@ -342,13 +324,17 @@ namespace Overview
 			}),
 			nullptr);
 
-		// hide the overview whenever the set of open windows changes, so the
-		// items never refer to a destroyed window
+		// dismiss the overview whenever the set of open windows changes, so the
+		// items never refer to a destroyed window, and when a window is activated
+		// from the overview
 		mWindowOpenedId = g_signal_connect(G_OBJECT(Xfw::mXfwScreen), "window-opened",
 			G_CALLBACK(+[](XfwScreen* screen, XfwWindow* xfwWindow) { hide(); }),
 			nullptr);
 		mWindowClosedId = g_signal_connect(G_OBJECT(Xfw::mXfwScreen), "window-closed",
 			G_CALLBACK(+[](XfwScreen* screen, XfwWindow* xfwWindow) { hide(); }),
+			nullptr);
+		mActiveWindowChangedId = g_signal_connect(G_OBJECT(Xfw::mXfwScreen), "active-window-changed",
+			G_CALLBACK(+[](XfwScreen* screen, XfwWindow* previousActiveWindow) { hide(); }),
 			nullptr);
 
 		updateSettings();
@@ -363,9 +349,12 @@ namespace Overview
 			g_signal_handler_disconnect(Xfw::mXfwScreen, mWindowOpenedId);
 		if (mWindowClosedId != 0)
 			g_signal_handler_disconnect(Xfw::mXfwScreen, mWindowClosedId);
+		if (mActiveWindowChangedId != 0)
+			g_signal_handler_disconnect(Xfw::mXfwScreen, mActiveWindowChangedId);
 
 		mWindowOpenedId = 0;
 		mWindowClosedId = 0;
+		mActiveWindowChangedId = 0;
 
 		if (mWindow != nullptr)
 		{
@@ -377,10 +366,12 @@ namespace Overview
 
 	void show()
 	{
-		if (mVisible || Xfw::mGroupWindows.size() == 0)
+		if (mVisible)
 			return;
 
-		populate();
+		if (!populate())
+			return;
+
 		positionWindow();
 		mVisible = true;
 		gtk_widget_show(mWindow);
@@ -395,6 +386,7 @@ namespace Overview
 		mVisible = false;
 		ungrabKeyboard();
 		gtk_widget_hide(mWindow);
+		restoreItems();
 	}
 
 	void updateSettings()
