@@ -47,6 +47,7 @@ public:
 	void onActivate();
 	void onUnactivate() const;
 	void minimize();
+	void unminimize();
 	void activate(guint32 timestamp);
 	bool getState(XfwWindowState flagMask) const;
 

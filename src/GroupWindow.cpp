@@ -99,6 +99,11 @@ void GroupWindow::minimize()
 	xfw_window_set_minimized(this->mXfwWindow, true, nullptr);
 }
 
+void GroupWindow::unminimize()
+{
+	xfw_window_set_minimized(this->mXfwWindow, false, nullptr);
+}
+
 GroupWindow::~GroupWindow()
 {
 	leaveGroup();

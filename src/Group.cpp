@@ -1092,8 +1092,38 @@ GtkWidget* Group::buildContextMenu()
 	}
 	else if (mWindows.size() > 0)
 	{
-		GtkWidget* item = gtk_menu_item_new_with_label(mWindows.size() == 1 ? _("Close") : _("Close All"));
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
+
+		GtkWidget* item = gtk_menu_item_new_with_label(mWindows.size() == 1 ? _("Minimize") : _("Minimize all windows"));
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+		g_signal_connect(G_OBJECT(item), "activate",
+			G_CALLBACK(+[](GtkMenuItem* _item, Group* group) {
+				group->mWindows.forEach([](GroupWindow* w) -> void {
+					if (!w->getState(XFW_WINDOW_STATE_MINIMIZED))
+						w->minimize();
+				});
+			}),
+			this);
+
+		item = gtk_menu_item_new_with_label(mWindows.size() == 1 ? _("Unminimize") : _("Unminimize all windows"));
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+		g_signal_connect(G_OBJECT(item), "activate",
+			G_CALLBACK(+[](GtkMenuItem* _item, Group* group) {
+				guint32 timestamp = gtk_get_current_event_time();
+
+				group->mWindows.forEach([](GroupWindow* w) -> void {
+					if (w->getState(XFW_WINDOW_STATE_MINIMIZED))
+						w->unminimize();
+				});
+
+				if (group->mWindows.size() > 0)
+					group->mWindows.get(0)->activate(timestamp);
+			}),
+			this);
+
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), gtk_separator_menu_item_new());
+
+		item = gtk_menu_item_new_with_label(mWindows.size() == 1 ? _("Close") : _("Close All"));
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
 		g_signal_connect(G_OBJECT(item), "activate",
 			G_CALLBACK(+[](GtkMenuItem* _item, Group* group) {
