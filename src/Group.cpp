@@ -1434,7 +1434,22 @@ void Group::onDragDataReceived(const GdkDragContext* context, int x, int y, cons
 
 		if (uris != nullptr)
 		{
-			Dock::pinFromUris((const gchar* const*)uris, this);
+			bool launcher = false;
+
+			for (gchar** uri = uris; *uri != nullptr; uri++)
+			{
+				if (g_str_has_suffix(*uri, ".desktop"))
+				{
+					launcher = true;
+					break;
+				}
+			}
+
+			if (launcher)
+				Dock::pinFromUris((const gchar* const*)uris, this);
+			else
+				mAppInfo->launchFiles((const gchar* const*)uris);
+
 			g_strfreev(uris);
 		}
 

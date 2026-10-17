@@ -49,6 +49,34 @@ void AppInfo::launchAction(const gchar* action)
 	}
 }
 
+void AppInfo::launchFiles(const gchar* const* uris)
+{
+	if (!mGAppInfo)
+		return;
+
+	GList* files = nullptr;
+
+	for (const gchar* const* uri = uris; uri != nullptr && *uri != nullptr; uri++)
+		files = g_list_prepend(files, g_file_new_for_uri(*uri));
+
+	if (files == nullptr)
+		return;
+
+	files = g_list_reverse(files);
+
+	GError* error = nullptr;
+	GdkAppLaunchContext* context = gdk_display_get_app_launch_context(Plugin::mDisplay);
+
+	if (!g_app_info_launch(G_APP_INFO(mGAppInfo.get()), files, G_APP_LAUNCH_CONTEXT(context), &error))
+	{
+		g_warning("Failed to open files with app '%s': %s", mName.c_str(), error->message);
+		g_error_free(error);
+	}
+
+	g_object_unref(context);
+	g_list_free_full(files, g_object_unref);
+}
+
 void AppInfo::edit()
 {
 	GError* error = nullptr;

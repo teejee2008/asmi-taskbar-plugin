@@ -41,6 +41,7 @@ struct AppInfo
 	const gchar* const* getActions() { return mGAppInfo ? g_desktop_app_info_list_actions(mGAppInfo.get()) : nullptr; };
 	void launch();
 	void launchAction(const gchar* action);
+	void launchFiles(const gchar* const* uris);
 	void edit();
 };
 
