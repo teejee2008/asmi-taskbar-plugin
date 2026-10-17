@@ -172,11 +172,20 @@ void GroupMenu::popup()
 void GroupMenu::updateOrientation()
 {
 	XfcePanelPluginMode panelMode = xfce_panel_plugin_get_mode(Plugin::mXfPlugin);
+	bool horizontal = Settings::showPreviews && panelMode == XFCE_PANEL_PLUGIN_MODE_HORIZONTAL;
 
-	if (Settings::showPreviews && panelMode == XFCE_PANEL_PLUGIN_MODE_HORIZONTAL)
+	if (horizontal)
 		gtk_orientable_set_orientation(GTK_ORIENTABLE(mBox), GTK_ORIENTATION_HORIZONTAL);
 	else
 		gtk_orientable_set_orientation(GTK_ORIENTABLE(mBox), GTK_ORIENTATION_VERTICAL);
+
+	Help::Gtk::cssClassRemove(mBox, "docklike-horizontal");
+	Help::Gtk::cssClassRemove(mBox, "docklike-vertical");
+	Help::Gtk::cssClassRemove(mBox, "docklike-previews");
+	Help::Gtk::cssClassAdd(mBox, horizontal ? "docklike-horizontal" : "docklike-vertical");
+
+	if (Settings::showPreviews)
+		Help::Gtk::cssClassAdd(mBox, "docklike-previews");
 }
 
 void GroupMenu::updatePosition(gint wx, gint wy)

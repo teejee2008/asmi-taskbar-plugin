@@ -19,10 +19,12 @@
 #ifndef THEME_HPP
 #define THEME_HPP
 
-#define DEFAULT_THEME ".xfce-docklike-window .menu { margin: 0px; padding: 0px; border: 0px; background-color: @menu_bgcolor; }\n" \
-					  ".xfce-docklike-window .menu_item grid { margin: 0px; padding:4px; }\n"                                      \
-					  ".xfce-docklike-window .menu_item .preview { margin:2px 0px }\n"                                             \
-					  ".xfce-docklike-window .hover_menu_item { background-color: alpha(@menu_item_color_hover, 0.2); }\n";
+#define DEFAULT_THEME ".xfce-docklike-window .menu { margin: 0px; padding: 0px; border: 0px; background-color: @menu_bgcolor; }\n"                        \
+					  ".xfce-docklike-window .menu_item grid { margin: 0px; padding:4px; }\n"                                                 \
+					  ".xfce-docklike-window .menu_item .preview { margin:2px 0px }\n"                                                        \
+					  ".xfce-docklike-window .hover_menu_item { background-color: alpha(@menu_item_color_hover, 0.2); }\n"                    \
+					  ".xfce-docklike-window .menu.docklike-previews.docklike-vertical .menu_item:not(:first-child) { border-top: 1px solid alpha(@menu_item_color, 0.25); }\n"     \
+					  ".xfce-docklike-window .menu.docklike-previews.docklike-horizontal .menu_item:not(:first-child) { border-left: 1px solid alpha(@menu_item_color, 0.25); }\n";
 
 #define LAUNCHER_COUNT_THEME "#docklike-plugin .launcher_count { "         \
 							 "color: @launcher_count_fgcolor; "            \
