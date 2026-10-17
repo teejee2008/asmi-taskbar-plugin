@@ -586,6 +586,60 @@ void Group::onDraw(cairo_t* cr)
 		break;
 	}
 
+	case STYLE_SEGMENTS:
+	{
+		if (mWindowsCount > 0)
+		{
+			int count = (int)mWindowsCount;
+			int length, thickness, fixed;
+			bool horizontal = (orientation == ORIENTATION_BOTTOM || orientation == ORIENTATION_TOP);
+
+			if (horizontal)
+			{
+				length = w;
+				thickness = round(h * (1 - BAR_WEIGHT));
+				fixed = round(h * BAR_WEIGHT);
+			}
+			else
+			{
+				length = h;
+				thickness = round(w * (1 - BAR_WEIGHT));
+				fixed = round(w * BAR_WEIGHT);
+			}
+
+			int gap = thickness;
+			if (count > 1)
+			{
+				int maxGap = (length - count) / (count - 1);
+				if (maxGap < 1)
+					maxGap = 1;
+				if (gap > maxGap)
+					gap = maxGap;
+			}
+
+			double size = (length - (count - 1) * gap) / (double)count;
+
+			cairo_set_source_rgba(cr, rgba[0], rgba[1], rgba[2], rgba[3]);
+
+			for (int i = 0; i < count; ++i)
+			{
+				double start = i * (size + gap);
+
+				if (orientation == ORIENTATION_BOTTOM)
+					cairo_rectangle(cr, start, fixed, size, thickness);
+				else if (orientation == ORIENTATION_RIGHT)
+					cairo_rectangle(cr, fixed, start, thickness, size);
+				else if (orientation == ORIENTATION_TOP)
+					cairo_rectangle(cr, start, 0, size, thickness);
+				else if (orientation == ORIENTATION_LEFT)
+					cairo_rectangle(cr, 0, start, thickness, size);
+			}
+
+			cairo_fill(cr);
+		}
+		break;
+	}
+
 	case STYLE_CIRCLES:
 	{
 		if (mWindowsCount > 0)

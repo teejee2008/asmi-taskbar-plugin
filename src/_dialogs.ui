@@ -430,6 +430,7 @@
                                   <item translatable="yes">Dots</item>
                                   <item translatable="yes">Rectangles</item>
                                   <item translatable="yes">Ciliora</item>
+                                  <item translatable="yes">Segments</item>
                                   <item translatable="yes">Circles</item>
                                   <item translatable="yes">None</item>
                                 </items>
@@ -461,6 +462,7 @@
                                   <item translatable="yes">Dots</item>
                                   <item translatable="yes">Rectangles</item>
                                   <item translatable="yes">Ciliora</item>
+                                  <item translatable="yes">Segments</item>
                                   <item translatable="yes">Circles</item>
                                   <item translatable="yes">None</item>
                                 </items>
