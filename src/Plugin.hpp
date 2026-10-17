@@ -41,7 +41,7 @@ extern "C"
 	gboolean internal_unique_check(GdkScreen* screen);
 }
 
-#define HELP_WEBSITE "https://docs.xfce.org/panel-plugins/xfce4-docklike-plugin/start"
+#define HELP_WEBSITE "https://gitlab.xfce.org/teejee2008/xfce4-docklike-plugin"
 
 namespace Plugin
 {

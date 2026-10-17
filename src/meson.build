@@ -45,7 +45,7 @@ plugin_lib = shared_module(
   plugin_sources,
   gnu_symbol_visibility: 'hidden',
   c_args: [
-    '-DG_LOG_DOMAIN="@0@"'.format('xfce4-docklike-plugin'),
+    '-DG_LOG_DOMAIN="@0@"'.format('asmi-taskbar-plugin'),
   ],
   include_directories: [
     include_directories('..'),

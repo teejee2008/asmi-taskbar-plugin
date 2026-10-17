@@ -1,7 +1,7 @@
 [Xfce Panel]
 Type=X-XFCE-PanelPlugin
 Encoding=UTF-8
-Name=Docklike Taskbar
+Name=Asmi Taskbar
 Comment=A modern, minimalist taskbar for Xfce
 Icon=preferences-system
 X-XFCE-Module=docklike
