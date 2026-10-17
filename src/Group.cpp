@@ -42,6 +42,28 @@ static double relativeLuminance(const double* rgba)
 	return 0.2126 * srgbToLinear(rgba[0]) + 0.7152 * srgbToLinear(rgba[1]) + 0.0722 * srgbToLinear(rgba[2]);
 }
 
+static PangoLayout* createCountLayout(cairo_t* cr, unsigned int count, double fontSize, int* tw, int* th)
+{
+	gchar text[16];
+	if (count > 99)
+		g_strlcpy(text, "99+", sizeof(text));
+	else
+		g_snprintf(text, sizeof(text), "%u", count);
+
+	PangoLayout* layout = pango_cairo_create_layout(cr);
+	pango_layout_set_text(layout, text, -1);
+
+	PangoFontDescription* desc = pango_font_description_new();
+	pango_font_description_set_weight(desc, PANGO_WEIGHT_BOLD);
+	pango_font_description_set_absolute_size(desc, fontSize * PANGO_SCALE);
+	pango_layout_set_font_description(layout, desc);
+	pango_font_description_free(desc);
+
+	pango_layout_get_pixel_size(layout, tw, th);
+
+	return layout;
+}
+
 static std::shared_ptr<Group> getDragGroup(const std::string& dragId)
 {
 	return Dock::mGroups.findIf(
@@ -741,27 +763,12 @@ void Group::onDraw(cairo_t* cr)
 	{
 		if (mWindowsCount > 0)
 		{
-			gchar text[16];
-			if (mWindowsCount > 99)
-				g_strlcpy(text, "99+", sizeof(text));
-			else
-				g_snprintf(text, sizeof(text), "%u", (unsigned)mWindowsCount);
-
 			double margin = std::max(1.0, h * 0.04);
 			double padding = std::max(1.0, h * 0.05);
 			double fontSize = std::max(5.0, h * 0.24);
 
-			PangoLayout* layout = pango_cairo_create_layout(cr);
-			pango_layout_set_text(layout, text, -1);
-
-			PangoFontDescription* desc = pango_font_description_new();
-			pango_font_description_set_weight(desc, PANGO_WEIGHT_BOLD);
-			pango_font_description_set_absolute_size(desc, fontSize * PANGO_SCALE);
-			pango_layout_set_font_description(layout, desc);
-			pango_font_description_free(desc);
-
 			int tw = 0, th = 0;
-			pango_layout_get_pixel_size(layout, &tw, &th);
+			PangoLayout* layout = createCountLayout(cr, mWindowsCount, fontSize, &tw, &th);
 
 			double bh = th + 2 * padding;
 			double bw = std::max((double)tw + 2 * padding, bh);
@@ -783,6 +790,31 @@ void Group::onDraw(cairo_t* cr)
 
 			cairo_move_to(cr, x + (bw - tw) / 2., y + padding);
 			pango_cairo_show_layout(cr, layout);
+
+			g_object_unref(layout);
+		}
+		break;
+	}
+
+	case STYLE_COUNT:
+	{
+		if (mWindowsCount > 0)
+		{
+			double margin = std::max(1.0, h * 0.04);
+			double fontSize = std::max(5.0, h * 0.30);
+
+			int tw = 0, th = 0;
+			PangoLayout* layout = createCountLayout(cr, mWindowsCount, fontSize, &tw, &th);
+
+			cairo_move_to(cr, w - margin - tw, margin);
+			pango_cairo_layout_path(cr, layout);
+
+			cairo_set_source_rgba(cr, 0, 0, 0, 1);
+			cairo_set_line_width(cr, std::max(1.0, fontSize * 0.16));
+			cairo_stroke_preserve(cr);
+
+			cairo_set_source_rgba(cr, 1, 1, 1, 1);
+			cairo_fill(cr);
 
 			g_object_unref(layout);
 		}

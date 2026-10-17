@@ -433,6 +433,7 @@
                                   <item translatable="yes">Segments</item>
                                   <item translatable="yes">Circles</item>
                                   <item translatable="yes">Badge</item>
+                                  <item translatable="yes">Count</item>
                                   <item translatable="yes">None</item>
                                 </items>
                               </object>
@@ -466,6 +467,7 @@
                                   <item translatable="yes">Segments</item>
                                   <item translatable="yes">Circles</item>
                                   <item translatable="yes">Badge</item>
+                                  <item translatable="yes">Count</item>
                                   <item translatable="yes">None</item>
                                 </items>
                               </object>
