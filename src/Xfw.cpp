@@ -29,9 +29,9 @@ namespace Xfw
 	Store::KeyStore<XfwWindow*, std::shared_ptr<GroupWindow>> mGroupWindows;
 	// clang-format off
 	std::unordered_set<std::string> mInvalidClassIds = {
-		// https://gitlab.xfce.org/panel-plugins/xfce4-docklike-plugin/-/issues/75
+		// https://github.com/teejee2008/asmi-taskbar-plugin/issues/75
 		"wine",
-		// https://gitlab.xfce.org/panel-plugins/xfce4-docklike-plugin/-/issues/21
+		// https://github.com/teejee2008/asmi-taskbar-plugin/issues/21
   // In theory, the "crx_*" fix below for #118 should cover all these cases,
   // but it doesn't hurt to keep this as well, just in case…
 		"brave-browser", "chromium", "google-chrome", "vivaldi-stable", "microsoft-edge",
@@ -49,7 +49,7 @@ namespace Xfw
 			{
 				// Chromium browsers use "crx_<appid>" as the instance-id for installed web
 				// apps/PWAs, regardless of the browser (fork) name, so prefer it directly.
-				// https://gitlab.xfce.org/panel-plugins/xfce4-docklike-plugin/-/issues/118
+				// https://github.com/teejee2008/asmi-taskbar-plugin/issues/118
 				if (!xfce_str_is_empty(class_ids[1]) && g_str_has_prefix(class_ids[1], "crx_"))
 					return class_ids[1];
 

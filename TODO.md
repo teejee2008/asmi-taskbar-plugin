@@ -4,7 +4,7 @@
 + Make separate light and dark themes?
 + Greyscale/pixelate minimized thumbnail images
 + Use X-Flatpak value for icon/desktop file names if it exists
-+ Handle running out of dock space, overflow menu? (https://gitlab.xfce.org/panel-plugins/xfce4-docklike-plugin/-/issues/5)
++ Handle running out of dock space, overflow menu? (https://github.com/teejee2008/asmi-taskbar-plugin/issues/5)
 + Make sure the label never overlaps the indicator
 + Use g_app_info_get_all() rather than finding apps ourselves?
 + Move aliases to a text file so users can add stuff

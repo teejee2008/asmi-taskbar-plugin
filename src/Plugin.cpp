@@ -160,8 +160,8 @@ extern "C" gboolean internal_unique_check(GdkScreen* screen)
 		GtkWidget* dialog = gtk_message_dialog_new_with_markup(
 			nullptr, GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_CLOSE,
 			"Currently, only one internal instance of the docklike plugin can be used at a time. "
-			"See <a href=\"https://gitlab.xfce.org/teejee2008/xfce4-docklike-plugin/-/work_items/113\">"
-			"https://gitlab.xfce.org/teejee2008/xfce4-docklike-plugin/-/work_items/113</a>.");
+			"See <a href=\"https://github.com/teejee2008/asmi-taskbar-plugin/issues/113\">"
+			"https://github.com/teejee2008/asmi-taskbar-plugin/issues/113</a>.");
 		gtk_dialog_run(GTK_DIALOG(dialog));
 		gtk_widget_destroy(dialog);
 		return false;

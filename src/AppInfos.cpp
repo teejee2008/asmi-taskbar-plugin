@@ -331,7 +331,7 @@ namespace AppInfos
 		if (ai != nullptr)
 			return ai;
 
-		// Try to remove extension, see https://gitlab.xfce.org/panel-plugins/xfce4-docklike-plugin/-/merge_requests/49
+		// Try to remove extension, see https://github.com/teejee2008/asmi-taskbar-plugin/pull/49
 		ai = searchByPrefix(id, '.');
 		if (ai != nullptr)
 			return ai;

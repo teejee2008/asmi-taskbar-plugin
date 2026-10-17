@@ -5,7 +5,7 @@ A modern, minimalist taskbar for Xfce
 Asmi Taskbar behaves similarly to many other desktop environments and operating systems. Wherein all application windows are grouped together as an icon and can be pinned to act as a launcher when the application is not running. Commonly referred to as a dock.
 
 For usage instructions, keyboard shortcuts, and screenshots, see:
-<https://docs.xfce.org/panel-plugins/xfce4-docklike-plugin/start>.
+<https://github.com/teejee2008/asmi-taskbar-plugin>.
 
 ## Build & Install
 
@@ -19,7 +19,7 @@ sudo meson install -C build
 ### From git
 
 ```bash
-git clone https://gitlab.xfce.org/teejee2008/xfce4-docklike-plugin.git && cd xfce4-docklike-plugin
+git clone https://github.com/teejee2008/asmi-taskbar-plugin.git && cd asmi-taskbar-plugin
 meson setup build
 meson compile -C build
 sudo meson install -C build
@@ -35,7 +35,7 @@ sudo ninja uninstall -C build
 
 To assist with troubleshooting plugin issues, please run Xfce Panel in debugging mode, and include the relevant output in issues.
 
-<https://gitlab.xfce.org/teejee2008/xfce4-docklike-plugin/-/issues>
+<https://github.com/teejee2008/asmi-taskbar-plugin/issues>
 
 ### Running Xfce Panel in debugging mode
 

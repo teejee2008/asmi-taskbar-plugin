@@ -432,7 +432,7 @@ void Group::resize()
 	g_free(launcherCountCss);
 
 	// TODO: set `min-width` / `min-height` CSS property on button?
-	// https://github.com/davekeogh/xfce4-docklike-plugin/issues/39
+	// https://github.com/teejee2008/asmi-taskbar-plugin/issues/39
 
 	// may not yet be initialized
 	if (Dock::mIconSize == 0)
