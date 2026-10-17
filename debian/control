@@ -1,0 +1,35 @@
+Source: asmi-taskbar-plugin
+Section: utils
+Priority: optional
+Maintainer: TeejeeTech <support@teejeetech.com>
+Build-Depends:
+ debhelper (>= 11),
+ gettext,
+ meson,
+ ninja-build,
+ pkg-config,
+ libcairo2-dev,
+ libglib2.0-dev,
+ libgtk-3-dev,
+ libgtk-layer-shell-dev,
+ libx11-dev,
+ libxi-dev,
+ libxfce4panel-2.0-dev,
+ libxfce4ui-2-dev,
+ libxfce4util-dev,
+ libxfce4windowing-0-dev,
+ libxfconf-0-dev
+Standards-Version: 4.5.0
+Rules-Requires-Root: no
+Homepage: https://github.com/teejee2008/asmi-taskbar-plugin
+
+Package: asmi-taskbar-plugin
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Provides: xfce4-docklike-plugin
+Conflicts: xfce4-docklike-plugin
+Replaces: xfce4-docklike-plugin
+Description: A modern, minimalist taskbar for Xfce
+ Asmi Taskbar is a modern, minimalist taskbar plugin for the Xfce panel.
+ It groups application windows together as an icon and allows pinning them
+ as launchers when the application is not running.
