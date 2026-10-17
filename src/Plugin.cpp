@@ -116,6 +116,7 @@ namespace Plugin
 		const gchar* AUTHORS[] = {
 			"Nicolas Szabo <nszabo@vivaldi.net>",
 			"David Keogh <davidtkeogh@gmail.com>",
+			"Tony George <teejeetech@gmail.com>",
 			nullptr};
 
 		gtk_show_about_dialog(nullptr,
