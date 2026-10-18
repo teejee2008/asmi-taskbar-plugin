@@ -104,7 +104,7 @@ static std::shared_ptr<Group> getDragGroup(const std::string& dragId)
 		});
 }
 
-Group::Group(std::shared_ptr<AppInfo> appInfo, bool pinned) : mPinned(pinned), mActive(false), mWindowMenuShown(false), mDragging(false), mDragStartX(0), mDragStartY(0), mTopWindowIndex(0), mAppInfo(appInfo), mGroupMenu(this), mIconPixbuf(nullptr), mContextMenu(nullptr)
+Group::Group(std::shared_ptr<AppInfo> appInfo, bool pinned) : mPinned(pinned), mWindowGroup(false), mActive(false), mWindowMenuShown(false), mDragging(false), mDragStartX(0), mDragStartY(0), mTopWindowIndex(0), mAppInfo(appInfo), mGroupMenu(this), mIconPixbuf(nullptr), mContextMenu(nullptr)
 {
 	mWindowsCount.setup(
 		0,
@@ -360,7 +360,12 @@ void Group::add(GroupWindow* window)
 	Help::Gtk::cssClassAdd(mButton, "open_group");
 
 	if (mWindowsCount == 1 && !mPinned)
-		gtk_box_reorder_child(GTK_BOX(Dock::mBox), mButton, -1);
+	{
+		if (mWindowGroup)
+			Dock::placeWindowGroup(this);
+		else
+			gtk_box_reorder_child(GTK_BOX(Dock::mBox), mButton, -1);
+	}
 
 	if (!mActive && xfw_window_is_active(window->mXfwWindow))
 		onWindowActivate(window);
@@ -1024,9 +1029,9 @@ void Group::onDraw(cairo_t* cr)
 
 void Group::onMouseEnter()
 {
-	Dock::mGroups.forEach([this](std::pair<std::shared_ptr<AppInfo>, std::shared_ptr<Group>> g) -> void {
-		if (&(g.second->mGroupMenu) != &(this->mGroupMenu))
-			g.second->mGroupMenu.mGroup->onMouseLeave();
+	Dock::forEachGroup([this](Group* group) -> void {
+		if (&(group->mGroupMenu) != &(this->mGroupMenu))
+			group->mGroupMenu.mGroup->onMouseLeave();
 	});
 
 	if (mContextMenu == nullptr)

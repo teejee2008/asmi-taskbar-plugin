@@ -99,6 +99,7 @@ namespace Plugin
 				LauncherEntry::finalize();
 				Overview::finalize();
 				Xfw::finalize();
+				Dock::mWindowGroups.clear();
 				Dock::mGroups.clear();
 				AppInfos::finalize();
 				Hotkeys::finalize();

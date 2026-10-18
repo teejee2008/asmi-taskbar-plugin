@@ -29,7 +29,9 @@
 #include <gtk/gtk.h>
 #include <libxfce4windowing/libxfce4windowing.h>
 
+#include <functional>
 #include <iostream>
+#include <list>
 #include <string>
 
 class Group;
@@ -39,6 +41,12 @@ namespace Dock
 	void init();
 
 	Group* prepareGroup(std::shared_ptr<AppInfo> appInfo);
+	std::shared_ptr<Group> findPinnedGroup(std::shared_ptr<AppInfo> appInfo);
+
+	void registerWindowGroup(Group* group);
+	void unregisterWindowGroup(Group* group);
+	void placeWindowGroup(Group* group);
+	void forEachGroup(const std::function<void(Group*)>& funct);
 
 	void pinApp(std::shared_ptr<AppInfo> appInfo, Group* at = nullptr);
 	void pinFromUris(const gchar* const* uris, Group* at = nullptr);
@@ -55,6 +63,7 @@ namespace Dock
 
 	extern GtkWidget* mBox;
 	extern Store::KeyStore<std::shared_ptr<AppInfo>, std::shared_ptr<Group>> mGroups;
+	extern std::list<Group*> mWindowGroups;
 
 	extern int mPanelSize;
 	extern int mIconSize;

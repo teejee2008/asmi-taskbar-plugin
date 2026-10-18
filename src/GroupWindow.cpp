@@ -29,7 +29,26 @@ GroupWindow::GroupWindow(XfwWindow* xfwWindow)
 	g_debug("NEW: %s", groupName.c_str());
 
 	std::shared_ptr<AppInfo> appInfo = AppInfos::search(groupName);
-	mGroup = Dock::prepareGroup(appInfo);
+
+	if (Settings::ungroupWindows)
+	{
+		// Reuse an empty pinned launcher for the first window, so a pinned app
+		// does not show a duplicate item next to its (ungrouped) windows.
+		std::shared_ptr<Group> pinnedGroup = Dock::findPinnedGroup(appInfo);
+
+		if (pinnedGroup && pinnedGroup->mWindowsCount == 0)
+			mGroup = pinnedGroup.get();
+		else
+		{
+			mOwnGroup = std::make_shared<Group>(appInfo, false);
+			mOwnGroup->mWindowGroup = true;
+			mGroup = mOwnGroup.get();
+			Dock::registerWindowGroup(mGroup);
+			gtk_container_add(GTK_CONTAINER(Dock::mBox), mGroup->mButton);
+		}
+	}
+	else
+		mGroup = Dock::prepareGroup(appInfo);
 
 	//--------------------------------------------------
 
@@ -67,6 +86,9 @@ GroupWindow::GroupWindow(XfwWindow* xfwWindow)
 
 	g_signal_connect(G_OBJECT(mXfwWindow), "class-changed",
 		G_CALLBACK(+[](XfwWindow* window, GroupWindow* me) {
+			if (Settings::ungroupWindows)
+				return;
+
 			std::string _groupName = Xfw::getGroupName(me);
 			Group* group = Dock::prepareGroup(AppInfos::search(_groupName));
 			if (group != me->mGroup)
@@ -109,6 +131,12 @@ GroupWindow::~GroupWindow()
 	leaveGroup();
 	g_signal_handlers_disconnect_by_data(this->mXfwWindow, this);
 	delete mGroupMenuItem;
+
+	if (mOwnGroup)
+	{
+		Dock::unregisterWindowGroup(mOwnGroup.get());
+		mOwnGroup.reset();
+	}
 }
 
 void GroupWindow::getInGroup()

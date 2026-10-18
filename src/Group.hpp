@@ -99,6 +99,7 @@ public:
 	void unpin();
 
 	bool mPinned;
+	bool mWindowGroup;
 	bool mActive;
 	bool mWindowMenuShown;
 	bool mDragging;

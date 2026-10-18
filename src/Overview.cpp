@@ -92,8 +92,8 @@ namespace Overview
 		{
 			bool added = false;
 
-			Dock::mGroups.forEach([&added](std::pair<std::shared_ptr<AppInfo>, std::shared_ptr<Group>> group) -> void {
-				group.second->mWindows.forEach([&added](GroupWindow* window) -> void {
+			Dock::forEachGroup([&added](Group* group) -> void {
+				group->mWindows.forEach([&added](GroupWindow* window) -> void {
 					addWindowItem(window);
 					added = true;
 				});
@@ -106,14 +106,14 @@ namespace Overview
 		// item from its current parent (the overview) before packing it again.
 		void restoreItems()
 		{
-			Dock::mGroups.forEach([](std::pair<std::shared_ptr<AppInfo>, std::shared_ptr<Group>> group) -> void {
-				group.second->mWindows.forEach([](GroupWindow* window) -> void {
+			Dock::forEachGroup([](Group* group) -> void {
+				group->mWindows.forEach([](GroupWindow* window) -> void {
 					GtkWidget* item = GTK_WIDGET(window->mGroupMenuItem->mItem);
 					gtk_widget_set_halign(item, GTK_ALIGN_FILL);
 					gtk_widget_set_valign(item, GTK_ALIGN_FILL);
 					gtk_label_set_max_width_chars(window->mGroupMenuItem->mLabel, -1);
 				});
-				group.second->mGroupMenu.updateLayout();
+				group->mGroupMenu.updateLayout();
 			});
 
 			// updateLayout() only detaches the items from the flow box child

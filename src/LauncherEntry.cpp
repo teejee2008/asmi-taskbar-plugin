@@ -99,8 +99,8 @@ struct LauncherEntry::Impl
 
 	void refreshGroups()
 	{
-		Dock::mGroups.forEach([this](std::pair<std::shared_ptr<AppInfo>, std::shared_ptr<Group>> group) {
-			applyEntryToGroup(group.second.get());
+		Dock::forEachGroup([this](Group* group) {
+			applyEntryToGroup(group);
 		});
 	}
 

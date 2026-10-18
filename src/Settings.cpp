@@ -57,6 +57,7 @@ namespace Settings
 
 	State<bool> showWindowCount;
 	State<bool> disableLauncherCounts;
+	State<bool> ungroupWindows;
 	State<int> dockSize;
 	State<int> previewWidth;
 	State<int> previewHeight;
@@ -90,8 +91,8 @@ namespace Settings
 				g_key_file_set_boolean(mFile.get(), "user", "showPreviews", _showPreviews);
 				saveFile();
 
-				Dock::mGroups.forEach([](std::pair<std::shared_ptr<AppInfo>, std::shared_ptr<Group>> g) -> void {
-					g.second->mGroupMenu.showPreviewsChanged();
+				Dock::forEachGroup([](Group* g) -> void {
+					g->mGroupMenu.showPreviewsChanged();
 				});
 			});
 
@@ -107,8 +108,8 @@ namespace Settings
 				g_key_file_set_integer(mFile.get(), "user", "previewWidth", _previewWidth);
 				saveFile();
 
-				Dock::mGroups.forEach([](std::pair<std::shared_ptr<AppInfo>, std::shared_ptr<Group>> g) -> void {
-					g.second->mGroupMenu.showPreviewsChanged();
+				Dock::forEachGroup([](Group* g) -> void {
+					g->mGroupMenu.showPreviewsChanged();
 				});
 			});
 
@@ -124,8 +125,8 @@ namespace Settings
 				g_key_file_set_integer(mFile.get(), "user", "previewHeight", _previewHeight);
 				saveFile();
 
-				Dock::mGroups.forEach([](std::pair<std::shared_ptr<AppInfo>, std::shared_ptr<Group>> g) -> void {
-					g.second->mGroupMenu.showPreviewsChanged();
+				Dock::forEachGroup([](Group* g) -> void {
+					g->mGroupMenu.showPreviewsChanged();
 				});
 			});
 
@@ -137,8 +138,8 @@ namespace Settings
 				g_key_file_set_integer(mFile.get(), "user", "previewGap", _previewGap);
 				saveFile();
 
-				Dock::mGroups.forEach([](std::pair<std::shared_ptr<AppInfo>, std::shared_ptr<Group>> g) -> void {
-					g.second->mGroupMenu.reposition();
+				Dock::forEachGroup([](Group* g) -> void {
+					g->mGroupMenu.reposition();
 				});
 			});
 
@@ -171,6 +172,14 @@ namespace Settings
 				saveFile();
 
 				LauncherEntry::refreshGroups();
+			});
+
+		ungroupWindows.setup(g_key_file_get_boolean(file, "user", "ungroupWindows", nullptr),
+			[](bool _ungroupWindows) -> void {
+				g_key_file_set_boolean(mFile.get(), "user", "ungroupWindows", _ungroupWindows);
+				saveFile();
+
+				Dock::drawGroups();
 			});
 
 		intValue = g_key_file_get_integer(file, "user", "middleButtonBehavior", &error);

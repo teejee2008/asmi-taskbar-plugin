@@ -59,6 +59,7 @@ namespace Settings
 	extern State<int> previewGap;
 	extern State<bool> showWindowCount;
 	extern State<bool> disableLauncherCounts;
+	extern State<bool> ungroupWindows;
 	extern State<int> middleButtonBehavior;
 	extern State<bool> hotCornerEnabled;
 	extern State<int> hotCornerCorner;

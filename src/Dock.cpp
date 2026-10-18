@@ -24,6 +24,7 @@ namespace Dock
 {
 	GtkWidget* mBox;
 	Store::KeyStore<std::shared_ptr<AppInfo>, std::shared_ptr<Group>> mGroups;
+	std::list<Group*> mWindowGroups;
 
 	int mPanelSize;
 	int mIconSize;
@@ -68,6 +69,75 @@ namespace Dock
 		}
 
 		return group.get();
+	}
+
+	std::shared_ptr<Group> findPinnedGroup(std::shared_ptr<AppInfo> appInfo)
+	{
+		return mGroups.findIf(
+			[&appInfo](std::pair<std::shared_ptr<AppInfo>, std::shared_ptr<Group>> g) -> bool {
+				return g.second->mPinned && appInfo
+					&& (g.first == appInfo || (!appInfo->mId.empty() && g.first->mId == appInfo->mId));
+			});
+	}
+
+	void registerWindowGroup(Group* group)
+	{
+		mWindowGroups.push_back(group);
+	}
+
+	void unregisterWindowGroup(Group* group)
+	{
+		mWindowGroups.remove(group);
+	}
+
+	// Keep the items of an app together: place the group right after the last
+	// dock item that belongs to the same application.
+	void placeWindowGroup(Group* group)
+	{
+		if (group->mPinned || group->mAppInfo == nullptr || group->mAppInfo->mId.empty())
+			return;
+
+		GList* children = gtk_container_get_children(GTK_CONTAINER(mBox));
+		int buttonIndex = -1;
+		int siblingIndex = -1;
+		int index = 0;
+
+		for (GList* child = children; child != nullptr; child = child->next, ++index)
+		{
+			GtkWidget* widget = (GtkWidget*)child->data;
+
+			if (widget == group->mButton)
+			{
+				buttonIndex = index;
+				continue;
+			}
+
+			Group* other = (Group*)g_object_get_data(G_OBJECT(widget), "group");
+
+			if (other != nullptr && other->mAppInfo != nullptr
+				&& other->mAppInfo->mId == group->mAppInfo->mId)
+				siblingIndex = index;
+		}
+
+		g_list_free(children);
+
+		if (buttonIndex == -1 || siblingIndex == -1)
+			return;
+
+		// gtk_box_reorder_child() removes the button first, so account for the
+		// index shift when the last sibling sits before the button.
+		int position = siblingIndex > buttonIndex ? siblingIndex : siblingIndex + 1;
+		gtk_box_reorder_child(GTK_BOX(mBox), group->mButton, position);
+	}
+
+	void forEachGroup(const std::function<void(Group*)>& funct)
+	{
+		mGroups.forEach([&funct](std::pair<std::shared_ptr<AppInfo>, std::shared_ptr<Group>> g) -> void {
+			funct(g.second.get());
+		});
+
+		for (Group* group : mWindowGroups)
+			funct(group);
 	}
 
 	void pinApp(std::shared_ptr<AppInfo> appInfo, Group* at)
@@ -171,6 +241,7 @@ namespace Dock
 	{
 		// Remove old groups
 		Xfw::mGroupWindows.clear();
+		mWindowGroups.clear();
 		mGroups.clear();
 
 		// Add pinned groups
@@ -276,7 +347,7 @@ namespace Dock
 				mIconSize = mPanelSize * 0.8;
 		}
 
-		mGroups.forEach([](std::pair<std::shared_ptr<AppInfo>, std::shared_ptr<Group>> g) -> void { g.second->resize(); });
+		forEachGroup([](Group* group) -> void { group->resize(); });
 	}
 
 	void onPanelOrientationChange(GtkOrientation orientation)
@@ -291,6 +362,6 @@ namespace Dock
 				gtk_widget_set_size_request(mBox, -1, Settings::dockSize);
 		}
 
-		mGroups.forEach([](std::pair<std::shared_ptr<AppInfo>, std::shared_ptr<Group>> g) -> void { g.second->resize(); });
+		forEachGroup([](Group* group) -> void { group->resize(); });
 	}
 } // namespace Dock

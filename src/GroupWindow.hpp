@@ -31,6 +31,7 @@
 #include <libxfce4windowing/libxfce4windowing.h>
 
 #include <iostream>
+#include <memory>
 
 class GroupMenuItem;
 class Group;
@@ -52,6 +53,7 @@ public:
 	bool getState(XfwWindowState flagMask) const;
 
 	Group* mGroup;
+	std::shared_ptr<Group> mOwnGroup;
 	GroupMenuItem* mGroupMenuItem;
 
 	XfwWindow* mXfwWindow;
