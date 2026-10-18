@@ -265,7 +265,7 @@ namespace Overview
 	void init()
 	{
 		mWindow = createWindow();
-		Help::Gtk::cssClassAdd(mWindow, "xfce-docklike-window");
+		Help::Gtk::cssClassAdd(mWindow, "asmi-taskbar-window");
 		Help::Gtk::cssClassAdd(mWindow, "overview");
 
 		GtkWidget* scrolled = gtk_scrolled_window_new(nullptr, nullptr);

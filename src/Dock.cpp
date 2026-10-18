@@ -45,7 +45,7 @@ namespace Dock
 	void init()
 	{
 		mBox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
-		gtk_widget_set_name(mBox, "docklike-plugin");
+		gtk_widget_set_name(mBox, "asmi-taskbar-plugin");
 
 		if (Settings::dockSize)
 			gtk_widget_set_size_request(mBox, Settings::dockSize, -1);

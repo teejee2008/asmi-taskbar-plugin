@@ -77,9 +77,9 @@ namespace Settings
 		if (g_file_test(path, G_FILE_TEST_IS_REGULAR))
 			g_key_file_load_from_file(file, path, G_KEY_FILE_NONE, nullptr);
 
-		else // Look for a default config file in XDG_CONFIG_DIRS/xfce4/panel/docklike.rc
+		else // Look for a default config file in XDG_CONFIG_DIRS/xfce4/panel/asmi-taskbar.rc
 		{
-			gchar* distConfig = xfce_resource_lookup(XFCE_RESOURCE_CONFIG, "xfce4/panel/docklike.rc");
+			gchar* distConfig = xfce_resource_lookup(XFCE_RESOURCE_CONFIG, "xfce4/panel/asmi-taskbar.rc");
 
 			if (distConfig != nullptr && g_file_test(distConfig, G_FILE_TEST_IS_REGULAR))
 				g_key_file_load_from_file(file, distConfig, G_KEY_FILE_NONE, nullptr);

@@ -21,10 +21,10 @@
 
 #include <pango/pangocairo.h>
 
-static GtkTargetEntry sourceEntries[1] = {{(gchar*)"application/docklike_group", 0, 0}};
+static GtkTargetEntry sourceEntries[1] = {{(gchar*)"application/asmi-taskbar_group", 0, 0}};
 static GtkTargetList* targetList = gtk_target_list_new(sourceEntries, 1);
 static GtkTargetEntry destEntries[2] = {
-	{(gchar*)"application/docklike_group", 0, 0},
+	{(gchar*)"application/asmi-taskbar_group", 0, 0},
 	{(gchar*)"text/uri-list", 0, 1},
 };
 
@@ -1364,7 +1364,7 @@ GtkWidget* Group::buildContextMenu()
 			{
 				item = gtk_menu_item_new_with_label(_("Add activation shortcut..."));
 				gchar* temp = g_strdup_printf(
-					"%s 'xfce4-panel --plugin-event=docklike-%d:activate-group:string:%s'",
+					"%s 'xfce4-panel --plugin-event=asmi-taskbar-%d:activate-group:string:%s'",
 					command,
 					xfce_panel_plugin_get_unique_id(Plugin::mXfPlugin),
 					mAppInfo->mId.c_str());
@@ -1580,7 +1580,7 @@ bool Group::onDragMotion(GtkWidget* widget, GdkDragContext* context, int x, int 
 	std::string target = (name != nullptr) ? name : "";
 	g_free(name);
 
-	if (target == "application/docklike_group")
+	if (target == "application/asmi-taskbar_group")
 	{
 		if (mask & GDK_CONTROL_MASK)
 			gtk_drag_cancel(context);

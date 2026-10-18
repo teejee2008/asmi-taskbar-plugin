@@ -78,7 +78,7 @@ namespace SettingsDialog
 		if (xfce_titled_dialog_get_type() == 0)
 			return;
 
-		GtkBuilder* builder = gtk_builder_new_from_resource("/_dialogs.ui");
+		GtkBuilder* builder = gtk_builder_new_from_resource("/asmi-taskbar/_dialogs.ui");
 		GtkWidget* dialog = (GtkWidget*)gtk_builder_get_object(builder, "dialog");
 		mSettingsDialog = dialog;
 		g_object_add_weak_pointer(G_OBJECT(dialog), (gpointer*)&mSettingsDialog);

@@ -26,9 +26,6 @@ Homepage: https://github.com/teejee2008/asmi-taskbar-plugin
 Package: asmi-taskbar-plugin
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
-Provides: xfce4-docklike-plugin
-Conflicts: xfce4-docklike-plugin
-Replaces: xfce4-docklike-plugin
 Description: A modern, minimalist taskbar for Xfce
  Asmi Taskbar is a modern, minimalist taskbar plugin for the Xfce panel.
  It groups application windows together as an icon and allows pinning them

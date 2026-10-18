@@ -66,7 +66,7 @@ GroupMenu::GroupMenu(Group* dockButton)
 	mWindow = create_window();
 	mBox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 
-	Help::Gtk::cssClassAdd(mWindow, "xfce-docklike-window");
+	Help::Gtk::cssClassAdd(mWindow, "asmi-taskbar-window");
 	Help::Gtk::cssClassAdd(mBox, "menu");
 
 	gtk_container_add(GTK_CONTAINER(mWindow), mBox);
@@ -199,13 +199,13 @@ void GroupMenu::updateOrientation()
 	else
 		gtk_orientable_set_orientation(GTK_ORIENTABLE(mBox), GTK_ORIENTATION_VERTICAL);
 
-	Help::Gtk::cssClassRemove(mBox, "docklike-horizontal");
-	Help::Gtk::cssClassRemove(mBox, "docklike-vertical");
-	Help::Gtk::cssClassRemove(mBox, "docklike-previews");
-	Help::Gtk::cssClassAdd(mBox, previewsHorizontal ? "docklike-horizontal" : "docklike-vertical");
+	Help::Gtk::cssClassRemove(mBox, "asmi-taskbar-horizontal");
+	Help::Gtk::cssClassRemove(mBox, "asmi-taskbar-vertical");
+	Help::Gtk::cssClassRemove(mBox, "asmi-taskbar-previews");
+	Help::Gtk::cssClassAdd(mBox, previewsHorizontal ? "asmi-taskbar-horizontal" : "asmi-taskbar-vertical");
 
 	if (Settings::showPreviews)
-		Help::Gtk::cssClassAdd(mBox, "docklike-previews");
+		Help::Gtk::cssClassAdd(mBox, "asmi-taskbar-previews");
 }
 
 int GroupMenu::lineCapacity(bool horizontal)

@@ -36,14 +36,14 @@ plugin_sources = [
 ]
 
 plugin_sources += gnome.compile_resources(
-  'docklike-plugin-resources',
+  'asmi-taskbar-plugin-resources',
   '_gresources.xml',
 )
 
 plugin_install_subdir = 'xfce4' / 'panel' / 'plugins'
 
 plugin_lib = shared_module(
-  'docklike',
+  'asmi-taskbar',
   plugin_sources,
   gnu_symbol_visibility: 'hidden',
   c_args: [
@@ -71,8 +71,8 @@ plugin_lib = shared_module(
 )
 
 i18n.merge_file(
-  input: 'docklike.desktop.in',
-  output: 'docklike.desktop',
+  input: 'asmi-taskbar.desktop.in',
+  output: 'asmi-taskbar.desktop',
   po_dir: '..' / 'po',
   type: 'desktop',
   install: true,
