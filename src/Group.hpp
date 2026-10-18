@@ -79,6 +79,7 @@ public:
 
 	void resize();
 	void updateStyle();
+	void updateIconColor();
 	void updateIconGeometry();
 	void setLauncherCount(gint64 count, bool visible);
 
@@ -120,6 +121,8 @@ public:
 	GtkCssProvider* mLauncherCountCssProvider;
 	GtkWidget* mImage;
 	GdkPixbuf* mIconPixbuf;
+	GdkRGBA mIconColor;
+	bool mIconColorValid;
 	GtkWidget* mContextMenu;
 
 	Help::Gtk::Timeout mLeaveTimeout;

@@ -104,7 +104,7 @@ static std::shared_ptr<Group> getDragGroup(const std::string& dragId)
 		});
 }
 
-Group::Group(std::shared_ptr<AppInfo> appInfo, bool pinned) : mPinned(pinned), mWindowGroup(false), mActive(false), mWindowMenuShown(false), mDragging(false), mDragStartX(0), mDragStartY(0), mTopWindowIndex(0), mAppInfo(appInfo), mGroupMenu(this), mIconPixbuf(nullptr), mContextMenu(nullptr)
+Group::Group(std::shared_ptr<AppInfo> appInfo, bool pinned) : mPinned(pinned), mWindowGroup(false), mActive(false), mWindowMenuShown(false), mDragging(false), mDragStartX(0), mDragStartY(0), mTopWindowIndex(0), mAppInfo(appInfo), mGroupMenu(this), mIconPixbuf(nullptr), mIconColor{0, 0, 0, 1}, mIconColorValid(false), mContextMenu(nullptr)
 {
 	mWindowsCount.setup(
 		0,
@@ -332,6 +332,8 @@ Group::Group(std::shared_ptr<AppInfo> appInfo, bool pinned) : mPinned(pinned), m
 	else
 		gtk_image_set_from_icon_name(GTK_IMAGE(mImage), "application-x-executable", GTK_ICON_SIZE_BUTTON);
 
+	updateIconColor();
+
 	resize();
 	updateStyle();
 }
@@ -431,6 +433,89 @@ void Group::closeAll()
 	});
 }
 
+void Group::updateIconColor()
+{
+	mIconColor = {0, 0, 0, 1};
+	mIconColorValid = false;
+
+	GdkPixbuf* pixbuf = nullptr;
+
+	if (mIconPixbuf != nullptr)
+		pixbuf = mIconPixbuf;
+	else if (mAppInfo != nullptr && !mAppInfo->mIcon.empty())
+		pixbuf = gtk_icon_theme_load_icon(gtk_icon_theme_get_default(),
+			mAppInfo->mIcon.c_str(), 48, GTK_ICON_LOOKUP_FORCE_SIZE, nullptr);
+
+	if (pixbuf == nullptr)
+		pixbuf = gtk_icon_theme_load_icon(gtk_icon_theme_get_default(),
+			"application-x-executable", 48, GTK_ICON_LOOKUP_FORCE_SIZE, nullptr);
+
+	if (pixbuf == nullptr)
+		return;
+
+	const int width = gdk_pixbuf_get_width(pixbuf);
+	const int height = gdk_pixbuf_get_height(pixbuf);
+	const int channels = gdk_pixbuf_get_n_channels(pixbuf);
+	const int rowstride = gdk_pixbuf_get_rowstride(pixbuf);
+	const bool hasAlpha = gdk_pixbuf_get_has_alpha(pixbuf);
+	const guchar* pixels = gdk_pixbuf_get_pixels(pixbuf);
+
+	// Average the colors of the icon, weighting saturated pixels higher so the
+	// indicator picks up the icon's accent color rather than a muddy blend.
+	double accentWeight = 0, accentR = 0, accentG = 0, accentB = 0;
+	double totalWeight = 0, totalR = 0, totalG = 0, totalB = 0;
+
+	for (int y = 0; y < height; ++y)
+	{
+		for (int x = 0; x < width; ++x)
+		{
+			const guchar* p = pixels + y * rowstride + x * channels;
+			const double alpha = hasAlpha ? p[3] / 255.0 : 1.0;
+
+			if (alpha <= 0.0)
+				continue;
+
+			const int maxc = std::max({p[0], p[1], p[2]});
+			const int minc = std::min({p[0], p[1], p[2]});
+			const double saturation = maxc > 0 ? (maxc - minc) / (double)maxc : 0.0;
+
+			totalR += p[0] * alpha;
+			totalG += p[1] * alpha;
+			totalB += p[2] * alpha;
+			totalWeight += alpha;
+
+			if (saturation > 0.15)
+			{
+				accentR += p[0] * alpha;
+				accentG += p[1] * alpha;
+				accentB += p[2] * alpha;
+				accentWeight += alpha;
+			}
+		}
+	}
+
+	if (pixbuf != mIconPixbuf)
+		g_object_unref(pixbuf);
+
+	if (accentWeight > 0)
+	{
+		mIconColor.red = accentR / accentWeight / 255.0;
+		mIconColor.green = accentG / accentWeight / 255.0;
+		mIconColor.blue = accentB / accentWeight / 255.0;
+	}
+	else if (totalWeight > 0)
+	{
+		mIconColor.red = totalR / totalWeight / 255.0;
+		mIconColor.green = totalG / totalWeight / 255.0;
+		mIconColor.blue = totalB / totalWeight / 255.0;
+	}
+	else
+		return;
+
+	mIconColor.alpha = 1.0;
+	mIconColorValid = true;
+}
+
 void Group::resize()
 {
 	// The badge's current proportions look right on a 56 px panel. Scale all of its
@@ -506,22 +591,12 @@ void Group::onDraw(cairo_t* cr)
 
 	double rgba[4];
 
-	if (Settings::indicatorColorFromTheme)
+	if (Settings::indicatorColorFromTheme && mIconColorValid)
 	{
-		GtkWidget* menu = GTK_WIDGET(g_object_ref_sink(gtk_menu_new()));
-		GtkStyleContext* sc = gtk_widget_get_style_context(menu);
-
-		GValue gv = G_VALUE_INIT;
-		gtk_style_context_get_property(sc, "color", GTK_STATE_FLAG_NORMAL, &gv);
-		GdkRGBA* indicatorColor = (GdkRGBA*)g_value_get_boxed(&gv);
-
-		g_object_unref(menu);
-
-		rgba[0] = (*indicatorColor).red;
-		rgba[1] = (*indicatorColor).green;
-		rgba[2] = (*indicatorColor).blue;
-		rgba[3] = (*indicatorColor).alpha;
-		g_value_unset(&gv);
+		rgba[0] = mIconColor.red;
+		rgba[1] = mIconColor.green;
+		rgba[2] = mIconColor.blue;
+		rgba[3] = mIconColor.alpha;
 	}
 	else
 	{

@@ -112,17 +112,6 @@ std::string Theme::get_theme_colors()
 	std::string inactiveColor = str;
 	g_free(str);
 
-	if (Settings::indicatorColorFromTheme)
-	{
-		gv = G_VALUE_INIT;
-		gtk_style_context_get_property(sc, "color", GTK_STATE_FLAG_NORMAL, &gv);
-		str = gdk_rgba_to_string((GdkRGBA*)g_value_get_boxed(&gv));
-		indicatorColor = str;
-		inactiveColor = str;
-		g_free(str);
-		g_value_unset(&gv);
-	}
-
 	g_object_unref(menu);
 
 	std::string css = "@define-color menu_bgcolor " + menuBg + ";\n";
