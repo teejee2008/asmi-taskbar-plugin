@@ -286,7 +286,7 @@ namespace Dock
 		else if (group->mWindowsCount > 0)
 			group->activate(GDK_CURRENT_TIME);
 		else
-			group->mAppInfo->launch();
+			group->launch();
 	}
 
 	void activateGroup(int nb)

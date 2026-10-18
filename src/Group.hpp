@@ -75,6 +75,9 @@ public:
 	void setTopWindow(GroupWindow* groupWindow);
 
 	void activate(guint32 timestamp);
+	void launch();
+	void startProgress();
+	void stopProgress();
 	void scrollWindows(guint32 timestamp, GdkScrollDirection direction);
 	void closeAll();
 
@@ -108,6 +111,10 @@ public:
 	gdouble mDragStartX;
 	gdouble mDragStartY;
 
+	bool mStarting;
+	double mStartAngle;
+	uint mStartTicks;
+
 	uint mTolerablePointerDistance;
 	uint mTopWindowIndex;
 	Store::List<GroupWindow*> mWindows;
@@ -128,6 +135,7 @@ public:
 
 	Help::Gtk::Timeout mLeaveTimeout;
 	Help::Gtk::Timeout mMenuShowTimeout;
+	Help::Gtk::Timeout mStartTimeout;
 };
 
 #endif // GROUP_HPP

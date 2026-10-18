@@ -104,7 +104,7 @@ static std::shared_ptr<Group> getDragGroup(const std::string& dragId)
 		});
 }
 
-Group::Group(std::shared_ptr<AppInfo> appInfo, bool pinned) : mPinned(pinned), mWindowGroup(false), mActive(false), mWindowMenuShown(false), mDragging(false), mDragStartX(0), mDragStartY(0), mTopWindowIndex(0), mAppInfo(appInfo), mGroupMenu(this), mIconPixbuf(nullptr), mIconColor{0, 0, 0, 1}, mIconColorValid(false), mContextMenu(nullptr)
+Group::Group(std::shared_ptr<AppInfo> appInfo, bool pinned) : mPinned(pinned), mWindowGroup(false), mActive(false), mWindowMenuShown(false), mDragging(false), mDragStartX(0), mDragStartY(0), mStarting(false), mStartAngle(0), mStartTicks(0), mTopWindowIndex(0), mAppInfo(appInfo), mGroupMenu(this), mIconPixbuf(nullptr), mIconColor{0, 0, 0, 1}, mIconColorValid(false), mContextMenu(nullptr)
 {
 	mWindowsCount.setup(
 		0,
@@ -135,6 +135,24 @@ Group::Group(std::shared_ptr<AppInfo> appInfo, bool pinned) : mPinned(pinned), m
 	mMenuShowTimeout.setup(90, [this]() {
 		onMouseEnter();
 		return false;
+	});
+
+	// Drives the launch spinner until the app's window shows up (or we give up).
+	mStartTimeout.setup(30, [this]() {
+		if (!mStarting || mWindowsCount > 0 || mStartTicks > 200)
+		{
+			mStarting = false;
+			gtk_widget_queue_draw(mButton);
+			return false;
+		}
+
+		++mStartTicks;
+		mStartAngle += 0.30;
+		if (mStartAngle > 2.0 * M_PI)
+			mStartAngle -= 2.0 * M_PI;
+
+		gtk_widget_queue_draw(mButton);
+		return true;
 	});
 
 	//--------------------------------------------------
@@ -342,6 +360,7 @@ Group::~Group()
 {
 	mLeaveTimeout.stop();
 	mMenuShowTimeout.stop();
+	mStartTimeout.stop();
 
 	// can be unparented before the group is destroyed on exit
 	if (gtk_widget_get_parent(mButton) != nullptr)
@@ -358,6 +377,7 @@ void Group::add(GroupWindow* window)
 {
 	mWindows.push(window);
 	mWindowsCount.updateState();
+	stopProgress();
 	mGroupMenu.add(window->mGroupMenuItem);
 	Help::Gtk::cssClassAdd(mButton, "open_group");
 
@@ -432,6 +452,38 @@ void Group::activate(guint32 timestamp)
 	});
 
 	groupWindow->activate(timestamp);
+}
+
+void Group::launch()
+{
+	if (mAppInfo == nullptr)
+		return;
+
+	mAppInfo->launch();
+
+	// Only animate when the app was not running yet; opening a window is what the
+	// spinner is waiting for.
+	if (mWindowsCount == 0)
+		startProgress();
+}
+
+void Group::startProgress()
+{
+	mStarting = true;
+	mStartTicks = 0;
+	mStartAngle = 0;
+	mStartTimeout.start();
+	gtk_widget_queue_draw(mButton);
+}
+
+void Group::stopProgress()
+{
+	if (!mStarting)
+		return;
+
+	mStarting = false;
+	mStartTimeout.stop();
+	gtk_widget_queue_draw(mButton);
 }
 
 void Group::scrollWindows(guint32 timestamp, GdkScrollDirection direction)
@@ -1133,6 +1185,33 @@ void Group::onDraw(cairo_t* cr)
 		break;
 	}
 	}
+
+	if (mStarting)
+	{
+		const double size = std::min(w, h);
+		const double cx = w / 2.0;
+		const double cy = h / 2.0;
+		const double radius = size * 0.26;
+		const double lineWidth = std::max(2.0, size * 0.08);
+
+		// Dim the icon so the spinner stands out on any artwork...
+		cairo_set_source_rgba(cr, 0, 0, 0, 0.4);
+		cairo_arc(cr, cx, cy, size * 0.42, 0.0, 2.0 * M_PI);
+		cairo_fill(cr);
+
+		// ...then draw the track and the rotating arc on top.
+		cairo_set_line_width(cr, lineWidth);
+
+		cairo_set_source_rgba(cr, 1, 1, 1, 0.25);
+		cairo_arc(cr, cx, cy, radius, 0.0, 2.0 * M_PI);
+		cairo_stroke(cr);
+
+		cairo_set_source_rgba(cr, 1, 1, 1, 0.95);
+		cairo_set_line_cap(cr, CAIRO_LINE_CAP_ROUND);
+		cairo_arc(cr, cx, cy, radius, mStartAngle, mStartAngle + M_PI * 0.55);
+		cairo_stroke(cr);
+		cairo_set_line_cap(cr, CAIRO_LINE_CAP_BUTT);
+	}
 }
 
 void Group::onMouseEnter()
@@ -1319,10 +1398,10 @@ GtkWidget* Group::buildContextMenu()
 		item = gtk_menu_item_new_with_label(_("Launch application"));
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
 		g_signal_connect(G_OBJECT(item), "activate",
-			G_CALLBACK(+[](GtkMenuItem* _item, AppInfo* appInfo) {
-				appInfo->launch();
+			G_CALLBACK(+[](GtkMenuItem* _item, Group* me) {
+				me->launch();
 			}),
-			mAppInfo.get());
+			this);
 
 		item = gtk_menu_item_new_with_label(_("Edit Launcher..."));
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
@@ -1469,7 +1548,7 @@ void Group::onButtonRelease(GdkEventButton* event)
 		}
 		case BEHAVIOR_LAUNCH_NEW:
 		{
-			mAppInfo->launch();
+			launch();
 			break;
 		}
 		case BEHAVIOR_DO_NOTHING:
@@ -1479,7 +1558,7 @@ void Group::onButtonRelease(GdkEventButton* event)
 		}
 	}
 	else if (event->state & GDK_SHIFT_MASK || (mPinned && !mWindowsCount))
-		mAppInfo->launch();
+		launch();
 	else if (mActive)
 	{
 		mWindows.forEach([](GroupWindow* w) -> void {
