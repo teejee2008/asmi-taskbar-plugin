@@ -612,7 +612,11 @@ void Group::onDraw(cairo_t* cr)
 		rgba[3] = color->alpha;
 	}
 
-	const float BAR_WEIGHT = 0.935;
+	// Indicator bar thickness in pixels, expressed as the fraction of the button
+	// dimension that is left for the icon. Clamped so the bar stays inside the item.
+	const int indicatorThickness = Settings::indicatorThickness;
+	const double BAR_WEIGHT_H = 1.0 - (double)CLAMP(indicatorThickness, 1, std::max(1, h - 1)) / h;
+	const double BAR_WEIGHT_W = 1.0 - (double)CLAMP(indicatorThickness, 1, std::max(1, w - 1)) / w;
 	const double DOT_RADIUS = h * 0.065;
 	const double CIRCLE_WEIGHT = 0.0375;
 
@@ -634,13 +638,13 @@ void Group::onDraw(cairo_t* cr)
 			cairo_set_source_rgba(cr, rgba[0], rgba[1], rgba[2], rgba[3]);
 
 			if (orientation == ORIENTATION_BOTTOM)
-				cairo_rectangle(cr, 0, round(h * BAR_WEIGHT), w, h - round(h * BAR_WEIGHT));
+				cairo_rectangle(cr, 0, round(h * BAR_WEIGHT_H), w, h - round(h * BAR_WEIGHT_H));
 			else if (orientation == ORIENTATION_RIGHT)
-				cairo_rectangle(cr, round(w * BAR_WEIGHT), 0, w - round(w * BAR_WEIGHT), h);
+				cairo_rectangle(cr, round(w * BAR_WEIGHT_W), 0, w - round(w * BAR_WEIGHT_W), h);
 			else if (orientation == ORIENTATION_TOP)
-				cairo_rectangle(cr, 0, 0, w, round(h * (1 - BAR_WEIGHT)));
+				cairo_rectangle(cr, 0, 0, w, round(h * (1 - BAR_WEIGHT_H)));
 			else if (orientation == ORIENTATION_LEFT)
-				cairo_rectangle(cr, 0, 0, round(w * (1 - BAR_WEIGHT)), h);
+				cairo_rectangle(cr, 0, 0, round(w * (1 - BAR_WEIGHT_W)), h);
 
 			cairo_fill(cr);
 		}
@@ -666,13 +670,13 @@ void Group::onDraw(cairo_t* cr)
 			cairo_pattern_add_color_stop_rgba(pat, 0.3, 0, 0, 0, 0.15);
 
 			if (orientation == ORIENTATION_BOTTOM)
-				cairo_rectangle(cr, pat0, round(h * BAR_WEIGHT), w - pat0, round(h * (1 - BAR_WEIGHT)));
+				cairo_rectangle(cr, pat0, round(h * BAR_WEIGHT_H), w - pat0, round(h * (1 - BAR_WEIGHT_H)));
 			else if (orientation == ORIENTATION_RIGHT)
-				cairo_rectangle(cr, round(w * BAR_WEIGHT), pat0, round(w * (1 - BAR_WEIGHT)), h - pat0);
+				cairo_rectangle(cr, round(w * BAR_WEIGHT_W), pat0, round(w * (1 - BAR_WEIGHT_W)), h - pat0);
 			else if (orientation == ORIENTATION_TOP)
-				cairo_rectangle(cr, pat0, 0, w - pat0, round(h * (1 - BAR_WEIGHT)));
+				cairo_rectangle(cr, pat0, 0, w - pat0, round(h * (1 - BAR_WEIGHT_H)));
 			else if (orientation == ORIENTATION_LEFT)
-				cairo_rectangle(cr, 0, pat0, round(w * (1 - BAR_WEIGHT)), h - pat0);
+				cairo_rectangle(cr, 0, pat0, round(w * (1 - BAR_WEIGHT_W)), h - pat0);
 
 			cairo_set_source(cr, pat);
 			cairo_fill(cr);
@@ -694,22 +698,22 @@ void Group::onDraw(cairo_t* cr)
 			{
 				if (orientation == ORIENTATION_BOTTOM || orientation == ORIENTATION_TOP)
 				{
-					offset = 2 * (round(h * (1 - BAR_WEIGHT)));
+					offset = 2 * (round(h * (1 - BAR_WEIGHT_H)));
 				}
 				else
 				{
-					offset = (2 * (round(w * (1 - BAR_WEIGHT))));
+					offset = (2 * (round(w * (1 - BAR_WEIGHT_W))));
 				}
 			}
 
 			if (orientation == ORIENTATION_BOTTOM)
-				cairo_rectangle(cr, 0, round(h * BAR_WEIGHT), w - offset, round(h * (1 - BAR_WEIGHT)));
+				cairo_rectangle(cr, 0, round(h * BAR_WEIGHT_H), w - offset, round(h * (1 - BAR_WEIGHT_H)));
 			else if (orientation == ORIENTATION_RIGHT)
-				cairo_rectangle(cr, round(w * BAR_WEIGHT), 0, round(w * (1 - BAR_WEIGHT)), h - offset);
+				cairo_rectangle(cr, round(w * BAR_WEIGHT_W), 0, round(w * (1 - BAR_WEIGHT_W)), h - offset);
 			else if (orientation == ORIENTATION_TOP)
-				cairo_rectangle(cr, 0, 0, w - offset, round(h * (1 - BAR_WEIGHT)));
+				cairo_rectangle(cr, 0, 0, w - offset, round(h * (1 - BAR_WEIGHT_H)));
 			else if (orientation == ORIENTATION_LEFT)
-				cairo_rectangle(cr, 0, 0, round(w * (1 - BAR_WEIGHT)), h - offset);
+				cairo_rectangle(cr, 0, 0, round(w * (1 - BAR_WEIGHT_W)), h - offset);
 
 			cairo_fill(cr);
 		}
@@ -721,17 +725,17 @@ void Group::onDraw(cairo_t* cr)
 
 			if (orientation == ORIENTATION_BOTTOM || orientation == ORIENTATION_TOP)
 			{
-				size = round(h * (1 - BAR_WEIGHT));
+				size = round(h * (1 - BAR_WEIGHT_H));
 			}
 			else
 			{
-				size = round(w * (1 - BAR_WEIGHT));
+				size = round(w * (1 - BAR_WEIGHT_W));
 			}
 
 			if (orientation == ORIENTATION_BOTTOM)
-				cairo_rectangle(cr, w - size, round(h * BAR_WEIGHT), size, size);
+				cairo_rectangle(cr, w - size, round(h * BAR_WEIGHT_H), size, size);
 			else if (orientation == ORIENTATION_RIGHT)
-				cairo_rectangle(cr, round(w * BAR_WEIGHT), h - size, size, size);
+				cairo_rectangle(cr, round(w * BAR_WEIGHT_W), h - size, size, size);
 			else if (orientation == ORIENTATION_TOP)
 				cairo_rectangle(cr, w - size, 0, size, size);
 			else if (orientation == ORIENTATION_LEFT)
@@ -753,14 +757,14 @@ void Group::onDraw(cairo_t* cr)
 			if (horizontal)
 			{
 				length = w;
-				thickness = round(h * (1 - BAR_WEIGHT));
-				fixed = round(h * BAR_WEIGHT);
+				thickness = round(h * (1 - BAR_WEIGHT_H));
+				fixed = round(h * BAR_WEIGHT_H);
 			}
 			else
 			{
 				length = h;
-				thickness = round(w * (1 - BAR_WEIGHT));
-				fixed = round(w * BAR_WEIGHT);
+				thickness = round(w * (1 - BAR_WEIGHT_W));
+				fixed = round(w * BAR_WEIGHT_W);
 			}
 
 			int gap = thickness;
@@ -1056,23 +1060,23 @@ void Group::onDraw(cairo_t* cr)
 
 				if (orientation == ORIENTATION_BOTTOM)
 				{
-					cairo_rectangle(cr, w / 2. - sep / 2. - space, round(h * BAR_WEIGHT), space, round(h * (1 - BAR_WEIGHT)));
-					cairo_rectangle(cr, w / 2. + sep / 2., round(h * BAR_WEIGHT), space, round(h * (1 - BAR_WEIGHT)));
+					cairo_rectangle(cr, w / 2. - sep / 2. - space, round(h * BAR_WEIGHT_H), space, round(h * (1 - BAR_WEIGHT_H)));
+					cairo_rectangle(cr, w / 2. + sep / 2., round(h * BAR_WEIGHT_H), space, round(h * (1 - BAR_WEIGHT_H)));
 				}
 				else if (orientation == ORIENTATION_RIGHT)
 				{
-					cairo_rectangle(cr, round(w * BAR_WEIGHT), h / 2. - sep / 2. - space, round(w * (1 - BAR_WEIGHT)), space);
-					cairo_rectangle(cr, round(w * BAR_WEIGHT), h / 2. + sep / 2., round(w * (1 - BAR_WEIGHT)), space);
+					cairo_rectangle(cr, round(w * BAR_WEIGHT_W), h / 2. - sep / 2. - space, round(w * (1 - BAR_WEIGHT_W)), space);
+					cairo_rectangle(cr, round(w * BAR_WEIGHT_W), h / 2. + sep / 2., round(w * (1 - BAR_WEIGHT_W)), space);
 				}
 				else if (orientation == ORIENTATION_TOP)
 				{
-					cairo_rectangle(cr, w / 2. - sep / 2. - space, 0, space, round(h * (1 - BAR_WEIGHT)));
-					cairo_rectangle(cr, w / 2. + sep / 2., 0, space, round(h * (1 - BAR_WEIGHT)));
+					cairo_rectangle(cr, w / 2. - sep / 2. - space, 0, space, round(h * (1 - BAR_WEIGHT_H)));
+					cairo_rectangle(cr, w / 2. + sep / 2., 0, space, round(h * (1 - BAR_WEIGHT_H)));
 				}
 				else if (orientation == ORIENTATION_LEFT)
 				{
-					cairo_rectangle(cr, 0, h / 2. - sep / 2. - space, round(w * (1 - BAR_WEIGHT)), space);
-					cairo_rectangle(cr, 0, h / 2. + sep / 2., round(w * (1 - BAR_WEIGHT)), space);
+					cairo_rectangle(cr, 0, h / 2. - sep / 2. - space, round(w * (1 - BAR_WEIGHT_W)), space);
+					cairo_rectangle(cr, 0, h / 2. + sep / 2., round(w * (1 - BAR_WEIGHT_W)), space);
 				}
 
 				cairo_fill(cr);
@@ -1086,13 +1090,13 @@ void Group::onDraw(cairo_t* cr)
 				cairo_set_source_rgba(cr, rgba[0], rgba[1], rgba[2], rgba[3]);
 
 				if (orientation == ORIENTATION_BOTTOM)
-					cairo_rectangle(cr, start, round(h * BAR_WEIGHT), space, round(h * (1 - BAR_WEIGHT)));
+					cairo_rectangle(cr, start, round(h * BAR_WEIGHT_H), space, round(h * (1 - BAR_WEIGHT_H)));
 				else if (orientation == ORIENTATION_RIGHT)
-					cairo_rectangle(cr, round(w * BAR_WEIGHT), start, round(w * (1 - BAR_WEIGHT)), space);
+					cairo_rectangle(cr, round(w * BAR_WEIGHT_W), start, round(w * (1 - BAR_WEIGHT_W)), space);
 				else if (orientation == ORIENTATION_TOP)
-					cairo_rectangle(cr, start, 0, space, round(h * (1 - BAR_WEIGHT)));
+					cairo_rectangle(cr, start, 0, space, round(h * (1 - BAR_WEIGHT_H)));
 				else if (orientation == ORIENTATION_LEFT)
-					cairo_rectangle(cr, 0, start, round(w * (1 - BAR_WEIGHT)), space);
+					cairo_rectangle(cr, 0, start, round(w * (1 - BAR_WEIGHT_W)), space);
 
 				cairo_fill(cr);
 			}

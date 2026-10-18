@@ -44,6 +44,7 @@ namespace Settings
 	const int defPreviewHeight = 162;
 	const int defPreviewGap = 0;
 	const int defDockItemSpacing = 4;
+	const int defIndicatorThickness = 3;
 	const int defHotCornerDelay = 200;
 
 	extern State<bool> forceIconSize;
@@ -69,6 +70,7 @@ namespace Settings
 	extern State<int> indicatorStyle;
 	extern State<int> inactiveIndicatorStyle;
 	extern State<int> indicatorSpacing;
+	extern State<int> indicatorThickness;
 	extern State<int> dockItemSpacing;
 	extern State<bool> indicatorColorFromTheme;
 	extern State<std::shared_ptr<GdkRGBA>> indicatorColor;

@@ -257,6 +257,14 @@ namespace SettingsDialog
 			}),
 			dialog);
 
+		GObject* indicatorThickness = gtk_builder_get_object(builder, "indicatorThicknessButton");
+		gtk_spin_button_set_value(GTK_SPIN_BUTTON(indicatorThickness), Settings::indicatorThickness);
+		g_signal_connect(indicatorThickness, "value-changed",
+			G_CALLBACK(+[](GtkSpinButton* _indicatorThickness) {
+				Settings::indicatorThickness.set(gtk_spin_button_get_value_as_int(_indicatorThickness));
+			}),
+			dialog);
+
 		GObject* dockItemSpacing = gtk_builder_get_object(builder, "dockItemSpacingButton");
 		gtk_spin_button_set_value(GTK_SPIN_BUTTON(dockItemSpacing), Settings::dockItemSpacing);
 		g_signal_connect(dockItemSpacing, "value-changed",
