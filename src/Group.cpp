@@ -261,6 +261,15 @@ Group::Group(std::shared_ptr<AppInfo> appInfo, bool pinned) : mPinned(pinned), m
 		}),
 		this);
 
+	// dropping a pinned item outside the panel unpins it
+	g_signal_connect(G_OBJECT(mButton), "drag-failed",
+		G_CALLBACK(+[](GtkWidget* widget, GdkDragContext* context, GtkDragResult result, Group* me) {
+			if (result == GTK_DRAG_RESULT_NO_TARGET)
+				me->unpin();
+			return false;
+		}),
+		this);
+
 	g_signal_connect(G_OBJECT(mButton), "enter-notify-event",
 		G_CALLBACK(+[](GtkWidget* widget, GdkEventCrossing* event, Group* me) {
 			Help::Gtk::cssClassAdd(me->mButton, "hover_group");
@@ -1468,6 +1477,34 @@ void Group::onDragDataReceived(const GdkDragContext* context, int x, int y, cons
 
 	if (moving)
 		Dock::moveButton(moving.get(), this);
+}
+
+void Group::unpin()
+{
+	if (!mPinned)
+		return;
+
+	// A drop that failed but stayed on the panel is a cancelled reorder, not a
+	// request to remove the item from the dock.
+	GdkWindow* panelWindow = gtk_widget_get_window(GTK_WIDGET(Plugin::mXfPlugin));
+
+	if (panelWindow != nullptr && Plugin::mPointer != nullptr)
+	{
+		gint pointerX, pointerY;
+		gdk_device_get_position(Plugin::mPointer, nullptr, &pointerX, &pointerY);
+
+		gint panelX, panelY, panelWidth, panelHeight;
+		gdk_window_get_origin(panelWindow, &panelX, &panelY);
+		gdk_window_get_geometry(panelWindow, nullptr, nullptr, &panelWidth, &panelHeight);
+
+		if (pointerX >= panelX && pointerX < panelX + panelWidth
+			&& pointerY >= panelY && pointerY < panelY + panelHeight)
+			return;
+	}
+
+	mPinned = false;
+	Dock::savePinned();
+	updateStyle();
 }
 
 void Group::onDragBegin(GdkDragContext* context)

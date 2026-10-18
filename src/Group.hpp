@@ -96,6 +96,7 @@ public:
 	void onDragDataGet(const GdkDragContext* context, GtkSelectionData* selectionData, guint info, guint time);
 	void onDragDataReceived(const GdkDragContext* context, int x, int y, const GtkSelectionData* selectionData, guint info, guint time);
 	void onDragBegin(GdkDragContext* context);
+	void unpin();
 
 	bool mPinned;
 	bool mActive;
