@@ -36,8 +36,6 @@ namespace Settings
 	void init();
 	void finalize();
 
-	void saveFile();
-
 	const int minIconSize = 16;
 	const int maxIconSize = 128;
 	const int defPreviewWidth = 288;
