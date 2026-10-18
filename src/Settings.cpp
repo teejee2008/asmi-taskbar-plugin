@@ -87,11 +87,6 @@ namespace Settings
 		return mLegacyFile && g_key_file_has_key(mLegacyFile.get(), "user", key, nullptr);
 	}
 
-	static bool hasKey(const gchar* key)
-	{
-		return channelHas(key) || legacyHas(key);
-	}
-
 	static bool getBool(const gchar* key, bool def)
 	{
 		if (channelHas(key))
@@ -305,7 +300,7 @@ namespace Settings
 
 		int intValue;
 
-		showPreviews.setup(getBool("showPreviews", false),
+		showPreviews.setup(getBool("showPreviews", true),
 			[](bool _showPreviews) -> void {
 				setBool("showPreviews", _showPreviews);
 
@@ -356,9 +351,7 @@ namespace Settings
 				});
 			});
 
-		gboolean expandValue = hasKey("expandDock")
-			? getBool("expandDock", false)
-			: xfce_panel_plugin_get_expand(Plugin::mXfPlugin);
+		gboolean expandValue = getBool("expandDock", true);
 		expandDock.setup(expandValue,
 			[](bool _expandDock) -> void {
 				setBool("expandDock", _expandDock);
@@ -438,21 +431,21 @@ namespace Settings
 				Dock::onPanelResize();
 			});
 
-		indicatorStyle.setup(getInt("indicatorStyle", 0),
+		indicatorStyle.setup(getInt("indicatorStyle", STYLE_SEGMENTS),
 			[](int _indicatorStyle) -> void {
 				setInt("indicatorStyle", _indicatorStyle);
 
 				Dock::drawGroups();
 			});
 
-		inactiveIndicatorStyle.setup(getInt("inactiveIndicatorStyle", 0),
+		inactiveIndicatorStyle.setup(getInt("inactiveIndicatorStyle", STYLE_SEGMENTS),
 			[](int _inactiveIndicatorStyle) -> void {
 				setInt("inactiveIndicatorStyle", _inactiveIndicatorStyle);
 
 				Dock::drawGroups();
 			});
 
-		indicatorSpacing.setup(CLAMP(getInt("indicatorSpacing", 0), 0, 64),
+		indicatorSpacing.setup(CLAMP(getInt("indicatorSpacing", 2), 0, 64),
 			[](int _indicatorSpacing) -> void {
 				setInt("indicatorSpacing", _indicatorSpacing);
 
@@ -475,7 +468,7 @@ namespace Settings
 				Dock::onPanelResize();
 			});
 
-		indicatorColorFromTheme.setup(getBool("indicatorColorFromTheme", false),
+		indicatorColorFromTheme.setup(getBool("indicatorColorFromTheme", true),
 			[](bool _indicatorColorFromTheme) -> void {
 				setBool("indicatorColorFromTheme", _indicatorColorFromTheme);
 
