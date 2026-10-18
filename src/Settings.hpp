@@ -38,9 +38,9 @@ namespace Settings
 
 	const int minIconSize = 16;
 	const int maxIconSize = 128;
-	const int defPreviewWidth = 288;
-	const int defPreviewHeight = 162;
-	const int defPreviewGap = 0;
+	const int defPreviewWidth = 300;
+	const int defPreviewHeight = 180;
+	const int defPreviewGap = 2;
 	const int defDockItemSpacing = 4;
 	const int defIndicatorThickness = 3;
 	const int defHotCornerDelay = 200;
