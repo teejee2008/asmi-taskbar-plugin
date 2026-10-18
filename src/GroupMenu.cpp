@@ -61,6 +61,8 @@ GroupMenu::GroupMenu(Group* dockButton)
 	mGroup = dockButton;
 	mVisible = false;
 	mMouseHover = false;
+	mDropIndex = -1;
+	mDragCursor = nullptr;
 	mWindow = create_window();
 	mBox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 
@@ -125,6 +127,10 @@ GroupMenu::GroupMenu(Group* dockButton)
 GroupMenu::~GroupMenu()
 {
 	mPopupIdle.stop();
+
+	if (mDragCursor != nullptr)
+		g_object_unref(mDragCursor);
+
 	gtk_widget_destroy(mWindow);
 }
 
@@ -295,6 +301,99 @@ void GroupMenu::updateLayout()
 	}
 }
 
+void GroupMenu::reorder()
+{
+	std::vector<GtkWidget*> ordered;
+	ordered.reserve(mItems.size());
+
+	mGroup->mWindows.forEach([&ordered](GroupWindow* window) -> void {
+		ordered.push_back(GTK_WIDGET(window->mGroupMenuItem->mItem));
+	});
+
+	mItems = ordered;
+	updateLayout();
+}
+
+int GroupMenu::itemIndexAtPointer(gint px, gint py)
+{
+	for (size_t i = 0; i < mItems.size(); i++)
+	{
+		GtkWidget* item = mItems[i];
+		GtkWidget* toplevel = gtk_widget_get_toplevel(item);
+
+		if (toplevel == nullptr || gtk_widget_get_window(item) == nullptr
+			|| gtk_widget_get_window(toplevel) == nullptr)
+			continue;
+
+		gint x = 0;
+		gint y = 0;
+		if (!gtk_widget_translate_coordinates(item, toplevel, 0, 0, &x, &y))
+			continue;
+
+		gint originX = 0;
+		gint originY = 0;
+		gdk_window_get_origin(gtk_widget_get_window(toplevel), &originX, &originY);
+
+		GtkAllocation alloc;
+		gtk_widget_get_allocation(item, &alloc);
+
+		gint x0 = originX + x;
+		gint y0 = originY + y;
+
+		if (px >= x0 && px < x0 + alloc.width && py >= y0 && py < y0 + alloc.height)
+			return (int)i;
+	}
+
+	return -1;
+}
+
+void GroupMenu::setDropTarget(int index)
+{
+	if (index == mDropIndex)
+		return;
+
+	if (mDropIndex >= 0 && mDropIndex < (int)mItems.size())
+		Help::Gtk::cssClassRemove(mItems[mDropIndex], "drop_target_menu_item");
+
+	mDropIndex = index;
+
+	if (mDropIndex >= 0 && mDropIndex < (int)mItems.size())
+		Help::Gtk::cssClassAdd(mItems[mDropIndex], "drop_target_menu_item");
+}
+
+void GroupMenu::clearDropTarget()
+{
+	if (mDropIndex >= 0 && mDropIndex < (int)mItems.size())
+		Help::Gtk::cssClassRemove(mItems[mDropIndex], "drop_target_menu_item");
+
+	mDropIndex = -1;
+}
+
+void GroupMenu::setDragCursor(bool dragging)
+{
+	GdkWindow* window = gtk_widget_get_window(mWindow);
+
+	if (window == nullptr)
+		return;
+
+	if (!dragging)
+	{
+		gdk_window_set_cursor(window, nullptr);
+		return;
+	}
+
+	if (mDragCursor == nullptr)
+	{
+		GdkDisplay* display = gdk_display_get_default();
+		mDragCursor = gdk_cursor_new_from_name(display, "grabbing");
+
+		if (mDragCursor == nullptr)
+			mDragCursor = gdk_cursor_new_for_display(display, GDK_FLEUR);
+	}
+
+	gdk_window_set_cursor(window, mDragCursor);
+}
+
 void GroupMenu::updatePosition(gint wx, gint wy)
 {
 	GdkScreen* screen;
@@ -375,6 +474,8 @@ void GroupMenu::reposition()
 void GroupMenu::hide()
 {
 	mVisible = false;
+	clearDropTarget();
+	setDragCursor(false);
 	gtk_widget_hide(mWindow);
 }
 

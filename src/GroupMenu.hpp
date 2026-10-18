@@ -41,6 +41,11 @@ public:
 	void popup();
 	void updateOrientation();
 	void updateLayout();
+	void reorder();
+	int itemIndexAtPointer(gint px, gint py);
+	void setDropTarget(int index);
+	void clearDropTarget();
+	void setDragCursor(bool dragging);
 	int lineCapacity(bool horizontal);
 	void updatePosition(gint wx, gint wy);
 	void reposition();
@@ -58,6 +63,10 @@ public:
 
 	bool mVisible;
 	bool mMouseHover;
+
+	int mDropIndex;
+
+	GdkCursor* mDragCursor;
 
 	Help::Gtk::Idle mPopupIdle;
 };

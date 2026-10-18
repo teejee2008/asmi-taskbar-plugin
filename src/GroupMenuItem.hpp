@@ -48,6 +48,10 @@ public:
 	GtkButton* mCloseButton;
 	GtkImage* mPreview;
 
+	bool mDragging;
+	gdouble mDragStartX;
+	gdouble mDragStartY;
+
 	Help::Gtk::Timeout mPreviewTimeout;
 };
 

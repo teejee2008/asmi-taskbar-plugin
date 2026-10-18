@@ -23,11 +23,15 @@ static GtkTargetEntry entries[1] = {{(gchar*)"any", 0, 0}};
 GroupMenuItem::GroupMenuItem(GroupWindow* groupWindow)
 {
 	mGroupWindow = groupWindow;
+	mDragging = false;
+	mDragStartX = 0;
+	mDragStartY = 0;
 
 	// This needs work to survive porting to GTK4.
 	// GtkEventBox is removed, all events are supported by all widgets.
 
 	mItem = GTK_EVENT_BOX(gtk_event_box_new());
+	gtk_widget_add_events(GTK_WIDGET(mItem), GDK_POINTER_MOTION_MASK);
 	gtk_drag_dest_set(GTK_WIDGET(mItem), GTK_DEST_DEFAULT_DROP, entries, 1, GDK_ACTION_MOVE);
 	Help::Gtk::cssClassAdd(GTK_WIDGET(mItem), "menu_item");
 	gtk_widget_show(GTK_WIDGET(mItem));
@@ -83,7 +87,13 @@ GroupMenuItem::GroupMenuItem(GroupWindow* groupWindow)
 	g_signal_connect(G_OBJECT(mItem), "button-press-event",
 		G_CALLBACK(+[](GtkWidget* widget, GdkEventButton* event, GroupMenuItem* me) {
 			if (event->button == GDK_BUTTON_PRIMARY)
-				me->mGroupWindow->activate((event)->time);
+			{
+				// Delay activation to the release so a press-and-drag can reorder
+				// the previews instead of switching to the window.
+				me->mDragging = false;
+				me->mDragStartX = event->x;
+				me->mDragStartY = event->y;
+			}
 			else if (event->button == GDK_BUTTON_MIDDLE && Settings::middleButtonBehavior == BEHAVIOR_CLOSE_ALL)
 				Xfw::close(me->mGroupWindow, event->time);
 			else if (event->button == GDK_BUTTON_SECONDARY)
@@ -100,6 +110,64 @@ GroupMenuItem::GroupMenuItem(GroupWindow* groupWindow)
 				gtk_menu_popup_at_pointer(GTK_MENU(menu), (GdkEvent*)event);
 				me->mGroupWindow->mGroup->mWindowMenuShown = true;
 			}
+			return true;
+		}),
+		this);
+
+	g_signal_connect(G_OBJECT(mItem), "motion-notify-event",
+		G_CALLBACK(+[](GtkWidget* widget, GdkEventMotion* event, GroupMenuItem* me) {
+			if (me->mDragging)
+			{
+				gint px;
+				gint py;
+				gdk_device_get_position(Plugin::mPointer, nullptr, &px, &py);
+
+				GroupWindow* window = me->mGroupWindow;
+				window->mGroup->mGroupMenu.setDropTarget(
+					window->mGroup->mGroupMenu.itemIndexAtPointer(px, py));
+
+				return true;
+			}
+
+			if (!(event->state & GDK_BUTTON1_MASK))
+				return false;
+
+			if (gtk_drag_check_threshold(widget, me->mDragStartX, me->mDragStartY, event->x, event->y))
+			{
+				me->mDragging = true;
+				Help::Gtk::cssClassAdd(widget, "dragging_menu_item");
+				me->mGroupWindow->mGroup->mGroupMenu.clearDropTarget();
+				me->mGroupWindow->mGroup->mGroupMenu.setDragCursor(true);
+			}
+
+			return true;
+		}),
+		this);
+
+	g_signal_connect(G_OBJECT(mItem), "button-release-event",
+		G_CALLBACK(+[](GtkWidget* widget, GdkEventButton* event, GroupMenuItem* me) {
+			if (event->button != GDK_BUTTON_PRIMARY)
+				return false;
+
+			Help::Gtk::cssClassRemove(widget, "dragging_menu_item");
+
+			if (me->mDragging)
+			{
+				me->mDragging = false;
+
+				GroupWindow* window = me->mGroupWindow;
+				GroupMenu* menu = &window->mGroup->mGroupMenu;
+				int index = menu->mDropIndex;
+				menu->clearDropTarget();
+				menu->setDragCursor(false);
+
+				if (index >= 0 && window->mGroup->mWindows.getIndex(window) != (uint)index)
+					window->mGroup->moveWindow(window, index);
+
+				return true;
+			}
+
+			me->mGroupWindow->activate(event->time);
 			return true;
 		}),
 		this);
@@ -127,7 +195,7 @@ GroupMenuItem::GroupMenuItem(GroupWindow* groupWindow)
 
 	g_signal_connect(G_OBJECT(mItem), "enter-notify-event",
 		G_CALLBACK(+[](GtkWidget* widget, GdkEventCrossing* event, GroupMenuItem* me) {
-			if (event->state & GDK_BUTTON1_MASK)
+			if (!me->mDragging && (event->state & GDK_BUTTON1_MASK))
 				me->mGroupWindow->activate(event->time);
 			Help::Gtk::cssClassAdd(widget, "hover_menu_item");
 			gtk_widget_queue_draw(widget);

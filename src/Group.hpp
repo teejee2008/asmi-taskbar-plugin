@@ -70,6 +70,7 @@ public:
 
 	void add(GroupWindow* window);
 	void remove(GroupWindow* window);
+	void moveWindow(GroupWindow* window, int toIndex);
 	void electNewTopWindow();
 	void setTopWindow(GroupWindow* groupWindow);
 

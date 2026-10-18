@@ -127,6 +127,13 @@ namespace Store
 	public:
 		void push(V v) { mList.push_back(v); }
 
+		void insert(uint index, V v)
+		{
+			typename std::list<V>::iterator it = mList.begin();
+			std::advance(it, index);
+			mList.insert(it, v);
+		}
+
 		void pop(V v) { mList.remove(v); }
 
 		V get(uint index) { return *std::next(mList.begin(), index); }

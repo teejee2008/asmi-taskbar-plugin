@@ -390,6 +390,35 @@ void Group::remove(GroupWindow* window)
 	gtk_widget_queue_draw(mButton);
 }
 
+void Group::moveWindow(GroupWindow* window, int toIndex)
+{
+	uint size = mWindows.size();
+	if (size == 0)
+		return;
+
+	int fromIndex = mWindows.getIndex(window);
+	if (fromIndex == toIndex)
+		return;
+
+	GroupWindow* topWindow = mWindows.get(mTopWindowIndex);
+	bool movingTop = topWindow == window;
+
+	mWindows.pop(window);
+
+	if (toIndex < 0)
+		toIndex = 0;
+	if (toIndex > (int)mWindows.size())
+		toIndex = mWindows.size();
+
+	mWindows.insert(toIndex, window);
+
+	if (movingTop)
+		mTopWindowIndex = toIndex;
+
+	mGroupMenu.reorder();
+	gtk_widget_queue_draw(mButton);
+}
+
 void Group::activate(guint32 timestamp)
 {
 	if (!mWindowsCount)
