@@ -311,7 +311,7 @@ namespace Settings
 				});
 			});
 
-		alternativeOverviewStyle.setup(getBool("alternativeOverviewStyle", false),
+		alternativeOverviewStyle.setup(getBool("alternativeOverviewStyle", true),
 			[](bool _alternativeOverviewStyle) -> void {
 				setBool("alternativeOverviewStyle", _alternativeOverviewStyle);
 			});
