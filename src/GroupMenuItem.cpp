@@ -488,6 +488,12 @@ void GroupMenuItem::setOverviewAlternative(bool enabled)
 {
 	mOverviewAlternative = enabled;
 
+	// The overview close button is larger and more prominent than the small
+	// one used in the dock menu.
+	GtkWidget* closeImage = gtk_bin_get_child(GTK_BIN(mCloseButton));
+	if (GTK_IS_IMAGE(closeImage))
+		gtk_image_set_pixel_size(GTK_IMAGE(closeImage), enabled ? 24 : -1);
+
 	// The dock menu always uses the configured preview size; the overview may
 	// have enlarged it to use the available screen space.
 	if (!enabled)

@@ -45,9 +45,11 @@
 						   ".asmi-taskbar-window .menu_item.overview_alt .title { color: @menu_item_color; background-color: alpha(@menu_item_color, 0.15); " \
 						   "border: 1px solid alpha(@menu_item_color, 0.20); border-radius: 999px; padding: 2px 10px; }\n"                               \
 						   ".asmi-taskbar-window .menu_item.overview_alt .overview_close { color: #ffffff; "                                             \
-						   "background-color: rgba(0, 0, 0, 0.55); border: 1px solid rgba(255, 255, 255, 0.15); "                                       \
-						   "border-radius: 999px; min-width: 24px; min-height: 24px; padding: 2px; }\n"                                                 \
-						   ".asmi-taskbar-window .menu_item.overview_alt .overview_close:hover { background-color: rgba(0, 0, 0, 0.75); }\n";
+						   "background-color: #d32f2f; border: 2px solid rgba(255, 255, 255, 0.45); "                                                    \
+						   "border-radius: 999px; min-width: 32px; min-height: 32px; padding: 4px; "                                                    \
+						   "box-shadow: 0 2px 6px rgba(0, 0, 0, 0.45); -gtk-icon-shadow: 0 1px 2px rgba(0, 0, 0, 0.6); }\n"                           \
+						   ".asmi-taskbar-window .menu_item.overview_alt .overview_close:hover { background-color: #f44336; "                            \
+						   "border-color: rgba(255, 255, 255, 0.7); }\n";
 
 #include "Dock.hpp"
 
