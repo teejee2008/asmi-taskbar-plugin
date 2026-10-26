@@ -50,6 +50,11 @@ namespace Overview
 		gulong mActiveWindowChangedId = 0;
 		bool mVisible = false;
 		gint64 mCornerSince = -1;
+		// Window closed from the overview. Kept for a short grace period so the
+		// window-closed and active-window-changed signals that follow the close
+		// do not dismiss the overview.
+		XfwWindow* mKeepOpenWindow = nullptr;
+		Help::Gtk::Timeout mCloseGraceTimeout;
 
 		GtkWidget* createWindow()
 		{
@@ -65,6 +70,8 @@ namespace Overview
 		{
 			GroupMenuItem* menuItem = window->mGroupMenuItem;
 			bool alternativeStyle = Settings::alternativeOverviewStyle && Settings::showPreviews;
+
+			menuItem->mInOverview = true;
 
 			// Apply the layout first: this also sets the alternative flag, so the
 			// preview below is rendered with the proportional path when needed.
@@ -111,25 +118,11 @@ namespace Overview
 			return added;
 		}
 
-		// Give the items back to their group menus. updateLayout() detaches each
-		// item from its current parent (the overview) before packing it again.
-		void restoreItems()
+		// Empty the flow box. The items themselves are kept alive by their
+		// GroupMenuItem reference, so detaching them first prevents destroying a
+		// live item when the wrapper is destroyed.
+		void clearFlowBox()
 		{
-			Dock::forEachGroup([](Group* group) -> void {
-				group->mWindows.forEach([](GroupWindow* window) -> void {
-					GtkWidget* item = GTK_WIDGET(window->mGroupMenuItem->mItem);
-					window->mGroupMenuItem->setOverviewAlternative(false);
-					gtk_widget_set_halign(item, GTK_ALIGN_FILL);
-					gtk_widget_set_valign(item, GTK_ALIGN_FILL);
-					gtk_label_set_max_width_chars(window->mGroupMenuItem->mLabel, -1);
-				});
-				group->mGroupMenu.updateLayout();
-			});
-
-			// updateLayout() only detaches the items from the flow box child
-			// wrappers; the empty wrappers would otherwise pile up and push the
-			// grid down on every opening. Detach any remaining item first so
-			// destroying the wrapper can never destroy a live menu item.
 			GList* children = gtk_container_get_children(GTK_CONTAINER(mFlowBox));
 			for (GList* it = children; it != nullptr; it = it->next)
 			{
@@ -141,6 +134,39 @@ namespace Overview
 				gtk_widget_destroy(wrapper);
 			}
 			g_list_free(children);
+		}
+
+		// Give the items back to their group menus. updateLayout() detaches each
+		// item from its current parent (the overview) before packing it again.
+		void restoreItems()
+		{
+			Dock::forEachGroup([](Group* group) -> void {
+				group->mWindows.forEach([](GroupWindow* window) -> void {
+					GtkWidget* item = GTK_WIDGET(window->mGroupMenuItem->mItem);
+					window->mGroupMenuItem->mInOverview = false;
+					window->mGroupMenuItem->setOverviewAlternative(false);
+					gtk_widget_set_halign(item, GTK_ALIGN_FILL);
+					gtk_widget_set_valign(item, GTK_ALIGN_FILL);
+					gtk_label_set_max_width_chars(window->mGroupMenuItem->mLabel, -1);
+				});
+				group->mGroupMenu.updateLayout();
+			});
+
+			// updateLayout() only detaches the items from the flow box child
+			// wrappers; the empty wrappers would otherwise pile up and push the
+			// grid down on every opening.
+			clearFlowBox();
+		}
+
+		// Rebuild the overview after a window was closed from it. The remaining
+		// items may have been pulled back into their (hidden) group menus by
+		// GroupMenu::remove(), so repopulate the flow box from the live groups.
+		void refresh()
+		{
+			clearFlowBox();
+
+			if (!populate())
+				hide();
 		}
 
 		GdkMonitor* pointerMonitor(gint pointerX, gint pointerY)
@@ -311,6 +337,13 @@ namespace Overview
 			return poll();
 		});
 
+		// Forget the window that was closed from the overview once the signals
+		// caused by its destruction have been processed.
+		mCloseGraceTimeout.setup(1000, []() {
+			mKeepOpenWindow = nullptr;
+			return false;
+		});
+
 		// dismiss the overview on any key press, except for the arrow keys and
 		// enter, which are reserved for navigating the overview
 		gtk_widget_add_events(mWindow, GDK_KEY_PRESS_MASK);
@@ -349,10 +382,30 @@ namespace Overview
 			G_CALLBACK(+[](XfwScreen* screen, XfwWindow* xfwWindow) { hide(); }),
 			nullptr);
 		mWindowClosedId = g_signal_connect(G_OBJECT(Xfw::mXfwScreen), "window-closed",
-			G_CALLBACK(+[](XfwScreen* screen, XfwWindow* xfwWindow) { hide(); }),
+			G_CALLBACK(+[](XfwScreen* screen, XfwWindow* xfwWindow) {
+				// A window closed from the overview must not dismiss it: rebuild
+				// the grid with the remaining windows instead.
+				if (xfwWindow == mKeepOpenWindow)
+				{
+					if (mVisible)
+						refresh();
+					return;
+				}
+
+				hide();
+			}),
 			nullptr);
 		mActiveWindowChangedId = g_signal_connect(G_OBJECT(Xfw::mXfwScreen), "active-window-changed",
-			G_CALLBACK(+[](XfwScreen* screen, XfwWindow* previousActiveWindow) { hide(); }),
+			G_CALLBACK(+[](XfwScreen* screen, XfwWindow* previousActiveWindow) {
+				// Closing a window moves the focus to another one; that focus
+				// change belongs to the close and must not dismiss the overview.
+				// The previous window may be reported as NULL on some backends.
+				if (mKeepOpenWindow != nullptr
+					&& (previousActiveWindow == nullptr || previousActiveWindow == mKeepOpenWindow))
+					return;
+
+				hide();
+			}),
 			nullptr);
 
 		updateSettings();
@@ -361,6 +414,8 @@ namespace Overview
 	void finalize()
 	{
 		mPollTimeout.stop();
+		mCloseGraceTimeout.stop();
+		mKeepOpenWindow = nullptr;
 		ungrabKeyboard();
 
 		if (mWindowOpenedId != 0)
@@ -405,9 +460,26 @@ namespace Overview
 			return;
 
 		mVisible = false;
+		mKeepOpenWindow = nullptr;
+		mCloseGraceTimeout.stop();
 		ungrabKeyboard();
 		gtk_widget_hide(mWindow);
 		restoreItems();
+	}
+
+	void closeFromOverview(GroupWindow* window)
+	{
+		if (!mVisible)
+		{
+			Xfw::close(window, 0);
+			return;
+		}
+
+		// Remember which window is being closed so the signals emitted while it
+		// disappears keep the overview open and trigger a refresh.
+		mKeepOpenWindow = window->mXfwWindow;
+		mCloseGraceTimeout.start();
+		Xfw::close(window, 0);
 	}
 
 	void updateSettings()

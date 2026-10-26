@@ -19,6 +19,8 @@
 #ifndef OVERVIEW_HPP
 #define OVERVIEW_HPP
 
+class GroupWindow;
+
 namespace Overview
 {
 	void init();
@@ -29,6 +31,9 @@ namespace Overview
 	void show();
 	void hide();
 	void toggle();
+
+	// Close a window from an overview item, keeping the overview open.
+	void closeFromOverview(GroupWindow* window);
 } // namespace Overview
 
 #endif // OVERVIEW_HPP

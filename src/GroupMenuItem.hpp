@@ -56,6 +56,7 @@ public:
 
 	bool mDragging;
 	bool mOverviewAlternative;
+	bool mInOverview;
 	gdouble mDragStartX;
 	gdouble mDragStartY;
 

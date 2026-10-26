@@ -18,6 +18,8 @@
 
 #include "GroupMenuItem.hpp"
 
+#include "Overview.hpp"
+
 static GtkTargetEntry entries[1] = {{(gchar*)"any", 0, 0}};
 
 GroupMenuItem::GroupMenuItem(GroupWindow* groupWindow)
@@ -25,6 +27,7 @@ GroupMenuItem::GroupMenuItem(GroupWindow* groupWindow)
 	mGroupWindow = groupWindow;
 	mDragging = false;
 	mOverviewAlternative = false;
+	mInOverview = false;
 	mDragStartX = 0;
 	mDragStartY = 0;
 
@@ -259,7 +262,12 @@ GroupMenuItem::GroupMenuItem(GroupWindow* groupWindow)
 
 	g_signal_connect(G_OBJECT(mCloseButton), "clicked",
 		G_CALLBACK(+[](GtkButton* button, GroupMenuItem* me) {
-			Xfw::close(me->mGroupWindow, 0);
+			// Closing from the overview should keep it open so the remaining
+			// windows can still be managed.
+			if (me->mInOverview)
+				Overview::closeFromOverview(me->mGroupWindow);
+			else
+				Xfw::close(me->mGroupWindow, 0);
 		}),
 		this);
 }
