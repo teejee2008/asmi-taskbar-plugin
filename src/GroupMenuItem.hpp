@@ -41,6 +41,7 @@ public:
 
 	void setOverviewAlternative(bool enabled);
 	void setOverviewHover(bool hover);
+	void setPreviewSize(int width, int height);
 
 	GroupWindow* mGroupWindow;
 
@@ -57,6 +58,8 @@ public:
 	bool mDragging;
 	bool mOverviewAlternative;
 	bool mInOverview;
+	int mPreviewWidth;
+	int mPreviewHeight;
 	gdouble mDragStartX;
 	gdouble mDragStartY;
 

@@ -56,6 +56,10 @@ namespace Overview
 		// do not dismiss the overview.
 		XfwWindow* mKeepOpenWindow = nullptr;
 		Help::Gtk::Timeout mCloseGraceTimeout;
+		// Preview bounding box used by the alternative overview for the current
+		// number of windows. It grows when fewer previews leave room to spare.
+		int mPreviewTargetWidth = 0;
+		int mPreviewTargetHeight = 0;
 
 		GdkMonitor* pointerMonitor(gint pointerX, gint pointerY);
 
@@ -75,6 +79,10 @@ namespace Overview
 			bool alternativeStyle = Settings::alternativeOverviewStyle && Settings::showPreviews;
 
 			menuItem->mInOverview = true;
+
+			// Size the preview for the current grid before applying the layout:
+			// the alternative icon size and the proportional preview both use it.
+			menuItem->setPreviewSize(mPreviewTargetWidth, mPreviewTargetHeight);
 
 			// Apply the layout first: this also sets the alternative flag, so the
 			// preview below is rendered with the proportional path when needed.
@@ -161,10 +169,13 @@ namespace Overview
 			clearFlowBox();
 		}
 
-		// Choose a balanced number of columns for the alternative style so the
-		// previews use both rows and columns instead of forming a single row.
+		// Choose a balanced grid for the alternative style and enlarge the
+		// previews when the available screen space allows it.
 		void updateGridLayout()
 		{
+			mPreviewTargetWidth = Settings::previewWidth;
+			mPreviewTargetHeight = Settings::previewHeight;
+
 			if (!(Settings::alternativeOverviewStyle && Settings::showPreviews))
 			{
 				// Keep the default overview's natural flow layout.
@@ -186,8 +197,6 @@ namespace Overview
 			while (columns * columns < count)
 				++columns;
 
-			// Do not ask for more columns than fit across the monitor, or the
-			// flow box would force them into a clipped row.
 			GdkMonitor* monitor = gdk_display_get_primary_monitor(Plugin::mDisplay);
 			if (Plugin::mPointer != nullptr)
 			{
@@ -198,16 +207,38 @@ namespace Overview
 					monitor = pointerMon;
 			}
 
-			if (monitor != nullptr)
+			if (monitor == nullptr)
 			{
-				GdkRectangle geometry;
-				gdk_monitor_get_geometry(monitor, &geometry);
-
-				const int spacing = 6;
-				int available = geometry.width - 2 * OVERVIEW_PADDING;
-				int maxColumns = (available + spacing) / (Settings::previewWidth + spacing);
-				columns = MIN(columns, MAX(1, maxColumns));
+				gtk_flow_box_set_min_children_per_line(GTK_FLOW_BOX(mFlowBox), columns);
+				gtk_flow_box_set_max_children_per_line(GTK_FLOW_BOX(mFlowBox), columns);
+				return;
 			}
+
+			GdkRectangle geometry;
+			gdk_monitor_get_geometry(monitor, &geometry);
+
+			const int spacing = 6;
+			int availableWidth = geometry.width - 2 * OVERVIEW_PADDING;
+			int availableHeight = geometry.height - 2 * OVERVIEW_PADDING;
+
+			// Do not ask for more columns than fit across the monitor, or the
+			// flow box would force them into a clipped row.
+			int itemWidth = MAX(1, Settings::previewWidth);
+			int maxColumns = (availableWidth + spacing) / (itemWidth + spacing);
+			columns = MIN(columns, MAX(1, maxColumns));
+
+			int rows = (count + columns - 1) / columns;
+
+			// Reserve room for the title below each preview: one ellipsized line
+			// plus its top/bottom margins and padding.
+			const int labelReserve = 40;
+			int cellWidth = (availableWidth - (columns - 1) * spacing) / columns;
+			int cellHeight = (availableHeight - (rows - 1) * spacing) / rows - labelReserve;
+
+			// Grow beyond the configured size when the grid leaves free space,
+			// but never shrink below it.
+			mPreviewTargetWidth = MAX(Settings::previewWidth, cellWidth);
+			mPreviewTargetHeight = MAX(Settings::previewHeight, cellHeight);
 
 			gtk_flow_box_set_min_children_per_line(GTK_FLOW_BOX(mFlowBox), columns);
 			gtk_flow_box_set_max_children_per_line(GTK_FLOW_BOX(mFlowBox), columns);
@@ -219,14 +250,10 @@ namespace Overview
 		void refresh()
 		{
 			clearFlowBox();
+			updateGridLayout();
 
 			if (!populate())
-			{
 				hide();
-				return;
-			}
-
-			updateGridLayout();
 		}
 
 		GdkMonitor* pointerMonitor(gint pointerX, gint pointerY)
@@ -554,10 +581,11 @@ namespace Overview
 			}
 		}
 
+		updateGridLayout();
+
 		if (!populate())
 			return;
 
-		updateGridLayout();
 		positionWindow();
 		mVisible = true;
 		gtk_widget_show(mWindow);

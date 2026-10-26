@@ -28,6 +28,8 @@ GroupMenuItem::GroupMenuItem(GroupWindow* groupWindow)
 	mDragging = false;
 	mOverviewAlternative = false;
 	mInOverview = false;
+	mPreviewWidth = Settings::previewWidth;
+	mPreviewHeight = Settings::previewHeight;
 	mDragStartX = 0;
 	mDragStartY = 0;
 
@@ -316,7 +318,7 @@ void GroupMenuItem::updateIcon()
 	gint iconSize = 16;
 
 	if (mOverviewAlternative)
-		iconSize = CLAMP(MIN(Settings::previewWidth, Settings::previewHeight) / 6, 24, 48);
+		iconSize = CLAMP(MIN(mPreviewWidth, mPreviewHeight) / 6, 24, 48);
 
 	GdkPixbuf* iconPixbuf = xfw_window_get_icon(mGroupWindow->mXfwWindow, iconSize, scale_factor);
 
@@ -405,14 +407,14 @@ void GroupMenuItem::updatePreview()
 {
 	gint scaleFactor = gtk_widget_get_scale_factor(GTK_WIDGET(mPreview));
 	cairo_surface_t* surface = Xfw::getWindowPreview(mGroupWindow->mXfwWindow,
-		Settings::previewWidth, Settings::previewHeight, scaleFactor, mOverviewAlternative);
+		mPreviewWidth, mPreviewHeight, scaleFactor, mOverviewAlternative);
 
 	if (surface == nullptr && mOverviewAlternative)
 	{
 		// Fall back to a letterboxed preview so the window is still shown if the
 		// proportional rendering cannot be produced.
 		surface = Xfw::getWindowPreview(mGroupWindow->mXfwWindow,
-			Settings::previewWidth, Settings::previewHeight, scaleFactor, false);
+			mPreviewWidth, mPreviewHeight, scaleFactor, false);
 	}
 
 	// Fall back to a placeholder when no thumbnail is available.
@@ -429,7 +431,9 @@ void GroupMenuItem::updatePreview()
 			gint minimumWidth;
 			gint naturalWidth;
 			gtk_widget_get_preferred_width(GTK_WIDGET(mPreview), &minimumWidth, &naturalWidth);
-			int maxChars = MAX(8, (naturalWidth > 0 ? naturalWidth : Settings::previewWidth) / 8);
+			// Leave room for the title pill's padding and border so a long
+			// title cannot make the item wider than its preview.
+			int maxChars = MAX(8, ((naturalWidth > 0 ? naturalWidth : mPreviewWidth) - 40) / 8);
 			gtk_label_set_max_width_chars(mLabel, maxChars);
 		}
 
@@ -447,9 +451,23 @@ void GroupMenuItem::setOverviewHover(bool hover)
 	gtk_widget_set_sensitive(GTK_WIDGET(mCloseButton), hover);
 }
 
+void GroupMenuItem::setPreviewSize(int width, int height)
+{
+	mPreviewWidth = MAX(1, width);
+	mPreviewHeight = MAX(1, height);
+}
+
 void GroupMenuItem::setOverviewAlternative(bool enabled)
 {
 	mOverviewAlternative = enabled;
+
+	// The dock menu always uses the configured preview size; the overview may
+	// have enlarged it to use the available screen space.
+	if (!enabled)
+	{
+		mPreviewWidth = Settings::previewWidth;
+		mPreviewHeight = Settings::previewHeight;
+	}
 
 	// Reparenting is only needed when the layout actually changes. Calling it
 	// twice would try to remove the widgets from the wrong container.
@@ -507,7 +525,7 @@ void GroupMenuItem::setOverviewAlternative(bool enabled)
 		gtk_label_set_xalign(mLabel, 0.5);
 		gtk_label_set_ellipsize(mLabel, PANGO_ELLIPSIZE_END);
 		gtk_label_set_width_chars(mLabel, -1);
-		gtk_label_set_max_width_chars(mLabel, MAX(8, Settings::previewWidth / 8));
+		gtk_label_set_max_width_chars(mLabel, MAX(8, (mPreviewWidth - 40) / 8));
 		gtk_widget_set_margin_top(GTK_WIDGET(mLabel), 8);
 		gtk_widget_set_margin_bottom(GTK_WIDGET(mLabel), 4);
 
