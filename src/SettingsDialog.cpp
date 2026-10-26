@@ -66,6 +66,101 @@ namespace SettingsDialog
 		gtk_widget_set_visible(widget, Settings::keyAloneActive && !Hotkeys::mKeyAloneGrabbed);
 	}
 
+	// Pushes the current settings into the dialog widgets. Used after a reset
+	// so the dialog reflects the defaults without being recreated.
+	static void updateWidgets(GtkBuilder* builder)
+	{
+		GObject* noListForSingleWindow = gtk_builder_get_object(builder, "c_noListForSingleWindow");
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(noListForSingleWindow), Settings::noWindowsListIfSingle);
+
+		GObject* onlyDisplayVisible = gtk_builder_get_object(builder, "c_onlyDisplayVisible");
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(onlyDisplayVisible), Settings::onlyDisplayVisible);
+
+		GObject* onlyDisplayScreen = gtk_builder_get_object(builder, "c_onlyDisplayScreen");
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(onlyDisplayScreen), Settings::onlyDisplayScreen);
+
+		GObject* showPreviews = gtk_builder_get_object(builder, "c_showPreviews");
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(showPreviews), Settings::showPreviews);
+
+		GObject* showWindowCount = gtk_builder_get_object(builder, "c_showWindowCount");
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(showWindowCount), Settings::showWindowCount);
+
+		GObject* disableLauncherCounts = gtk_builder_get_object(builder, "c_disableLauncherCounts");
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(disableLauncherCounts), Settings::disableLauncherCounts);
+
+		GObject* ungroupWindows = gtk_builder_get_object(builder, "c_ungroupWindows");
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(ungroupWindows), Settings::ungroupWindows);
+
+		GObject* middleButtonBehavior = gtk_builder_get_object(builder, "co_middleButtonBehavior");
+		gtk_combo_box_set_active(GTK_COMBO_BOX(middleButtonBehavior), Settings::middleButtonBehavior);
+
+		GObject* hotCornerEnabled = gtk_builder_get_object(builder, "c_hotCornerEnabled");
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(hotCornerEnabled), Settings::hotCornerEnabled);
+
+		GObject* hotCornerCorner = gtk_builder_get_object(builder, "co_hotCornerCorner");
+		gtk_combo_box_set_active(GTK_COMBO_BOX(hotCornerCorner), Settings::hotCornerCorner);
+
+		GObject* hotCornerDelay = gtk_builder_get_object(builder, "hotCornerDelayButton");
+		gtk_spin_button_set_value(GTK_SPIN_BUTTON(hotCornerDelay), Settings::hotCornerDelay);
+
+		GObject* indicatorOrientation = gtk_builder_get_object(builder, "co_indicatorOrientation");
+		gtk_combo_box_set_active(GTK_COMBO_BOX(indicatorOrientation), Settings::indicatorOrientation);
+
+		GObject* indicatorStyle = gtk_builder_get_object(builder, "co_indicatorStyle");
+		gtk_combo_box_set_active(GTK_COMBO_BOX(indicatorStyle), Settings::indicatorStyle);
+
+		GObject* inactiveIndicatorStyle = gtk_builder_get_object(builder, "co_inactiveIndicatorStyle");
+		gtk_combo_box_set_active(GTK_COMBO_BOX(inactiveIndicatorStyle), Settings::inactiveIndicatorStyle);
+
+		GObject* indicatorSpacing = gtk_builder_get_object(builder, "indicatorSpacingButton");
+		gtk_spin_button_set_value(GTK_SPIN_BUTTON(indicatorSpacing), Settings::indicatorSpacing);
+
+		GObject* indicatorThickness = gtk_builder_get_object(builder, "indicatorThicknessButton");
+		gtk_spin_button_set_value(GTK_SPIN_BUTTON(indicatorThickness), Settings::indicatorThickness);
+
+		GObject* dockItemSpacing = gtk_builder_get_object(builder, "dockItemSpacingButton");
+		gtk_spin_button_set_value(GTK_SPIN_BUTTON(dockItemSpacing), Settings::dockItemSpacing);
+
+		GObject* indicatorColorFromTheme = gtk_builder_get_object(builder, "c_indicatorColorFromTheme");
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(indicatorColorFromTheme), Settings::indicatorColorFromTheme);
+
+		GObject* indicatorColor = gtk_builder_get_object(builder, "cp_indicatorColor");
+		gtk_color_chooser_set_rgba(GTK_COLOR_CHOOSER(indicatorColor), Settings::indicatorColor.get().get());
+
+		GObject* inactiveColor = gtk_builder_get_object(builder, "cp_inactiveColor");
+		gtk_color_chooser_set_rgba(GTK_COLOR_CHOOSER(inactiveColor), Settings::inactiveColor.get().get());
+
+		GObject* iconSize = gtk_builder_get_object(builder, "e_iconSize");
+		gtk_entry_set_text(GTK_ENTRY(gtk_bin_get_child(GTK_BIN(iconSize))), std::to_string(Settings::iconSize).c_str());
+
+		GObject* forceIconSize = gtk_builder_get_object(builder, "c_forceIconSize");
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(forceIconSize), Settings::forceIconSize);
+
+		GObject* expandDock = gtk_builder_get_object(builder, "c_expandDock");
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(expandDock), Settings::expandDock);
+
+		GObject* previewWidthButton = gtk_builder_get_object(builder, "previewWidthButton");
+		gtk_spin_button_set_value(GTK_SPIN_BUTTON(previewWidthButton), Settings::previewWidth);
+
+		GObject* previewHeightButton = gtk_builder_get_object(builder, "previewHeightButton");
+		gtk_spin_button_set_value(GTK_SPIN_BUTTON(previewHeightButton), Settings::previewHeight);
+
+		GObject* previewGapButton = gtk_builder_get_object(builder, "previewGapButton");
+		gtk_spin_button_set_value(GTK_SPIN_BUTTON(previewGapButton), Settings::previewGap);
+
+		GObject* alternativeOverviewStyle = gtk_builder_get_object(builder, "c_alternativeOverviewStyle");
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(alternativeOverviewStyle), Settings::alternativeOverviewStyle);
+
+		GObject* keyComboActive = gtk_builder_get_object(builder, "c_keyComboActive");
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(keyComboActive), Settings::keyComboActive);
+
+		GObject* keyAloneActive = gtk_builder_get_object(builder, "c_keyAloneActive");
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(keyAloneActive), Settings::keyAloneActive);
+
+		updateKeyComboActiveWarning(GTK_WIDGET(gtk_builder_get_object(builder, "c_keyComboActiveWarning")));
+		updateKeyAloneActiveWarning(GTK_WIDGET(gtk_builder_get_object(builder, "c_keyAloneActiveWarning")));
+	}
+
 	void popup()
 	{
 		if (mSettingsDialog != nullptr)
@@ -92,6 +187,40 @@ namespace SettingsDialog
 				gtk_dialog_response(GTK_DIALOG(dialogWindow), 0);
 			}),
 			dialog);
+
+		g_signal_connect(
+			gtk_builder_get_object(builder, "b_reset"), "clicked",
+			G_CALLBACK(+[](GtkButton* button, GtkBuilder* _builder) {
+				GtkWidget* dialogWindow = GTK_WIDGET(gtk_builder_get_object(_builder, "dialog"));
+
+				GtkWidget* confirm = gtk_message_dialog_new(
+					GTK_WINDOW(dialogWindow),
+					(GtkDialogFlags)(GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT),
+					GTK_MESSAGE_QUESTION,
+					GTK_BUTTONS_NONE,
+					"%s", _("Reset all settings to their default values?"));
+				gtk_message_dialog_format_secondary_text(
+					GTK_MESSAGE_DIALOG(confirm), "%s", _("This cannot be undone."));
+				gtk_dialog_add_buttons(GTK_DIALOG(confirm),
+					_("_Cancel"), GTK_RESPONSE_CANCEL,
+					_("_Reset"), GTK_RESPONSE_OK,
+					nullptr);
+				gtk_dialog_set_default_response(GTK_DIALOG(confirm), GTK_RESPONSE_CANCEL);
+
+				// Keep the dialog alive across the nested main loop in case the
+				// parent window is closed while the prompt is open.
+				g_object_ref(confirm);
+				gint response = gtk_dialog_run(GTK_DIALOG(confirm));
+				gtk_widget_destroy(confirm);
+				g_object_unref(confirm);
+
+				if (response == GTK_RESPONSE_OK)
+				{
+					Settings::resetToDefaults();
+					updateWidgets(_builder);
+				}
+			}),
+			builder);
 
 		g_signal_connect(
 			gtk_builder_get_object(builder, "b_help"), "clicked",

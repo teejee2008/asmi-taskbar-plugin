@@ -576,6 +576,51 @@ namespace Settings
 		saveAll();
 	}
 
+	// Restores every user-facing setting to the value used by a fresh
+	// installation. Pinned applications and user-set app associations are user
+	// data, not preferences, so they are left untouched.
+	void resetToDefaults()
+	{
+		forceIconSize.set(false);
+		iconSize.set(minIconSize);
+		expandDock.set(true);
+
+		noWindowsListIfSingle.set(false);
+		onlyDisplayVisible.set(false);
+		onlyDisplayScreen.set(false);
+		showPreviews.set(true);
+		alternativeOverviewStyle.set(true);
+		previewWidth.set(defPreviewWidth);
+		previewHeight.set(defPreviewHeight);
+		previewGap.set(defPreviewGap);
+		showWindowCount.set(false);
+		disableLauncherCounts.set(false);
+		ungroupWindows.set(false);
+		middleButtonBehavior.set(BEHAVIOR_DO_NOTHING);
+		hotCornerEnabled.set(false);
+		hotCornerCorner.set(0);
+		hotCornerDelay.set(defHotCornerDelay);
+
+		indicatorOrientation.set(ORIENTATION_AUTOMATIC);
+		indicatorStyle.set(STYLE_SEGMENTS);
+		inactiveIndicatorStyle.set(STYLE_SEGMENTS);
+		indicatorSpacing.set(2);
+		indicatorThickness.set(defIndicatorThickness);
+		dockItemSpacing.set(defDockItemSpacing);
+		indicatorColorFromTheme.set(true);
+
+		std::shared_ptr<GdkRGBA> color(g_new(GdkRGBA, 1), g_free);
+		gdk_rgba_parse(color.get(), "rgb(53,132,228)");
+		indicatorColor.set(color);
+
+		color = std::shared_ptr<GdkRGBA>(g_new(GdkRGBA, 1), g_free);
+		gdk_rgba_parse(color.get(), "rgb(51,209,122)");
+		inactiveColor.set(color);
+
+		keyComboActive.set(false);
+		keyAloneActive.set(false);
+	}
+
 	void finalize()
 	{
 		if (mChannel != nullptr)

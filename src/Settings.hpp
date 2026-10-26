@@ -35,6 +35,7 @@ namespace Settings
 {
 	void init();
 	void finalize();
+	void resetToDefaults();
 
 	const int minIconSize = 16;
 	const int maxIconSize = 128;
