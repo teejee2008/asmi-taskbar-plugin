@@ -58,6 +58,7 @@ public:
 	bool mDragging;
 	bool mOverviewAlternative;
 	bool mInOverview;
+	bool mCloseButtonPressed;
 	int mPreviewWidth;
 	int mPreviewHeight;
 	gdouble mDragStartX;

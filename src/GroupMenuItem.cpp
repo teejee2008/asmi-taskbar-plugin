@@ -28,6 +28,7 @@ GroupMenuItem::GroupMenuItem(GroupWindow* groupWindow)
 	mDragging = false;
 	mOverviewAlternative = false;
 	mInOverview = false;
+	mCloseButtonPressed = false;
 	mPreviewWidth = Settings::previewWidth;
 	mPreviewHeight = Settings::previewHeight;
 	mDragStartX = 0;
@@ -208,7 +209,23 @@ GroupMenuItem::GroupMenuItem(GroupWindow* groupWindow)
 				return true;
 			}
 
+			// The close button is inside the item, and its release can still
+			// reach this handler. Ignore it so closing a window from the
+			// overview does not also activate the window and dismiss the
+			// overview.
+			if (me->mCloseButtonPressed)
+			{
+				me->mCloseButtonPressed = false;
+				return true;
+			}
+
 			me->mGroupWindow->activate(event->time);
+
+			// Activating the window that is already active does not emit
+			// active-window-changed, so dismiss the overview explicitly.
+			if (me->mInOverview)
+				Overview::hide();
+
 			return true;
 		}),
 		this);
@@ -259,6 +276,16 @@ GroupMenuItem::GroupMenuItem(GroupWindow* groupWindow)
 				gtk_widget_queue_draw(me->mGroupWindow->mGroup->mButton);
 			}
 			return true;
+		}),
+		this);
+
+	g_signal_connect(G_OBJECT(mCloseButton), "button-press-event",
+		G_CALLBACK(+[](GtkWidget* widget, GdkEventButton* event, GroupMenuItem* me) {
+			// Remember that the press belongs to the close button so the item's
+			// release handler can skip activating the window underneath it.
+			if (event->button == GDK_BUTTON_PRIMARY)
+				me->mCloseButtonPressed = true;
+			return false;
 		}),
 		this);
 
