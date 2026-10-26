@@ -44,6 +44,7 @@ namespace Overview
 	{
 		GtkWidget* mWindow = nullptr;
 		GtkWidget* mFlowBox = nullptr;
+		GtkWidget* mContent = nullptr;
 		Help::Gtk::Timeout mPollTimeout;
 		gulong mWindowOpenedId = 0;
 		gulong mWindowClosedId = 0;
@@ -55,6 +56,8 @@ namespace Overview
 		// do not dismiss the overview.
 		XfwWindow* mKeepOpenWindow = nullptr;
 		Help::Gtk::Timeout mCloseGraceTimeout;
+
+		GdkMonitor* pointerMonitor(gint pointerX, gint pointerY);
 
 		GtkWidget* createWindow()
 		{
@@ -158,6 +161,58 @@ namespace Overview
 			clearFlowBox();
 		}
 
+		// Choose a balanced number of columns for the alternative style so the
+		// previews use both rows and columns instead of forming a single row.
+		void updateGridLayout()
+		{
+			if (!(Settings::alternativeOverviewStyle && Settings::showPreviews))
+			{
+				// Keep the default overview's natural flow layout.
+				gtk_flow_box_set_min_children_per_line(GTK_FLOW_BOX(mFlowBox), 1);
+				gtk_flow_box_set_max_children_per_line(GTK_FLOW_BOX(mFlowBox), G_MAXUINT);
+				return;
+			}
+
+			int count = 0;
+			Dock::forEachGroup([&count](Group* group) -> void {
+				count += group->mWindows.size();
+			});
+
+			if (count <= 0)
+				return;
+
+			// 4 windows -> 2x2, 6 -> 3x2, 9 -> 3x3, and so on.
+			int columns = 1;
+			while (columns * columns < count)
+				++columns;
+
+			// Do not ask for more columns than fit across the monitor, or the
+			// flow box would force them into a clipped row.
+			GdkMonitor* monitor = gdk_display_get_primary_monitor(Plugin::mDisplay);
+			if (Plugin::mPointer != nullptr)
+			{
+				gint pointerX, pointerY;
+				gdk_device_get_position(Plugin::mPointer, nullptr, &pointerX, &pointerY);
+				GdkMonitor* pointerMon = pointerMonitor(pointerX, pointerY);
+				if (pointerMon != nullptr)
+					monitor = pointerMon;
+			}
+
+			if (monitor != nullptr)
+			{
+				GdkRectangle geometry;
+				gdk_monitor_get_geometry(monitor, &geometry);
+
+				const int spacing = 6;
+				int available = geometry.width - 2 * OVERVIEW_PADDING;
+				int maxColumns = (available + spacing) / (Settings::previewWidth + spacing);
+				columns = MIN(columns, MAX(1, maxColumns));
+			}
+
+			gtk_flow_box_set_min_children_per_line(GTK_FLOW_BOX(mFlowBox), columns);
+			gtk_flow_box_set_max_children_per_line(GTK_FLOW_BOX(mFlowBox), columns);
+		}
+
 		// Rebuild the overview after a window was closed from it. The remaining
 		// items may have been pulled back into their (hidden) group menus by
 		// GroupMenu::remove(), so repopulate the flow box from the live groups.
@@ -166,7 +221,12 @@ namespace Overview
 			clearFlowBox();
 
 			if (!populate())
+			{
 				hide();
+				return;
+			}
+
+			updateGridLayout();
 		}
 
 		GdkMonitor* pointerMonitor(gint pointerX, gint pointerY)
@@ -321,7 +381,18 @@ namespace Overview
 		gtk_widget_set_margin_bottom(scrolled, OVERVIEW_PADDING);
 		gtk_container_add(GTK_CONTAINER(mWindow), scrolled);
 
+		// Center the grid in the viewport. The flow box itself only takes its
+		// natural size in the alternative style, so it can sit in the middle of
+		// the screen instead of hugging the top-left corner.
+		mContent = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+		gtk_widget_set_hexpand(mContent, TRUE);
+		gtk_widget_set_vexpand(mContent, TRUE);
+		gtk_container_add(GTK_CONTAINER(scrolled), mContent);
+
 		mFlowBox = gtk_flow_box_new();
+		// Keep the flow box alive while it is moved between the packed layout
+		// and the centered one.
+		g_object_ref_sink(mFlowBox);
 		gtk_flow_box_set_selection_mode(GTK_FLOW_BOX(mFlowBox), GTK_SELECTION_NONE);
 		// Equal-sized cells keep the grid regular even though previews and
 		// windows without a preview have different natural sizes.
@@ -329,8 +400,9 @@ namespace Overview
 		gtk_flow_box_set_column_spacing(GTK_FLOW_BOX(mFlowBox), 6);
 		gtk_flow_box_set_row_spacing(GTK_FLOW_BOX(mFlowBox), 6);
 		Help::Gtk::cssClassAdd(mFlowBox, "menu");
-		gtk_container_add(GTK_CONTAINER(scrolled), mFlowBox);
+		gtk_box_pack_start(GTK_BOX(mContent), mFlowBox, TRUE, TRUE, 0);
 		gtk_widget_show(scrolled);
+		gtk_widget_show(mContent);
 		gtk_widget_show(mFlowBox);
 
 		mPollTimeout.setup(POLL_INTERVAL, []() {
@@ -433,6 +505,12 @@ namespace Overview
 		{
 			gtk_widget_destroy(mWindow);
 			mWindow = nullptr;
+			mContent = nullptr;
+		}
+
+		if (mFlowBox != nullptr)
+		{
+			g_object_unref(mFlowBox);
 			mFlowBox = nullptr;
 		}
 	}
@@ -445,9 +523,41 @@ namespace Overview
 		bool alternativeStyle = Settings::alternativeOverviewStyle && Settings::showPreviews;
 		gtk_flow_box_set_homogeneous(GTK_FLOW_BOX(mFlowBox), !alternativeStyle);
 
+		if (alternativeStyle)
+		{
+			// Let the grid take its natural size and center it in the viewport
+			// instead of leaving it in the top-left corner.
+			gtk_widget_set_halign(mFlowBox, GTK_ALIGN_CENTER);
+			gtk_widget_set_valign(mFlowBox, GTK_ALIGN_CENTER);
+			gtk_widget_set_hexpand(mFlowBox, FALSE);
+			gtk_widget_set_vexpand(mFlowBox, FALSE);
+
+			if (gtk_box_get_center_widget(GTK_BOX(mContent)) != mFlowBox)
+			{
+				GtkWidget* parent = gtk_widget_get_parent(mFlowBox);
+				if (parent != nullptr)
+					gtk_container_remove(GTK_CONTAINER(parent), mFlowBox);
+				gtk_box_set_center_widget(GTK_BOX(mContent), mFlowBox);
+			}
+		}
+		else
+		{
+			gtk_widget_set_halign(mFlowBox, GTK_ALIGN_FILL);
+			gtk_widget_set_valign(mFlowBox, GTK_ALIGN_FILL);
+			gtk_widget_set_hexpand(mFlowBox, TRUE);
+			gtk_widget_set_vexpand(mFlowBox, TRUE);
+
+			if (gtk_box_get_center_widget(GTK_BOX(mContent)) == mFlowBox)
+			{
+				gtk_container_remove(GTK_CONTAINER(mContent), mFlowBox);
+				gtk_box_pack_start(GTK_BOX(mContent), mFlowBox, TRUE, TRUE, 0);
+			}
+		}
+
 		if (!populate())
 			return;
 
+		updateGridLayout();
 		positionWindow();
 		mVisible = true;
 		gtk_widget_show(mWindow);
