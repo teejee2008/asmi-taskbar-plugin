@@ -64,13 +64,22 @@ namespace Overview
 		void addWindowItem(GroupWindow* window)
 		{
 			GroupMenuItem* menuItem = window->mGroupMenuItem;
+			bool alternativeStyle = Settings::alternativeOverviewStyle && Settings::showPreviews;
+
+			// Apply the layout first: this also sets the alternative flag, so the
+			// preview below is rendered with the proportional path when needed.
+			menuItem->setOverviewAlternative(alternativeStyle);
 			menuItem->updateLabel();
 
 			if (Settings::showPreviews)
 			{
 				menuItem->updatePreview();
 				gtk_label_set_ellipsize(menuItem->mLabel, PANGO_ELLIPSIZE_END);
-				gtk_label_set_max_width_chars(menuItem->mLabel, OVERVIEW_LABEL_MAX_CHARS);
+
+				// In the default overview the title is reduced to the preview
+				// width; the alternative style sizes it to the preview instead.
+				if (!alternativeStyle)
+					gtk_label_set_max_width_chars(menuItem->mLabel, OVERVIEW_LABEL_MAX_CHARS);
 			}
 
 			GtkWidget* item = GTK_WIDGET(menuItem->mItem);
@@ -109,6 +118,7 @@ namespace Overview
 			Dock::forEachGroup([](Group* group) -> void {
 				group->mWindows.forEach([](GroupWindow* window) -> void {
 					GtkWidget* item = GTK_WIDGET(window->mGroupMenuItem->mItem);
+					window->mGroupMenuItem->setOverviewAlternative(false);
 					gtk_widget_set_halign(item, GTK_ALIGN_FILL);
 					gtk_widget_set_valign(item, GTK_ALIGN_FILL);
 					gtk_label_set_max_width_chars(window->mGroupMenuItem->mLabel, -1);
@@ -118,10 +128,18 @@ namespace Overview
 
 			// updateLayout() only detaches the items from the flow box child
 			// wrappers; the empty wrappers would otherwise pile up and push the
-			// grid down on every opening.
+			// grid down on every opening. Detach any remaining item first so
+			// destroying the wrapper can never destroy a live menu item.
 			GList* children = gtk_container_get_children(GTK_CONTAINER(mFlowBox));
 			for (GList* it = children; it != nullptr; it = it->next)
-				gtk_widget_destroy(GTK_WIDGET(it->data));
+			{
+				GtkWidget* wrapper = GTK_WIDGET(it->data);
+				GList* inner = gtk_container_get_children(GTK_CONTAINER(wrapper));
+				for (GList* j = inner; j != nullptr; j = j->next)
+					gtk_container_remove(GTK_CONTAINER(wrapper), GTK_WIDGET(j->data));
+				g_list_free(inner);
+				gtk_widget_destroy(wrapper);
+			}
 			g_list_free(children);
 		}
 
@@ -368,6 +386,9 @@ namespace Overview
 	{
 		if (mVisible)
 			return;
+
+		bool alternativeStyle = Settings::alternativeOverviewStyle && Settings::showPreviews;
+		gtk_flow_box_set_homogeneous(GTK_FLOW_BOX(mFlowBox), !alternativeStyle);
 
 		if (!populate())
 			return;

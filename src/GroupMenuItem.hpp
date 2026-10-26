@@ -39,16 +39,23 @@ public:
 	void updateIcon();
 	void updatePreview();
 
+	void setOverviewAlternative(bool enabled);
+	void setOverviewHover(bool hover);
+
 	GroupWindow* mGroupWindow;
 
 	GtkEventBox* mItem;
+	GtkBox* mRootBox;
 	GtkGrid* mGrid;
+	GtkOverlay* mOverlay;
+	GtkBox* mAltBox;
 	GtkImage* mIcon;
 	GtkLabel* mLabel;
 	GtkButton* mCloseButton;
 	GtkImage* mPreview;
 
 	bool mDragging;
+	bool mOverviewAlternative;
 	gdouble mDragStartX;
 	gdouble mDragStartY;
 

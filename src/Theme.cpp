@@ -49,6 +49,8 @@ void Theme::load()
 	else // No file
 		css += DEFAULT_THEME;
 
+	css += OVERVIEW_ALT_THEME;
+
 	if (gtk_css_provider_load_from_data(css_provider, css.c_str(), -1, nullptr))
 		gtk_style_context_add_provider_for_screen(gdk_screen_get_default(),
 			GTK_STYLE_PROVIDER(css_provider), GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);

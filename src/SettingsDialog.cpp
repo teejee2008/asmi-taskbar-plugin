@@ -368,6 +368,15 @@ namespace SettingsDialog
 			}),
 			nullptr);
 
+		GObject* alternativeOverviewStyle = gtk_builder_get_object(builder, "c_alternativeOverviewStyle");
+		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(alternativeOverviewStyle), Settings::alternativeOverviewStyle);
+		g_object_bind_property(showPreviews, "active", alternativeOverviewStyle, "sensitive", G_BINDING_SYNC_CREATE);
+		g_signal_connect(alternativeOverviewStyle, "toggled",
+			G_CALLBACK(+[](GtkToggleButton* _alternativeOverviewStyle) {
+				Settings::alternativeOverviewStyle.set(gtk_toggle_button_get_active(_alternativeOverviewStyle));
+			}),
+			nullptr);
+
 		// =====================================================================
 
 		GObject* keyComboActiveWarning = gtk_builder_get_object(builder, "c_keyComboActiveWarning");

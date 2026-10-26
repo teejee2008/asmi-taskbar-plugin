@@ -204,7 +204,7 @@ namespace Xfw
 		return Help::String::toLowercase(getGroupNameSys(groupWindow->mXfwWindow));
 	}
 
-	cairo_surface_t* getWindowPreview(XfwWindow* window, int width, int height, int scaleFactor)
+	cairo_surface_t* getWindowPreview(XfwWindow* window, int width, int height, int scaleFactor, bool proportional)
 	{
 #ifdef ENABLE_X11
 		// This needs work to survive porting to GTK4 and/or Wayland.
@@ -219,6 +219,11 @@ namespace Xfw
 
 		if (gdkWindow == nullptr)
 			return nullptr;
+
+		if (width <= 0)
+			width = 1;
+		if (height <= 0)
+			height = 1;
 
 		// we're probably not doing anything wrong at our level, but things can go wrong in cairo when
 		// multiple windows are closed and thumbnails are shown (#71), so let's catch X11 errors for it
@@ -237,7 +242,32 @@ namespace Xfw
 		gint pixbufWidth = gdk_pixbuf_get_width(pixbuf);
 		gint pixbufHeight = gdk_pixbuf_get_height(pixbuf);
 
-		/* calculate the new dimensions */
+		if (proportional)
+		{
+			// Fit the thumbnail inside the preview box while preserving the
+			// window's aspect ratio (no letterboxing, no upscaling distortion).
+			gdouble scale = MIN((gdouble)previewWidth / (gdouble)pixbufWidth,
+			                    (gdouble)previewHeight / (gdouble)pixbufHeight);
+			pixbufWidth = MAX(1, (gint)(pixbufWidth * scale));
+			pixbufHeight = MAX(1, (gint)(pixbufHeight * scale));
+
+			GdkPixbuf* thumbnail = gdk_pixbuf_scale_simple(pixbuf, pixbufWidth, pixbufHeight, GDK_INTERP_BILINEAR);
+
+			if (thumbnail == nullptr)
+			{
+				g_object_unref(pixbuf);
+				return nullptr;
+			}
+
+			cairo_surface_t* surface = gdk_cairo_surface_create_from_pixbuf(thumbnail, scaleFactor, nullptr);
+
+			g_object_unref(thumbnail);
+			g_object_unref(pixbuf);
+
+			return surface;
+		}
+
+		/* calculate the new dimensions (fill the box, letterbox the rest) */
 		gdouble wRatio = (gdouble)pixbufWidth / (gdouble)previewWidth;
 		gdouble hRatio = (gdouble)pixbufHeight / (gdouble)previewHeight;
 
@@ -273,6 +303,7 @@ namespace Xfw
 		(void)width;
 		(void)height;
 		(void)scaleFactor;
+		(void)proportional;
 		return nullptr;
 #endif
 	}

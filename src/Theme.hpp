@@ -39,6 +39,16 @@
 							 "padding: 1px 4px; "                          \
 							 "margin: 1px; }\n";
 
+#define OVERVIEW_ALT_THEME ".asmi-taskbar-window .menu_item.overview_alt { background-color: transparent; }\n"                                                       \
+						   ".asmi-taskbar-window .menu_item.overview_alt grid { padding: 0px; }\n"                                                       \
+						   ".asmi-taskbar-window .menu_item.overview_alt .preview { margin: 0px; }\n"                                                    \
+						   ".asmi-taskbar-window .menu_item.overview_alt .title { color: @menu_item_color; background-color: alpha(@menu_item_color, 0.15); " \
+						   "border: 1px solid alpha(@menu_item_color, 0.20); border-radius: 999px; padding: 2px 10px; }\n"                               \
+						   ".asmi-taskbar-window .menu_item.overview_alt .overview_close { color: #ffffff; "                                             \
+						   "background-color: rgba(0, 0, 0, 0.55); border: 1px solid rgba(255, 255, 255, 0.15); "                                       \
+						   "border-radius: 999px; min-width: 24px; min-height: 24px; padding: 2px; }\n"                                                 \
+						   ".asmi-taskbar-window .menu_item.overview_alt .overview_close:hover { background-color: rgba(0, 0, 0, 0.75); }\n";
+
 #include "Dock.hpp"
 
 #include <gtk/gtk.h>

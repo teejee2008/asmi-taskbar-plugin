@@ -24,6 +24,7 @@ GroupMenuItem::GroupMenuItem(GroupWindow* groupWindow)
 {
 	mGroupWindow = groupWindow;
 	mDragging = false;
+	mOverviewAlternative = false;
 	mDragStartX = 0;
 	mDragStartY = 0;
 
@@ -37,12 +38,26 @@ GroupMenuItem::GroupMenuItem(GroupWindow* groupWindow)
 	gtk_widget_show(GTK_WIDGET(mItem));
 	g_object_ref(mItem);
 
+	// Root container that holds either the default grid layout or the
+	// alternative overlay layout. Only one is visible at a time.
+	mRootBox = GTK_BOX(gtk_box_new(GTK_ORIENTATION_VERTICAL, 0));
+	gtk_widget_show(GTK_WIDGET(mRootBox));
+	gtk_container_add(GTK_CONTAINER(mItem), GTK_WIDGET(mRootBox));
+
+	//--------------------------------------------------
+	// Default layout: GtkGrid with icon, label, close in row 0,
+	// preview spanning row 1.
+	//--------------------------------------------------
+
 	mGrid = GTK_GRID(gtk_grid_new());
 	gtk_grid_set_column_spacing(mGrid, 6);
 	gtk_widget_show(GTK_WIDGET(mGrid));
-	gtk_container_add(GTK_CONTAINER(mItem), GTK_WIDGET(mGrid));
+	gtk_box_pack_start(GTK_BOX(mRootBox), GTK_WIDGET(mGrid), TRUE, TRUE, 0);
 
 	mIcon = GTK_IMAGE(gtk_image_new());
+	// Keep our own reference: the overview reparents this widget between
+	// containers, and the container would otherwise destroy it on removal.
+	g_object_ref_sink(GTK_WIDGET(mIcon));
 	Help::Gtk::cssClassAdd(GTK_WIDGET(mIcon), "icon");
 	gtk_widget_set_halign(GTK_WIDGET(mIcon), GTK_ALIGN_START);
 	gtk_widget_set_hexpand(GTK_WIDGET(mIcon), false);
@@ -50,6 +65,7 @@ GroupMenuItem::GroupMenuItem(GroupWindow* groupWindow)
 	gtk_grid_attach(mGrid, GTK_WIDGET(mIcon), 0, 0, 1, 1);
 
 	mLabel = GTK_LABEL(gtk_label_new(""));
+	g_object_ref_sink(GTK_WIDGET(mLabel));
 	Help::Gtk::cssClassAdd(GTK_WIDGET(mLabel), "title");
 	gtk_label_set_xalign(mLabel, 0);
 	gtk_label_set_ellipsize(mLabel, PANGO_ELLIPSIZE_END);
@@ -59,16 +75,36 @@ GroupMenuItem::GroupMenuItem(GroupWindow* groupWindow)
 	gtk_grid_attach(mGrid, GTK_WIDGET(mLabel), 1, 0, 1, 1);
 
 	mCloseButton = GTK_BUTTON(gtk_button_new_from_icon_name("window-close", GTK_ICON_SIZE_MENU));
+	g_object_ref_sink(GTK_WIDGET(mCloseButton));
 	gtk_button_set_relief(mCloseButton, GTK_RELIEF_NONE);
+	Help::Gtk::cssClassAdd(GTK_WIDGET(mCloseButton), "overview_close");
 	gtk_widget_set_halign(GTK_WIDGET(mCloseButton), GTK_ALIGN_END);
 	gtk_widget_set_hexpand(GTK_WIDGET(mCloseButton), false);
 	gtk_widget_show(GTK_WIDGET(mCloseButton));
 	gtk_grid_attach(mGrid, GTK_WIDGET(mCloseButton), 2, 0, 1, 1);
 
 	mPreview = GTK_IMAGE(gtk_image_new());
+	g_object_ref_sink(GTK_WIDGET(mPreview));
 	Help::Gtk::cssClassAdd(GTK_WIDGET(mPreview), "preview");
 	gtk_grid_attach(mGrid, GTK_WIDGET(mPreview), 0, 1, 3, 1);
 	gtk_widget_set_visible(GTK_WIDGET(mPreview), Settings::showPreviews);
+
+	//--------------------------------------------------
+	// Alternative layout: GtkOverlay inside a vertical GtkBox.
+	// Overlay contains preview (main child) with icon (bottom center)
+	// and close button (top right) overlaid on top. Label below.
+	//--------------------------------------------------
+
+	mAltBox = GTK_BOX(gtk_box_new(GTK_ORIENTATION_VERTICAL, 0));
+	gtk_widget_hide(GTK_WIDGET(mAltBox));
+	gtk_box_pack_start(GTK_BOX(mRootBox), GTK_WIDGET(mAltBox), TRUE, TRUE, 0);
+
+	mOverlay = GTK_OVERLAY(gtk_overlay_new());
+	gtk_widget_show(GTK_WIDGET(mOverlay));
+	gtk_box_pack_start(GTK_BOX(mAltBox), GTK_WIDGET(mOverlay), TRUE, TRUE, 0);
+
+	// Label is added to mAltBox in setOverviewAlternative(true) when switching
+	// to the alternative layout; it stays in mGrid for the default layout.
 
 	if (Xfw::getActiveWindow() == mGroupWindow->mXfwWindow)
 		Help::Gtk::cssClassAdd(GTK_WIDGET(mItem), "active_menu_item");
@@ -198,16 +234,25 @@ GroupMenuItem::GroupMenuItem(GroupWindow* groupWindow)
 			if (!me->mDragging && (event->state & GDK_BUTTON1_MASK))
 				me->mGroupWindow->activate(event->time);
 			Help::Gtk::cssClassAdd(widget, "hover_menu_item");
+			if (me->mOverviewAlternative)
+				me->setOverviewHover(true);
 			gtk_widget_queue_draw(widget);
 			return true;
 		}),
 		this);
 
 	g_signal_connect(G_OBJECT(mItem), "leave-notify-event",
-		G_CALLBACK(+[](GtkWidget* widget, GdkEvent* event, GroupMenuItem* me) {
-			Help::Gtk::cssClassRemove(widget, "hover_menu_item");
-			gtk_widget_queue_draw(widget);
-			gtk_widget_queue_draw(me->mGroupWindow->mGroup->mButton);
+		G_CALLBACK(+[](GtkWidget* widget, GdkEventCrossing* event, GroupMenuItem* me) {
+			// Entering a child (such as the close button) also produces a leave
+			// event for the event box; keep the overview controls visible then.
+			if (event->detail != GDK_NOTIFY_INFERIOR)
+			{
+				Help::Gtk::cssClassRemove(widget, "hover_menu_item");
+				if (me->mOverviewAlternative)
+					me->setOverviewHover(false);
+				gtk_widget_queue_draw(widget);
+				gtk_widget_queue_draw(me->mGroupWindow->mGroup->mButton);
+			}
 			return true;
 		}),
 		this);
@@ -222,6 +267,14 @@ GroupMenuItem::GroupMenuItem(GroupWindow* groupWindow)
 GroupMenuItem::~GroupMenuItem()
 {
 	mPreviewTimeout.stop();
+
+	// Drop the references taken in the constructor. If the widgets are still
+	// parented, the container keeps them alive until the item is destroyed.
+	g_object_unref(mPreview);
+	g_object_unref(mCloseButton);
+	g_object_unref(mLabel);
+	g_object_unref(mIcon);
+
 	g_object_unref(mItem);
 }
 
@@ -252,7 +305,12 @@ void GroupMenuItem::updateLabel()
 void GroupMenuItem::updateIcon()
 {
 	gint scale_factor = gtk_widget_get_scale_factor(GTK_WIDGET(mIcon));
-	GdkPixbuf* iconPixbuf = xfw_window_get_icon(mGroupWindow->mXfwWindow, 16, scale_factor);
+	gint iconSize = 16;
+
+	if (mOverviewAlternative)
+		iconSize = CLAMP(MIN(Settings::previewWidth, Settings::previewHeight) / 6, 24, 48);
+
+	GdkPixbuf* iconPixbuf = xfw_window_get_icon(mGroupWindow->mXfwWindow, iconSize, scale_factor);
 
 	if (iconPixbuf != nullptr)
 	{
@@ -338,12 +396,16 @@ static cairo_surface_t* createPlaceholderPreview(GtkWidget* widget, int width, i
 void GroupMenuItem::updatePreview()
 {
 	gint scaleFactor = gtk_widget_get_scale_factor(GTK_WIDGET(mPreview));
-	cairo_surface_t* surface = nullptr;
+	cairo_surface_t* surface = Xfw::getWindowPreview(mGroupWindow->mXfwWindow,
+		Settings::previewWidth, Settings::previewHeight, scaleFactor, mOverviewAlternative);
 
-	// Minimized windows may not expose a usable thumbnail.
-	if (!mGroupWindow->getState(XFW_WINDOW_STATE_MINIMIZED))
+	if (surface == nullptr && mOverviewAlternative)
+	{
+		// Fall back to a letterboxed preview so the window is still shown if the
+		// proportional rendering cannot be produced.
 		surface = Xfw::getWindowPreview(mGroupWindow->mXfwWindow,
-			Settings::previewWidth, Settings::previewHeight, scaleFactor);
+			Settings::previewWidth, Settings::previewHeight, scaleFactor, false);
+	}
 
 	// Fall back to a placeholder when no thumbnail is available.
 	if (surface == nullptr)
@@ -353,6 +415,163 @@ void GroupMenuItem::updatePreview()
 	if (surface != nullptr)
 	{
 		gtk_image_set_from_surface(mPreview, surface);
+
+		if (mOverviewAlternative)
+		{
+			gint minimumWidth;
+			gint naturalWidth;
+			gtk_widget_get_preferred_width(GTK_WIDGET(mPreview), &minimumWidth, &naturalWidth);
+			int maxChars = MAX(8, (naturalWidth > 0 ? naturalWidth : Settings::previewWidth) / 8);
+			gtk_label_set_max_width_chars(mLabel, maxChars);
+		}
+
 		cairo_surface_destroy(surface);
+	}
+}
+
+void GroupMenuItem::setOverviewHover(bool hover)
+{
+	if (!mOverviewAlternative)
+		return;
+
+	gtk_widget_set_opacity(GTK_WIDGET(mLabel), hover ? 1.0 : 0.0);
+	gtk_widget_set_opacity(GTK_WIDGET(mCloseButton), hover ? 1.0 : 0.0);
+	gtk_widget_set_sensitive(GTK_WIDGET(mCloseButton), hover);
+}
+
+void GroupMenuItem::setOverviewAlternative(bool enabled)
+{
+	mOverviewAlternative = enabled;
+
+	// Reparenting is only needed when the layout actually changes. Calling it
+	// twice would try to remove the widgets from the wrong container.
+	bool inOverlay = gtk_widget_get_parent(GTK_WIDGET(mPreview)) == GTK_WIDGET(mOverlay);
+
+	if (enabled)
+	{
+		if (!inOverlay)
+		{
+			// Switch from default grid layout to alternative overlay layout.
+			gtk_widget_hide(GTK_WIDGET(mGrid));
+			gtk_widget_show(GTK_WIDGET(mAltBox));
+
+			// Move preview, icon, close button and label out of the grid.
+			gtk_container_remove(GTK_CONTAINER(mGrid), GTK_WIDGET(mPreview));
+			gtk_container_remove(GTK_CONTAINER(mGrid), GTK_WIDGET(mIcon));
+			gtk_container_remove(GTK_CONTAINER(mGrid), GTK_WIDGET(mCloseButton));
+			gtk_container_remove(GTK_CONTAINER(mGrid), GTK_WIDGET(mLabel));
+
+			gtk_container_add(GTK_CONTAINER(mOverlay), GTK_WIDGET(mPreview));
+			gtk_overlay_add_overlay(mOverlay, GTK_WIDGET(mIcon));
+			gtk_overlay_add_overlay(mOverlay, GTK_WIDGET(mCloseButton));
+			gtk_box_pack_start(GTK_BOX(mAltBox), GTK_WIDGET(mLabel), FALSE, FALSE, 0);
+		}
+
+		Help::Gtk::cssClassAdd(GTK_WIDGET(mItem), "overview_alt");
+
+		// Position overlay children: icon bottom center, close top right.
+		gtk_widget_set_halign(GTK_WIDGET(mIcon), GTK_ALIGN_CENTER);
+		gtk_widget_set_valign(GTK_WIDGET(mIcon), GTK_ALIGN_END);
+		gtk_widget_set_hexpand(GTK_WIDGET(mIcon), false);
+		gtk_widget_set_margin_top(GTK_WIDGET(mIcon), 0);
+		gtk_widget_set_margin_bottom(GTK_WIDGET(mIcon), 4);
+		gtk_widget_set_margin_start(GTK_WIDGET(mIcon), 0);
+		gtk_widget_set_margin_end(GTK_WIDGET(mIcon), 0);
+
+		gtk_widget_set_halign(GTK_WIDGET(mCloseButton), GTK_ALIGN_END);
+		gtk_widget_set_valign(GTK_WIDGET(mCloseButton), GTK_ALIGN_START);
+		gtk_widget_set_margin_top(GTK_WIDGET(mCloseButton), 6);
+		gtk_widget_set_margin_end(GTK_WIDGET(mCloseButton), 6);
+		gtk_widget_set_margin_bottom(GTK_WIDGET(mCloseButton), 0);
+		gtk_widget_set_margin_start(GTK_WIDGET(mCloseButton), 0);
+
+		gtk_widget_set_halign(GTK_WIDGET(mPreview), GTK_ALIGN_FILL);
+		gtk_widget_set_valign(GTK_WIDGET(mPreview), GTK_ALIGN_FILL);
+		gtk_widget_set_margin_top(GTK_WIDGET(mPreview), 0);
+		gtk_widget_set_margin_bottom(GTK_WIDGET(mPreview), 0);
+		gtk_widget_set_margin_start(GTK_WIDGET(mPreview), 0);
+		gtk_widget_set_margin_end(GTK_WIDGET(mPreview), 0);
+
+		// Label below the overlay: centered, ellipsized to preview width.
+		gtk_widget_set_halign(GTK_WIDGET(mLabel), GTK_ALIGN_CENTER);
+		gtk_widget_set_valign(GTK_WIDGET(mLabel), GTK_ALIGN_CENTER);
+		gtk_widget_set_hexpand(GTK_WIDGET(mLabel), false);
+		gtk_label_set_xalign(mLabel, 0.5);
+		gtk_label_set_ellipsize(mLabel, PANGO_ELLIPSIZE_END);
+		gtk_label_set_width_chars(mLabel, -1);
+		gtk_label_set_max_width_chars(mLabel, MAX(8, Settings::previewWidth / 8));
+		gtk_widget_set_margin_top(GTK_WIDGET(mLabel), 8);
+		gtk_widget_set_margin_bottom(GTK_WIDGET(mLabel), 4);
+
+		gtk_widget_show(GTK_WIDGET(mPreview));
+		gtk_widget_show(GTK_WIDGET(mIcon));
+		gtk_widget_show(GTK_WIDGET(mCloseButton));
+		gtk_widget_show(GTK_WIDGET(mLabel));
+
+		setOverviewHover(false);
+		updateIcon();
+	}
+	else
+	{
+		if (inOverlay)
+		{
+			// Switch back to default grid layout.
+			gtk_widget_hide(GTK_WIDGET(mAltBox));
+			gtk_widget_show(GTK_WIDGET(mGrid));
+
+			gtk_container_remove(GTK_CONTAINER(mAltBox), GTK_WIDGET(mLabel));
+
+			// Move widgets from overlay back into the grid.
+			gtk_container_remove(GTK_CONTAINER(mOverlay), GTK_WIDGET(mPreview));
+			gtk_container_remove(GTK_CONTAINER(mOverlay), GTK_WIDGET(mIcon));
+			gtk_container_remove(GTK_CONTAINER(mOverlay), GTK_WIDGET(mCloseButton));
+
+			gtk_grid_attach(mGrid, GTK_WIDGET(mIcon), 0, 0, 1, 1);
+			gtk_grid_attach(mGrid, GTK_WIDGET(mLabel), 1, 0, 1, 1);
+			gtk_grid_attach(mGrid, GTK_WIDGET(mCloseButton), 2, 0, 1, 1);
+			gtk_grid_attach(mGrid, GTK_WIDGET(mPreview), 0, 1, 3, 1);
+		}
+
+		Help::Gtk::cssClassRemove(GTK_WIDGET(mItem), "overview_alt");
+
+		gtk_widget_set_halign(GTK_WIDGET(mIcon), GTK_ALIGN_START);
+		gtk_widget_set_valign(GTK_WIDGET(mIcon), GTK_ALIGN_CENTER);
+		gtk_widget_set_hexpand(GTK_WIDGET(mIcon), false);
+		gtk_widget_set_margin_top(GTK_WIDGET(mIcon), 0);
+		gtk_widget_set_margin_bottom(GTK_WIDGET(mIcon), 0);
+		gtk_widget_set_margin_start(GTK_WIDGET(mIcon), 0);
+		gtk_widget_set_margin_end(GTK_WIDGET(mIcon), 0);
+
+		gtk_widget_set_halign(GTK_WIDGET(mLabel), GTK_ALIGN_FILL);
+		gtk_widget_set_valign(GTK_WIDGET(mLabel), GTK_ALIGN_CENTER);
+		gtk_widget_set_hexpand(GTK_WIDGET(mLabel), true);
+		gtk_label_set_xalign(mLabel, 0);
+		gtk_label_set_width_chars(mLabel, 26);
+		gtk_label_set_max_width_chars(mLabel, -1);
+		gtk_widget_set_margin_top(GTK_WIDGET(mLabel), 0);
+		gtk_widget_set_margin_bottom(GTK_WIDGET(mLabel), 0);
+		gtk_widget_set_margin_start(GTK_WIDGET(mLabel), 0);
+		gtk_widget_set_margin_end(GTK_WIDGET(mLabel), 0);
+
+		gtk_widget_set_halign(GTK_WIDGET(mCloseButton), GTK_ALIGN_END);
+		gtk_widget_set_valign(GTK_WIDGET(mCloseButton), GTK_ALIGN_CENTER);
+		gtk_widget_set_margin_top(GTK_WIDGET(mCloseButton), 0);
+		gtk_widget_set_margin_end(GTK_WIDGET(mCloseButton), 0);
+		gtk_widget_set_margin_bottom(GTK_WIDGET(mCloseButton), 0);
+		gtk_widget_set_margin_start(GTK_WIDGET(mCloseButton), 0);
+
+		gtk_widget_set_halign(GTK_WIDGET(mPreview), GTK_ALIGN_FILL);
+		gtk_widget_set_valign(GTK_WIDGET(mPreview), GTK_ALIGN_FILL);
+
+		gtk_widget_set_opacity(GTK_WIDGET(mLabel), 1.0);
+		gtk_widget_set_opacity(GTK_WIDGET(mCloseButton), 1.0);
+		gtk_widget_set_sensitive(GTK_WIDGET(mCloseButton), TRUE);
+
+		gtk_widget_set_visible(GTK_WIDGET(mPreview), Settings::showPreviews);
+		gtk_widget_show(GTK_WIDGET(mIcon));
+		gtk_widget_show(GTK_WIDGET(mCloseButton));
+		gtk_widget_show(GTK_WIDGET(mLabel));
+
+		updateIcon();
 	}
 }
