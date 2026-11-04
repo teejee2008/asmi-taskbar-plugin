@@ -71,8 +71,8 @@ plugin_lib = shared_module(
 )
 
 i18n.merge_file(
-  input: 'asmi-taskbar.desktop.in',
-  output: 'asmi-taskbar.desktop',
+  input: 'asmi-taskbar-plugin.desktop.in',
+  output: 'asmi-taskbar-plugin.desktop',
   po_dir: '..' / 'po',
   type: 'desktop',
   install: true,

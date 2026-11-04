@@ -2,5 +2,5 @@ src/AppInfos.cpp
 src/Group.cpp
 src/Plugin.cpp
 src/SettingsDialog.cpp
-src/asmi-taskbar.desktop.in
+src/asmi-taskbar-plugin.desktop.in
 src/_dialogs.ui
