@@ -51,6 +51,8 @@ namespace Plugin
 
 	void aboutDialog();
 	void remoteEvent(gchar* name, GValue* value);
+
+	extern const char* ABOUT_VERSION;
 } // namespace Plugin
 
 #endif // PLUGIN_HPP

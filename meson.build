@@ -172,3 +172,9 @@ xfce_revision_h = vcs_tag(
 
 subdir('src')
 subdir('po')
+
+# Install application icon
+install_data(
+  'images/asmi-taskbar-plugin.png',
+  install_dir: get_option('datadir') / 'pixmaps'
+)

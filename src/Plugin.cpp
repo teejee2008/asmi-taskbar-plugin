@@ -31,6 +31,8 @@ namespace Plugin
 	GdkDevice* mPointer;
 	GdkDisplay* mDisplay;
 
+	const char* ABOUT_VERSION = VERSION_FULL;
+
 	static void init(XfcePanelPlugin* xfPlugin)
 	{
 		xfce_textdomain(GETTEXT_PACKAGE, PACKAGE_LOCALE_DIR, nullptr);
@@ -124,9 +126,9 @@ namespace Plugin
 			nullptr};
 
 		gtk_show_about_dialog(nullptr,
-			"program-name", PACKAGE_NAME,
-			"logo-icon-name", "preferences-system",
-			"version", VERSION_FULL,
+			"program-name", "Asmi Taskbar Plugin",
+			"logo-icon-name", "asmi-taskbar-plugin",
+			"version", ABOUT_VERSION,
 			"copyright", "Copyright \302\251 2019-" COPYRIGHT_YEAR " The Xfce development team",
 			"license-type", GTK_LICENSE_GPL_3_0,
 			"website", PACKAGE_URL,
