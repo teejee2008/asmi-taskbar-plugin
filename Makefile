@@ -22,7 +22,7 @@ MODULE   := asmi-taskbar
 DESKTOP  := asmi-taskbar-plugin.desktop
 ICON     := asmi-taskbar-plugin.png
 
-.PHONY: all install uninstall clean help
+.PHONY: all install uninstall clean help update-about-version
 
 all:
 	@meson setup $(BUILDDIR) -Dprefix=$(PREFIX)
@@ -41,14 +41,26 @@ uninstall:
 clean:
 	@rm -rf $(BUILDDIR)
 
+# Update ABOUT_VERSION in src/Plugin.cpp from the top debian/changelog entry.
+# debian/changelog first line looks like:  asmi-taskbar-plugin (26.11) resolute; urgency=medium
+update-about-version:
+	@version=$$(sed -n '1s/.*(\([^)]*\)).*/\1/p' debian/changelog); \
+	if [ -z "$$version" ]; then \
+		echo "update-about-version: could not parse version from debian/changelog" >&2; \
+		exit 1; \
+	fi; \
+	sed -i 's/const char\* ABOUT_VERSION = .*/const char* ABOUT_VERSION = "'"$$version"'";/' src/Plugin.cpp; \
+	echo "update-about-version: set ABOUT_VERSION to $$version"
+
 help:
 	@echo "Usage: make [target] [VAR=value] ..."
 	@echo ""
 	@echo "Targets:"
-	@echo "  all       - meson setup + ninja build in $(BUILDDIR)/"
-	@echo "  install   - build and install to $(PREFIX)"
-	@echo "  uninstall - remove installed files from known paths under $(PREFIX)"
-	@echo "  clean     - remove $(BUILDDIR)/ entirely"
+	@echo "  all                - meson setup + ninja build in $(BUILDDIR)/"
+	@echo "  install            - build and install to $(PREFIX)"
+	@echo "  uninstall          - remove installed files from known paths under $(PREFIX)"
+	@echo "  clean              - remove $(BUILDDIR)/ entirely"
+	@echo "  update-about-version - replace ABOUT_VERSION in src/Plugin.cpp with the version from debian/changelog"
 	@echo ""
 	@echo "Variables:"
 	@echo "  PREFIX      install prefix                        (default $(PREFIX))"
