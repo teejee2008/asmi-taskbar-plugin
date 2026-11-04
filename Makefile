@@ -1,14 +1,21 @@
 # Simple Makefile wrapper around meson + ninja for asmi-taskbar-plugin.
 #
 # Install prefix (default /usr). Override with: make PREFIX=/opt/foo ...
-# Library dir (default lib). On Debian/Ubuntu multiarch systems use e.g.
-#   make LIBDIR=lib/x86_64-linux-gnu ...
+# Library dir for the panel plugin module. Defaults to the value reported by
+# pkg-config for libxfce4panel-2.0, with /xfce4/panel/plugins appended.
+# Override with: make LIBDIR=/usr/lib/xfce4/panel/plugins ...
 
-PREFIX   ?= /usr
-DATADIR  ?= $(PREFIX)/share
-LIBDIR   ?= $(PREFIX)/lib
-BUILDDIR ?= build
-DESTDIR  ?=
+PREFIX    ?= /usr
+DATADIR   ?= $(PREFIX)/share
+BUILDDIR  ?= build
+DESTDIR   ?=
+
+PKG_CONFIG      ?= pkg-config
+XFCE_PANEL_PKG  ?= libxfce4panel-2.0
+LIBDIR          ?= $(shell $(PKG_CONFIG) --variable=libdir $(XFCE_PANEL_PKG) 2>/dev/null)/xfce4/panel/plugins
+ifeq ($(LIBDIR),/xfce4/panel/plugins)
+LIBDIR := $(PREFIX)/lib/xfce4/panel/plugins
+endif
 
 # Meson shared_module name -> installed as lib<MODULE>.so
 MODULE   := asmi-taskbar
@@ -27,7 +34,7 @@ install: all
 uninstall:
 	@rm -f $(DESTDIR)$(DATADIR)/pixmaps/$(ICON)
 	@rm -f $(DESTDIR)$(DATADIR)/xfce4/panel/plugins/$(DESKTOP)
-	@rm -f $(DESTDIR)$(LIBDIR)/xfce4/panel/plugins/lib$(MODULE).so
+	@rm -f $(DESTDIR)$(LIBDIR)/lib$(MODULE).so
 	@rm -f $(DESTDIR)$(DATADIR)/locale/*/LC_MESSAGES/asmi-taskbar-plugin.mo
 	@echo "uninstall: removed known files under $(DESTDIR)$(PREFIX)"
 
@@ -44,8 +51,10 @@ help:
 	@echo "  clean     - remove $(BUILDDIR)/ entirely"
 	@echo ""
 	@echo "Variables:"
-	@echo "  PREFIX    install prefix            (default $(PREFIX))"
-	@echo "  DATADIR   data dir                  (default $(DATADIR))"
-	@echo "  LIBDIR    library dir               (default $(LIBDIR))"
-	@echo "  BUILDDIR  meson build directory     (default $(BUILDDIR))"
-	@echo "  DESTDIR   staging dir for install   (default $(DESTDIR))"
+	@echo "  PREFIX      install prefix                        (default $(PREFIX))"
+	@echo "  DATADIR     data dir                              (default $(DATADIR))"
+	@echo "  LIBDIR      panel plugin module dir               (default $(LIBDIR))"
+	@echo "              derived via pkg-config libxfce4panel-2.0"
+	@echo "              override: make LIBDIR=/usr/lib/xfce4/panel/plugins"
+	@echo "  BUILDDIR    meson build directory                 (default $(BUILDDIR))"
+	@echo "  DESTDIR     staging dir for install               (default $(DESTDIR))"
