@@ -31,7 +31,7 @@ namespace Plugin
 	GdkDevice* mPointer;
 	GdkDisplay* mDisplay;
 
-	const char* ABOUT_VERSION = VERSION_FULL;
+	const char* ABOUT_VERSION = "26.11";
 
 	static void init(XfcePanelPlugin* xfPlugin)
 	{

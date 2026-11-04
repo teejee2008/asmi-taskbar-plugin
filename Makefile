@@ -25,6 +25,7 @@ ICON     := asmi-taskbar-plugin.png
 .PHONY: all install uninstall clean help update-about-version
 
 all:
+	make update-about-version
 	@meson setup $(BUILDDIR) -Dprefix=$(PREFIX)
 	@ninja -C $(BUILDDIR)
 
@@ -51,6 +52,9 @@ update-about-version:
 	fi; \
 	sed -i 's/const char\* ABOUT_VERSION = .*/const char* ABOUT_VERSION = "'"$$version"'";/' src/Plugin.cpp; \
 	echo "update-about-version: set ABOUT_VERSION to $$version"
+
+testrun:
+	make all && sudo make install && xfce4-panel -r
 
 help:
 	@echo "Usage: make [target] [VAR=value] ..."

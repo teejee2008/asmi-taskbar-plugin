@@ -28,19 +28,20 @@ long_line_behaviour=1
 long_line_column=80
 
 [files]
-current_page=4
+current_page=6
 FILE_NAME_0=0;C++;0;EUTF-8;1;1;1;%2Fhome%2Ftt%2Fai%2Fasmi-taskbar-plugin%2Fasmi-taskbar-plugin%2Fsrc%2FSettings.cpp;0;4
 FILE_NAME_1=11960;C++;0;EUTF-8;1;1;1;%2Fhome%2Ftt%2Fai%2Fasmi-taskbar-plugin%2Fasmi-taskbar-plugin%2Fsrc%2FAppInfos.cpp;0;4
 FILE_NAME_2=5101;C++;0;EUTF-8;1;1;1;%2Fhome%2Ftt%2Fai%2Fasmi-taskbar-plugin%2Fasmi-taskbar-plugin%2Fsrc%2FPlugin.cpp;0;4
 FILE_NAME_3=1423;C++;0;EUTF-8;1;1;1;%2Fhome%2Ftt%2Fai%2Fasmi-taskbar-plugin%2Fasmi-taskbar-plugin%2Fsrc%2FDock.cpp;0;4
-FILE_NAME_4=10568;None;0;EUTF-8;1;1;1;%2Fhome%2Ftt%2Fai%2Fasmi-taskbar-plugin%2FNOTES;0;4
+FILE_NAME_4=9755;None;0;EUTF-8;1;1;1;%2Fhome%2Ftt%2Fai%2Fasmi-taskbar-plugin%2FNOTES;0;4
 FILE_NAME_5=1129;C++;0;EUTF-8;1;1;1;%2Fhome%2Ftt%2Fai%2Fasmi-taskbar-plugin%2Fasmi-taskbar-plugin%2Fsrc%2FTheme.cpp;0;4
+FILE_NAME_6=959;Make;0;EUTF-8;1;1;1;%2Fhome%2Ftt%2Fai%2Fasmi-taskbar-plugin%2Fasmi-taskbar-plugin%2FMakefile;0;4
 
 [VTE]
 last_dir=/home/tt/ai/asmi-taskbar-plugin/asmi-taskbar-plugin
 
 [prjorg]
-expanded_paths=/home/tt/ai/asmi-taskbar-plugin/asmi-taskbar-plugin/src;
+expanded_paths=/home/tt/ai/asmi-taskbar-plugin/asmi-taskbar-plugin;
 source_patterns=*.c;*.C;*.cpp;*.cxx;*.c++;*.cc;*.m;
 header_patterns=*.h;*.H;*.hpp;*.hxx;*.h++;*.hh;
 ignored_dirs_patterns=.*;CVS;
