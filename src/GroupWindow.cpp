@@ -19,6 +19,7 @@
 #include "GroupWindow.hpp"
 
 GroupWindow::GroupWindow(XfwWindow* xfwWindow)
+	: mOrder(0), mOrderGroup(nullptr)
 {
 	mXfwWindow = xfwWindow;
 	mGroupMenuItem = new GroupMenuItem(this);

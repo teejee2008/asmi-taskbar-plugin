@@ -104,7 +104,7 @@ static std::shared_ptr<Group> getDragGroup(const std::string& dragId)
 		});
 }
 
-Group::Group(std::shared_ptr<AppInfo> appInfo, bool pinned) : mPinned(pinned), mWindowGroup(false), mActive(false), mWindowMenuShown(false), mDragging(false), mDragStartX(0), mDragStartY(0), mStarting(false), mStartAngle(0), mStartTicks(0), mTopWindowIndex(0), mAppInfo(appInfo), mGroupMenu(this), mIconPixbuf(nullptr), mIconColor{0, 0, 0, 1}, mIconColorValid(false), mContextMenu(nullptr)
+Group::Group(std::shared_ptr<AppInfo> appInfo, bool pinned) : mPinned(pinned), mWindowGroup(false), mActive(false), mWindowMenuShown(false), mDragging(false), mDragStartX(0), mDragStartY(0), mStarting(false), mStartAngle(0), mStartTicks(0), mTopWindowIndex(0), mNextWindowOrder(0), mAppInfo(appInfo), mGroupMenu(this), mIconPixbuf(nullptr), mIconColor{0, 0, 0, 1}, mIconColorValid(false), mContextMenu(nullptr)
 {
 	mWindowsCount.setup(
 		0,
@@ -375,10 +375,39 @@ Group::~Group()
 
 void Group::add(GroupWindow* window)
 {
-	mWindows.push(window);
+	uint index = mWindows.size();
+
+	if (window->mOrderGroup == this)
+	{
+		// The window already belongs to this group but was temporarily removed
+		// (workspace or visibility change). Put it back where it was so that
+		// only an explicit drag changes the order.
+		for (uint i = 0; i < mWindows.size(); ++i)
+		{
+			GroupWindow* other = mWindows.get(i);
+			if (other->mOrderGroup == this && other->mOrder > window->mOrder)
+			{
+				index = i;
+				break;
+			}
+		}
+	}
+	else
+	{
+		window->mOrderGroup = this;
+		window->mOrder = mNextWindowOrder;
+	}
+
+	if (mWindows.size() > 0 && index <= mTopWindowIndex)
+		++mTopWindowIndex;
+
+	mWindows.insert(index, window);
+	if (window->mOrder >= mNextWindowOrder)
+		mNextWindowOrder = window->mOrder + 1;
+
 	mWindowsCount.updateState();
 	stopProgress();
-	mGroupMenu.add(window->mGroupMenuItem);
+	mGroupMenu.add(window->mGroupMenuItem, index);
 	Help::Gtk::cssClassAdd(mButton, "open_group");
 
 	if (mWindowsCount == 1 && !mPinned)
@@ -434,6 +463,15 @@ void Group::moveWindow(GroupWindow* window, int toIndex)
 
 	if (movingTop)
 		mTopWindowIndex = toIndex;
+
+	// Persist the new positions so that windows keep them if they leave and
+	// rejoin the group later.
+	uint order = 0;
+	mWindows.forEach([this, &order](GroupWindow* w) -> void {
+		w->mOrderGroup = this;
+		w->mOrder = order++;
+	});
+	mNextWindowOrder = order;
 
 	mGroupMenu.reorder();
 	gtk_widget_queue_draw(mButton);

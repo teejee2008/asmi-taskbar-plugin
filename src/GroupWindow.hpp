@@ -60,6 +60,11 @@ public:
 
 	unsigned short mState{};
 	bool mGroupAssociated;
+
+	// Position of this window in its group. It is preserved when the window
+	// leaves and rejoins the group, so only an explicit drag reorders it.
+	uint mOrder;
+	Group* mOrderGroup;
 };
 
 #endif // GROUP_WINDOW_HPP

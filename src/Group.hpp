@@ -117,6 +117,7 @@ public:
 
 	uint mTolerablePointerDistance;
 	uint mTopWindowIndex;
+	uint mNextWindowOrder;
 	Store::List<GroupWindow*> mWindows;
 	LogicalState<uint> mWindowsCount;
 

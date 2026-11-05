@@ -134,9 +134,12 @@ GroupMenu::~GroupMenu()
 	gtk_widget_destroy(mWindow);
 }
 
-void GroupMenu::add(GroupMenuItem* menuItem)
+void GroupMenu::add(GroupMenuItem* menuItem, uint index)
 {
-	mItems.push_back(GTK_WIDGET(menuItem->mItem));
+	if (index > mItems.size())
+		index = mItems.size();
+
+	mItems.insert(mItems.begin() + index, GTK_WIDGET(menuItem->mItem));
 	updateLayout();
 
 	if (mVisible)

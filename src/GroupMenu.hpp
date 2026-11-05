@@ -35,7 +35,7 @@ public:
 	explicit GroupMenu(Group* dockButton);
 	~GroupMenu();
 
-	void add(GroupMenuItem* menuItem);
+	void add(GroupMenuItem* menuItem, uint index);
 	void remove(GroupMenuItem* menuItem);
 
 	void popup();
