@@ -41,7 +41,7 @@ extern "C"
 	gboolean internal_unique_check(GdkScreen* screen);
 }
 
-#define HELP_WEBSITE "https://github.com/teejee2008/asmi-taskbar-plugin"
+#define HELP_WEBSITE "https://teejeetech.com"
 
 namespace Plugin
 {

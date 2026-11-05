@@ -28,20 +28,23 @@ long_line_behaviour=1
 long_line_column=80
 
 [files]
-current_page=6
+current_page=4
 FILE_NAME_0=0;C++;0;EUTF-8;1;1;1;%2Fhome%2Ftt%2Fai%2Fasmi-taskbar-plugin%2Fasmi-taskbar-plugin%2Fsrc%2FSettings.cpp;0;4
-FILE_NAME_1=11960;C++;0;EUTF-8;1;1;1;%2Fhome%2Ftt%2Fai%2Fasmi-taskbar-plugin%2Fasmi-taskbar-plugin%2Fsrc%2FAppInfos.cpp;0;4
-FILE_NAME_2=5101;C++;0;EUTF-8;1;1;1;%2Fhome%2Ftt%2Fai%2Fasmi-taskbar-plugin%2Fasmi-taskbar-plugin%2Fsrc%2FPlugin.cpp;0;4
+FILE_NAME_1=10213;C++;0;EUTF-8;1;1;1;%2Fhome%2Ftt%2Fai%2Fasmi-taskbar-plugin%2Fasmi-taskbar-plugin%2Fsrc%2FAppInfos.cpp;0;4
+FILE_NAME_2=5234;C++;0;EUTF-8;1;1;1;%2Fhome%2Ftt%2Fai%2Fasmi-taskbar-plugin%2Fasmi-taskbar-plugin%2Fsrc%2FPlugin.cpp;0;4
 FILE_NAME_3=1423;C++;0;EUTF-8;1;1;1;%2Fhome%2Ftt%2Fai%2Fasmi-taskbar-plugin%2Fasmi-taskbar-plugin%2Fsrc%2FDock.cpp;0;4
-FILE_NAME_4=9755;None;0;EUTF-8;1;1;1;%2Fhome%2Ftt%2Fai%2Fasmi-taskbar-plugin%2FNOTES;0;4
+FILE_NAME_4=11241;None;0;EUTF-8;1;1;1;%2Fhome%2Ftt%2Fai%2Fasmi-taskbar-plugin%2FNOTES;0;4
 FILE_NAME_5=1129;C++;0;EUTF-8;1;1;1;%2Fhome%2Ftt%2Fai%2Fasmi-taskbar-plugin%2Fasmi-taskbar-plugin%2Fsrc%2FTheme.cpp;0;4
-FILE_NAME_6=959;Make;0;EUTF-8;1;1;1;%2Fhome%2Ftt%2Fai%2Fasmi-taskbar-plugin%2Fasmi-taskbar-plugin%2FMakefile;0;4
+FILE_NAME_6=927;Make;0;EUTF-8;1;1;1;%2Fhome%2Ftt%2Fai%2Fasmi-taskbar-plugin%2Fasmi-taskbar-plugin%2FMakefile;0;4
+FILE_NAME_7=1342;C++;0;EUTF-8;1;1;1;%2Fhome%2Ftt%2Fai%2Fasmi-taskbar-plugin%2Fasmi-taskbar-plugin%2Fsrc%2FPlugin.hpp;0;4
+FILE_NAME_8=18374;C++;0;EUTF-8;1;1;1;%2Fhome%2Ftt%2Fai%2Fasmi-taskbar-plugin%2Fasmi-taskbar-plugin%2Fsrc%2FGroup.cpp;0;4
+FILE_NAME_9=2014;C++;0;EUTF-8;1;1;1;%2Fhome%2Ftt%2Fai%2Fasmi-taskbar-plugin%2Fasmi-taskbar-plugin%2Fsrc%2FXfw.cpp;0;4
 
 [VTE]
 last_dir=/home/tt/ai/asmi-taskbar-plugin/asmi-taskbar-plugin
 
 [prjorg]
-expanded_paths=/home/tt/ai/asmi-taskbar-plugin/asmi-taskbar-plugin;
+expanded_paths=/home/tt/ai/asmi-taskbar-plugin/asmi-taskbar-plugin/src;
 source_patterns=*.c;*.C;*.cpp;*.cxx;*.c++;*.cc;*.m;
 header_patterns=*.h;*.H;*.hpp;*.hxx;*.h++;*.hh;
 ignored_dirs_patterns=.*;CVS;

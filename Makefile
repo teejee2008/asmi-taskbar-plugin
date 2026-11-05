@@ -26,7 +26,7 @@ ICON     := asmi-taskbar-plugin.png
 
 all:
 	make update-about-version
-	@meson setup $(BUILDDIR) -Dprefix=$(PREFIX)
+	@meson setup --wipe $(BUILDDIR) -Dprefix=$(PREFIX)
 	@ninja -C $(BUILDDIR)
 
 install: all
