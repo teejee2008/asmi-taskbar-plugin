@@ -262,14 +262,93 @@ void GroupMenuItem::updateIcon()
 	}
 }
 
+// Draw an empty-window placeholder (outline + title bar) used when no
+// thumbnail can be captured: minimized windows, Wayland, or X11 errors.
+static cairo_surface_t* createPlaceholderPreview(GtkWidget* widget, int width, int height, int scaleFactor)
+{
+	if (width <= 0 || height <= 0)
+		return nullptr;
+
+	if (scaleFactor < 1)
+		scaleFactor = 1;
+
+	GtkStyleContext* context = gtk_widget_get_style_context(widget);
+
+	GdkRGBA bg, fg, border;
+	if (!gtk_style_context_lookup_color(context, "theme_bg_color", &bg))
+		bg = {0.9, 0.9, 0.9, 1.0};
+	if (!gtk_style_context_lookup_color(context, "theme_fg_color", &fg))
+		fg = {0.1, 0.1, 0.1, 1.0};
+	if (!gtk_style_context_lookup_color(context, "borders", &border))
+		border = {fg.red, fg.green, fg.blue, 0.35};
+
+	bg.alpha = 1.0;
+	border.alpha = border.alpha > 0.0 ? border.alpha : 0.35;
+
+	// Title bar: a subtly contrasted variant of the window background.
+	GdkRGBA titleBar = {
+		bg.red * 0.92 + fg.red * 0.08,
+		bg.green * 0.92 + fg.green * 0.08,
+		bg.blue * 0.92 + fg.blue * 0.08,
+		1.0};
+
+	cairo_surface_t* surface = cairo_image_surface_create(
+		CAIRO_FORMAT_ARGB32, width * scaleFactor, height * scaleFactor);
+
+	if (cairo_surface_status(surface) != CAIRO_STATUS_SUCCESS)
+	{
+		cairo_surface_destroy(surface);
+		return nullptr;
+	}
+
+	// Draw in logical (unscaled) coordinates.
+	cairo_surface_set_device_scale(surface, scaleFactor, scaleFactor);
+
+	cairo_t* cr = cairo_create(surface);
+	double w = width;
+	double h = height;
+	double titleHeight = MAX(10.0, h / 10.0);
+	double line = 1.0;
+
+	// Window body.
+	cairo_set_source_rgba(cr, bg.red, bg.green, bg.blue, bg.alpha);
+	cairo_rectangle(cr, 0, 0, w, h);
+	cairo_fill(cr);
+
+	// Title bar.
+	cairo_set_source_rgba(cr, titleBar.red, titleBar.green, titleBar.blue, titleBar.alpha);
+	cairo_rectangle(cr, 0, 0, w, titleHeight);
+	cairo_fill(cr);
+
+	// Separator below the title bar.
+	cairo_set_source_rgba(cr, border.red, border.green, border.blue, border.alpha);
+	cairo_rectangle(cr, 0, titleHeight - line / 2.0, w, line);
+	cairo_fill(cr);
+
+	// Window outline, drawn just inside the surface so it is not clipped.
+	cairo_set_line_width(cr, line);
+	cairo_set_source_rgba(cr, border.red, border.green, border.blue, border.alpha);
+	cairo_rectangle(cr, line / 2.0, line / 2.0, w - line, h - line);
+	cairo_stroke(cr);
+
+	cairo_destroy(cr);
+	return surface;
+}
+
 void GroupMenuItem::updatePreview()
 {
-	if (mGroupWindow->getState(XFW_WINDOW_STATE_MINIMIZED))
-		return; // minimized windows never need a new thumbnail
-
 	gint scaleFactor = gtk_widget_get_scale_factor(GTK_WIDGET(mPreview));
-	cairo_surface_t* surface = Xfw::getWindowPreview(mGroupWindow->mXfwWindow,
-		Settings::previewWidth, Settings::previewHeight, scaleFactor);
+	cairo_surface_t* surface = nullptr;
+
+	// Minimized windows may not expose a usable thumbnail.
+	if (!mGroupWindow->getState(XFW_WINDOW_STATE_MINIMIZED))
+		surface = Xfw::getWindowPreview(mGroupWindow->mXfwWindow,
+			Settings::previewWidth, Settings::previewHeight, scaleFactor);
+
+	// Fall back to a placeholder when no thumbnail is available.
+	if (surface == nullptr)
+		surface = createPlaceholderPreview(GTK_WIDGET(mPreview),
+			Settings::previewWidth, Settings::previewHeight, scaleFactor);
 
 	if (surface != nullptr)
 	{
