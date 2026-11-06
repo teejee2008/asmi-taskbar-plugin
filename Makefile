@@ -1,9 +1,5 @@
-# Simple Makefile wrapper around meson + ninja for asmi-taskbar-plugin.
-#
-# Install prefix (default /usr). Override with: make PREFIX=/opt/foo ...
-# Library dir for the panel plugin module. Defaults to the value reported by
-# pkg-config for libxfce4panel-2.0, with /xfce4/panel/plugins appended.
-# Override with: make LIBDIR=/usr/lib/xfce4/panel/plugins ...
+#!/bin/bash
+SHELL=/bin/bash
 
 PREFIX    ?= /usr
 DATADIR   ?= $(PREFIX)/share

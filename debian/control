@@ -1,9 +1,9 @@
 Source: asmi-taskbar-plugin
-Section: utils
+Section: xfce
 Priority: optional
 Maintainer: TeejeeTech <support@teejeetech.com>
 Build-Depends:
- debhelper (>= 11),
+ debhelper-compat (= 13),
  gettext,
  meson,
  ninja-build,
