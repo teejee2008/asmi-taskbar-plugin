@@ -52,6 +52,10 @@ update-about-version:
 testrun:
 	make all && sudo make install && xfce4-panel -r
 
+build-source-package:
+	rm -rvf release uninstall temp build debian/asmi-taskbar-plugin debian/.debhelper
+	dpkg-buildpackage -uc -us
+	
 help:
 	@echo "Usage: make [target] [VAR=value] ..."
 	@echo ""
