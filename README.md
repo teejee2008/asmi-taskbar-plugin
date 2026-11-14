@@ -1,5 +1,7 @@
 # Asmi Taskbar for Xfce
 
+Forked from [xfce4-docklike-plugin](https://gitlab.xfce.org/panel-plugins/xfce4-docklike-plugin)
+
 A modern, minimalist taskbar for Xfce
 
 Asmi Taskbar behaves similarly to many other desktop environments and operating systems. Wherein all application windows are grouped together as an icon and can be pinned to act as a launcher when the application is not running. Commonly referred to as a dock.
