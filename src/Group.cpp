@@ -68,6 +68,66 @@ static PangoLayout* createCountLayout(cairo_t* cr, unsigned int count, double fo
 	return layout;
 }
 
+static void drawWindowCountBadge(cairo_t* cr, int w, int h, const double* rgba, unsigned int count)
+{
+	if (count == 0)
+		return;
+
+	double margin = std::max(1.0, h * 0.04);
+	double padding = std::max(1.0, h * 0.05);
+	double fontSize = std::max(5.0, h * 0.24);
+
+	int tw = 0, th = 0;
+	PangoLayout* layout = createCountLayout(cr, count, fontSize, &tw, &th);
+
+	double bh = th + 2 * padding;
+	double bw = std::max((double)tw + 2 * padding, bh);
+	double x = w - margin - bw;
+	double y = margin;
+	double r = bh / 2.;
+
+	cairo_new_sub_path(cr);
+	cairo_arc(cr, x + bw - r, y + r, r, -M_PI / 2., M_PI / 2.);
+	cairo_arc(cr, x + r, y + r, r, M_PI / 2., 3. * M_PI / 2.);
+	cairo_close_path(cr);
+
+	cairo_set_source_rgba(cr, rgba[0], rgba[1], rgba[2], rgba[3]);
+	cairo_fill(cr);
+
+	double luminance = relativeLuminance(rgba);
+	double textColor = luminance > 0.179 ? 0.0 : 1.0;
+	cairo_set_source_rgba(cr, textColor, textColor, textColor, 1);
+
+	cairo_move_to(cr, x + (bw - tw) / 2., y + padding);
+	pango_cairo_show_layout(cr, layout);
+
+	g_object_unref(layout);
+}
+
+static void drawWindowCountNumber(cairo_t* cr, int w, int h, unsigned int count)
+{
+	if (count == 0)
+		return;
+
+	double margin = std::max(1.0, h * 0.04);
+	double fontSize = std::max(5.0, h * 0.30);
+
+	int tw = 0, th = 0;
+	PangoLayout* layout = createCountLayout(cr, count, fontSize, &tw, &th);
+
+	cairo_move_to(cr, w - margin - tw, margin);
+	pango_cairo_layout_path(cr, layout);
+
+	cairo_set_source_rgba(cr, 0, 0, 0, 1);
+	cairo_set_line_width(cr, std::max(1.0, fontSize * 0.16));
+	cairo_stroke_preserve(cr);
+
+	cairo_set_source_rgba(cr, 1, 1, 1, 1);
+	cairo_fill(cr);
+
+	g_object_unref(layout);
+}
+
 static int resolveIndicatorOrientation()
 {
 	int orientation = Settings::indicatorOrientation;
@@ -997,68 +1057,6 @@ void Group::onDraw(cairo_t* cr)
 		break;
 	}
 
-	case STYLE_BADGE:
-	{
-		if (mWindowsCount > 0)
-		{
-			double margin = std::max(1.0, h * 0.04);
-			double padding = std::max(1.0, h * 0.05);
-			double fontSize = std::max(5.0, h * 0.24);
-
-			int tw = 0, th = 0;
-			PangoLayout* layout = createCountLayout(cr, mWindowsCount, fontSize, &tw, &th);
-
-			double bh = th + 2 * padding;
-			double bw = std::max((double)tw + 2 * padding, bh);
-			double x = w - margin - bw;
-			double y = margin;
-			double r = bh / 2.;
-
-			cairo_new_sub_path(cr);
-			cairo_arc(cr, x + bw - r, y + r, r, -M_PI / 2., M_PI / 2.);
-			cairo_arc(cr, x + r, y + r, r, M_PI / 2., 3. * M_PI / 2.);
-			cairo_close_path(cr);
-
-			cairo_set_source_rgba(cr, rgba[0], rgba[1], rgba[2], rgba[3]);
-			cairo_fill(cr);
-
-			double luminance = relativeLuminance(rgba);
-			double textColor = luminance > 0.179 ? 0.0 : 1.0;
-			cairo_set_source_rgba(cr, textColor, textColor, textColor, 1);
-
-			cairo_move_to(cr, x + (bw - tw) / 2., y + padding);
-			pango_cairo_show_layout(cr, layout);
-
-			g_object_unref(layout);
-		}
-		break;
-	}
-
-	case STYLE_COUNT:
-	{
-		if (mWindowsCount > 0)
-		{
-			double margin = std::max(1.0, h * 0.04);
-			double fontSize = std::max(5.0, h * 0.30);
-
-			int tw = 0, th = 0;
-			PangoLayout* layout = createCountLayout(cr, mWindowsCount, fontSize, &tw, &th);
-
-			cairo_move_to(cr, w - margin - tw, margin);
-			pango_cairo_layout_path(cr, layout);
-
-			cairo_set_source_rgba(cr, 0, 0, 0, 1);
-			cairo_set_line_width(cr, std::max(1.0, fontSize * 0.16));
-			cairo_stroke_preserve(cr);
-
-			cairo_set_source_rgba(cr, 1, 1, 1, 1);
-			cairo_fill(cr);
-
-			g_object_unref(layout);
-		}
-		break;
-	}
-
 	case STYLE_DOTS:
 	{
 		if (mWindowsCount > 0)
@@ -1215,6 +1213,20 @@ void Group::onDraw(cairo_t* cr)
 		}
 		break;
 	}
+	}
+
+	switch (Settings::indicatorWindowCount)
+	{
+	case WINDOW_COUNT_BADGE:
+		drawWindowCountBadge(cr, w, h, rgba, mWindowsCount);
+		break;
+
+	case WINDOW_COUNT_NUMBER:
+		drawWindowCountNumber(cr, w, h, mWindowsCount);
+		break;
+
+	default:
+		break;
 	}
 
 	if (mStarting)

@@ -47,6 +47,7 @@ namespace Settings
 	State<int> indicatorOrientation;
 	State<int> indicatorStyle;
 	State<int> inactiveIndicatorStyle;
+	State<int> indicatorWindowCount;
 	State<int> indicatorSpacing;
 	State<int> indicatorThickness;
 	State<int> dockItemSpacing;
@@ -207,6 +208,24 @@ namespace Settings
 		g_free(str);
 	}
 
+	static int migrateIndicatorStyle(int value)
+	{
+		// Older versions stored Badge and Count in the indicator style list:
+		// Bars=0, Dots=1, Rectangles=2, Ciliora=3, Segments=4, Circles=5,
+		// Badge=6, Count=7, None=8. Badge and Count are now handled by the
+		// separate indicatorWindowCount setting, so reset them to Segments.
+		if (value == 6 || value == 7)
+			return STYLE_SEGMENTS;
+
+		if (value == 8)
+			return STYLE_NONE;
+
+		if (value < STYLE_BARS || value > STYLE_NONE)
+			return STYLE_SEGMENTS;
+
+		return value;
+	}
+
 	// Writes every setting to the channel. Used once on startup so the xfconf
 	// file is populated (and so settings migrated from the legacy rc file stick).
 	static void saveAll()
@@ -231,6 +250,7 @@ namespace Settings
 		setInt("indicatorOrientation", indicatorOrientation.get());
 		setInt("indicatorStyle", indicatorStyle.get());
 		setInt("inactiveIndicatorStyle", inactiveIndicatorStyle.get());
+		setInt("indicatorWindowCount", indicatorWindowCount.get());
 		setInt("indicatorSpacing", indicatorSpacing.get());
 		setInt("indicatorThickness", indicatorThickness.get());
 		setInt("dockItemSpacing", dockItemSpacing.get());
@@ -431,16 +451,36 @@ namespace Settings
 				Dock::onPanelResize();
 			});
 
-		indicatorStyle.setup(getInt("indicatorStyle", STYLE_SEGMENTS),
+		int activeStyle = getInt("indicatorStyle", STYLE_SEGMENTS);
+		int inactiveStyle = getInt("inactiveIndicatorStyle", STYLE_SEGMENTS);
+
+		if (getInt("indicatorStyleVersion", 0) < 1)
+		{
+			activeStyle = migrateIndicatorStyle(activeStyle);
+			inactiveStyle = migrateIndicatorStyle(inactiveStyle);
+
+			setInt("indicatorStyle", activeStyle);
+			setInt("inactiveIndicatorStyle", inactiveStyle);
+			setInt("indicatorStyleVersion", 1);
+		}
+
+		indicatorStyle.setup(activeStyle,
 			[](int _indicatorStyle) -> void {
 				setInt("indicatorStyle", _indicatorStyle);
 
 				Dock::drawGroups();
 			});
 
-		inactiveIndicatorStyle.setup(getInt("inactiveIndicatorStyle", STYLE_SEGMENTS),
+		inactiveIndicatorStyle.setup(inactiveStyle,
 			[](int _inactiveIndicatorStyle) -> void {
 				setInt("inactiveIndicatorStyle", _inactiveIndicatorStyle);
+
+				Dock::drawGroups();
+			});
+
+		indicatorWindowCount.setup(CLAMP(getInt("indicatorWindowCount", WINDOW_COUNT_NONE), WINDOW_COUNT_NONE, WINDOW_COUNT_NUMBER),
+			[](int _indicatorWindowCount) -> void {
+				setInt("indicatorWindowCount", _indicatorWindowCount);
 
 				Dock::drawGroups();
 			});
@@ -596,6 +636,7 @@ namespace Settings
 		indicatorOrientation.set(ORIENTATION_AUTOMATIC);
 		indicatorStyle.set(STYLE_SEGMENTS);
 		inactiveIndicatorStyle.set(STYLE_SEGMENTS);
+		indicatorWindowCount.set(WINDOW_COUNT_NONE);
 		indicatorSpacing.set(2);
 		indicatorThickness.set(defIndicatorThickness);
 		dockItemSpacing.set(defDockItemSpacing);

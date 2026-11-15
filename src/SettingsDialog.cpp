@@ -109,6 +109,9 @@ namespace SettingsDialog
 		GObject* inactiveIndicatorStyle = gtk_builder_get_object(builder, "co_inactiveIndicatorStyle");
 		gtk_combo_box_set_active(GTK_COMBO_BOX(inactiveIndicatorStyle), Settings::inactiveIndicatorStyle);
 
+		GObject* indicatorWindowCount = gtk_builder_get_object(builder, "co_indicatorWindowCount");
+		gtk_combo_box_set_active(GTK_COMBO_BOX(indicatorWindowCount), Settings::indicatorWindowCount);
+
 		GObject* indicatorSpacing = gtk_builder_get_object(builder, "indicatorSpacingButton");
 		gtk_spin_button_set_value(GTK_SPIN_BUTTON(indicatorSpacing), Settings::indicatorSpacing);
 
@@ -364,6 +367,14 @@ namespace SettingsDialog
 		g_signal_connect(inactiveIndicatorStyle, "changed",
 			G_CALLBACK(+[](GtkComboBox* _inactiveIndicatorStyle, GtkWidget* g) {
 				Settings::inactiveIndicatorStyle.set(gtk_combo_box_get_active(GTK_COMBO_BOX(_inactiveIndicatorStyle)));
+			}),
+			dialog);
+
+		GObject* indicatorWindowCount = gtk_builder_get_object(builder, "co_indicatorWindowCount");
+		gtk_combo_box_set_active(GTK_COMBO_BOX(indicatorWindowCount), Settings::indicatorWindowCount);
+		g_signal_connect(indicatorWindowCount, "changed",
+			G_CALLBACK(+[](GtkComboBox* _indicatorWindowCount, GtkWidget* g) {
+				Settings::indicatorWindowCount.set(gtk_combo_box_get_active(GTK_COMBO_BOX(_indicatorWindowCount)));
 			}),
 			dialog);
 

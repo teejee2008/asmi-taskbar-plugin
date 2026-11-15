@@ -55,9 +55,14 @@ enum IndicatorStyle
 	STYLE_CILIORA,
 	STYLE_SEGMENTS,
 	STYLE_CIRCLES,
-	STYLE_BADGE,
-	STYLE_COUNT,
 	STYLE_NONE
+};
+
+enum IndicatorWindowCount
+{
+	WINDOW_COUNT_NONE,
+	WINDOW_COUNT_BADGE,
+	WINDOW_COUNT_NUMBER
 };
 
 enum DockAlignment
