@@ -39,6 +39,7 @@ namespace Settings
 
 	const int minIconSize = 16;
 	const int maxIconSize = 128;
+	const int defIconSize = 24;
 	const int defPreviewWidth = 300;
 	const int defPreviewHeight = 180;
 	const int defPreviewGap = 2;

@@ -418,7 +418,7 @@ namespace Settings
 				Dock::onPanelResize();
 			});
 
-		iconSize.setup(CLAMP(getInt("iconSize", 0), Settings::minIconSize, Settings::maxIconSize),
+		iconSize.setup(CLAMP(getInt("iconSize", defIconSize), Settings::minIconSize, Settings::maxIconSize),
 			[](int _iconSize) -> void {
 				int clamped = CLAMP(_iconSize, Settings::minIconSize, Settings::maxIconSize);
 				if (clamped != _iconSize)
@@ -575,7 +575,7 @@ namespace Settings
 	void resetToDefaults()
 	{
 		forceIconSize.set(false);
-		iconSize.set(minIconSize);
+		iconSize.set(defIconSize);
 		expandDock.set(true);
 		dockAlignment.set(ALIGN_START);
 
