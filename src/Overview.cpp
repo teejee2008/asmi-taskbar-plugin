@@ -76,7 +76,7 @@ namespace Overview
 		void addWindowItem(GroupWindow* window)
 		{
 			GroupMenuItem* menuItem = window->mGroupMenuItem;
-			bool alternativeStyle = Settings::alternativeOverviewStyle && Settings::showPreviews;
+			bool alternativeStyle = Settings::showPreviews;
 
 			menuItem->mInOverview = true;
 
@@ -176,7 +176,7 @@ namespace Overview
 			mPreviewTargetWidth = Settings::previewWidth;
 			mPreviewTargetHeight = Settings::previewHeight;
 
-			if (!(Settings::alternativeOverviewStyle && Settings::showPreviews))
+			if (!Settings::showPreviews)
 			{
 				// Keep the default overview's natural flow layout.
 				gtk_flow_box_set_min_children_per_line(GTK_FLOW_BOX(mFlowBox), 1);
@@ -547,7 +547,7 @@ namespace Overview
 		if (mVisible)
 			return;
 
-		bool alternativeStyle = Settings::alternativeOverviewStyle && Settings::showPreviews;
+		bool alternativeStyle = Settings::showPreviews;
 		gtk_flow_box_set_homogeneous(GTK_FLOW_BOX(mFlowBox), !alternativeStyle);
 
 		if (alternativeStyle)

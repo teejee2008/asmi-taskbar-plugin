@@ -151,9 +151,6 @@ namespace SettingsDialog
 		GObject* previewGapButton = gtk_builder_get_object(builder, "previewGapButton");
 		gtk_spin_button_set_value(GTK_SPIN_BUTTON(previewGapButton), Settings::previewGap);
 
-		GObject* alternativeOverviewStyle = gtk_builder_get_object(builder, "c_alternativeOverviewStyle");
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(alternativeOverviewStyle), Settings::alternativeOverviewStyle);
-
 		GObject* keyComboActive = gtk_builder_get_object(builder, "c_keyComboActive");
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(keyComboActive), Settings::keyComboActive);
 
@@ -506,15 +503,6 @@ namespace SettingsDialog
 		g_signal_connect(previewGapButton, "value-changed",
 			G_CALLBACK(+[](GtkSpinButton* _previewGapButton) {
 				Settings::previewGap.set(gtk_spin_button_get_value_as_int(_previewGapButton));
-			}),
-			nullptr);
-
-		GObject* alternativeOverviewStyle = gtk_builder_get_object(builder, "c_alternativeOverviewStyle");
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(alternativeOverviewStyle), Settings::alternativeOverviewStyle);
-		g_object_bind_property(showPreviews, "active", alternativeOverviewStyle, "sensitive", G_BINDING_SYNC_CREATE);
-		g_signal_connect(alternativeOverviewStyle, "toggled",
-			G_CALLBACK(+[](GtkToggleButton* _alternativeOverviewStyle) {
-				Settings::alternativeOverviewStyle.set(gtk_toggle_button_get_active(_alternativeOverviewStyle));
 			}),
 			nullptr);
 

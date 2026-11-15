@@ -55,7 +55,6 @@ namespace Settings
 	extern State<bool> onlyDisplayVisible;
 	extern State<bool> onlyDisplayScreen;
 	extern State<bool> showPreviews;
-	extern State<bool> alternativeOverviewStyle;
 	extern State<int> previewWidth;
 	extern State<int> previewHeight;
 	extern State<int> previewGap;

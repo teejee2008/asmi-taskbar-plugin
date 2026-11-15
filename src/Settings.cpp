@@ -39,7 +39,6 @@ namespace Settings
 	State<bool> onlyDisplayVisible;
 	State<bool> onlyDisplayScreen;
 	State<bool> showPreviews;
-	State<bool> alternativeOverviewStyle;
 	State<int> middleButtonBehavior;
 	State<bool> hotCornerEnabled;
 	State<int> hotCornerCorner;
@@ -221,7 +220,6 @@ namespace Settings
 		setBool("onlyDisplayVisible", onlyDisplayVisible.get());
 		setBool("onlyDisplayScreen", onlyDisplayScreen.get());
 		setBool("showPreviews", showPreviews.get());
-		setBool("alternativeOverviewStyle", alternativeOverviewStyle.get());
 		setInt("previewWidth", previewWidth.get());
 		setInt("previewHeight", previewHeight.get());
 		setInt("previewGap", previewGap.get());
@@ -311,11 +309,6 @@ namespace Settings
 				Dock::forEachGroup([](Group* g) -> void {
 					g->mGroupMenu.showPreviewsChanged();
 				});
-			});
-
-		alternativeOverviewStyle.setup(getBool("alternativeOverviewStyle", true),
-			[](bool _alternativeOverviewStyle) -> void {
-				setBool("alternativeOverviewStyle", _alternativeOverviewStyle);
 			});
 
 		intValue = getInt("previewWidth", 0);
@@ -599,7 +592,6 @@ namespace Settings
 		onlyDisplayVisible.set(false);
 		onlyDisplayScreen.set(false);
 		showPreviews.set(true);
-		alternativeOverviewStyle.set(true);
 		previewWidth.set(defPreviewWidth);
 		previewHeight.set(defPreviewHeight);
 		previewGap.set(defPreviewGap);
