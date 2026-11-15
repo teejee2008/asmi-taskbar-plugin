@@ -663,7 +663,7 @@
                             </child>
                             <child>
                               <object class="GtkCheckButton" id="c_showPreviews">
-                                <property name="label" translatable="yes">Show preview thumbnails for open windows</property>
+                                <property name="label" translatable="yes">Show preview thumbnails in the dock menu</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>

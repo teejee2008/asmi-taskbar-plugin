@@ -33,10 +33,6 @@ static const int TRIGGER_MARGIN = 4;
 static const int POLL_INTERVAL = 50;
 // Space kept free around the preview grid.
 static const int OVERVIEW_PADDING = 12;
-// The overview lets the title ellipsize to the preview width instead of
-// keeping the fixed width it has in the dock menu, so long titles never widen
-// the item.
-static const int OVERVIEW_LABEL_MAX_CHARS = 1;
 
 namespace Overview
 {
@@ -76,7 +72,6 @@ namespace Overview
 		void addWindowItem(GroupWindow* window)
 		{
 			GroupMenuItem* menuItem = window->mGroupMenuItem;
-			bool alternativeStyle = Settings::showPreviews;
 
 			menuItem->mInOverview = true;
 
@@ -84,21 +79,13 @@ namespace Overview
 			// the alternative icon size and the proportional preview both use it.
 			menuItem->setPreviewSize(mPreviewTargetWidth, mPreviewTargetHeight);
 
-			// Apply the layout first: this also sets the alternative flag, so the
-			// preview below is rendered with the proportional path when needed.
-			menuItem->setOverviewAlternative(alternativeStyle);
+			// The overview always shows previews in the alternative layout,
+			// regardless of the dock menu's "show previews" setting.
+			menuItem->setOverviewAlternative(true);
 			menuItem->updateLabel();
 
-			if (Settings::showPreviews)
-			{
-				menuItem->updatePreview();
-				gtk_label_set_ellipsize(menuItem->mLabel, PANGO_ELLIPSIZE_END);
-
-				// In the default overview the title is reduced to the preview
-				// width; the alternative style sizes it to the preview instead.
-				if (!alternativeStyle)
-					gtk_label_set_max_width_chars(menuItem->mLabel, OVERVIEW_LABEL_MAX_CHARS);
-			}
+			menuItem->updatePreview();
+			gtk_label_set_ellipsize(menuItem->mLabel, PANGO_ELLIPSIZE_END);
 
 			GtkWidget* item = GTK_WIDGET(menuItem->mItem);
 
@@ -175,14 +162,6 @@ namespace Overview
 		{
 			mPreviewTargetWidth = Settings::previewWidth;
 			mPreviewTargetHeight = Settings::previewHeight;
-
-			if (!Settings::showPreviews)
-			{
-				// Keep the default overview's natural flow layout.
-				gtk_flow_box_set_min_children_per_line(GTK_FLOW_BOX(mFlowBox), 1);
-				gtk_flow_box_set_max_children_per_line(GTK_FLOW_BOX(mFlowBox), G_MAXUINT);
-				return;
-			}
 
 			int count = 0;
 			Dock::forEachGroup([&count](Group* group) -> void {
@@ -547,38 +526,21 @@ namespace Overview
 		if (mVisible)
 			return;
 
-		bool alternativeStyle = Settings::showPreviews;
-		gtk_flow_box_set_homogeneous(GTK_FLOW_BOX(mFlowBox), !alternativeStyle);
+		gtk_flow_box_set_homogeneous(GTK_FLOW_BOX(mFlowBox), false);
 
-		if (alternativeStyle)
+		// Let the grid take its natural size and center it in the viewport
+		// instead of leaving it in the top-left corner.
+		gtk_widget_set_halign(mFlowBox, GTK_ALIGN_CENTER);
+		gtk_widget_set_valign(mFlowBox, GTK_ALIGN_CENTER);
+		gtk_widget_set_hexpand(mFlowBox, FALSE);
+		gtk_widget_set_vexpand(mFlowBox, FALSE);
+
+		if (gtk_box_get_center_widget(GTK_BOX(mContent)) != mFlowBox)
 		{
-			// Let the grid take its natural size and center it in the viewport
-			// instead of leaving it in the top-left corner.
-			gtk_widget_set_halign(mFlowBox, GTK_ALIGN_CENTER);
-			gtk_widget_set_valign(mFlowBox, GTK_ALIGN_CENTER);
-			gtk_widget_set_hexpand(mFlowBox, FALSE);
-			gtk_widget_set_vexpand(mFlowBox, FALSE);
-
-			if (gtk_box_get_center_widget(GTK_BOX(mContent)) != mFlowBox)
-			{
-				GtkWidget* parent = gtk_widget_get_parent(mFlowBox);
-				if (parent != nullptr)
-					gtk_container_remove(GTK_CONTAINER(parent), mFlowBox);
-				gtk_box_set_center_widget(GTK_BOX(mContent), mFlowBox);
-			}
-		}
-		else
-		{
-			gtk_widget_set_halign(mFlowBox, GTK_ALIGN_FILL);
-			gtk_widget_set_valign(mFlowBox, GTK_ALIGN_FILL);
-			gtk_widget_set_hexpand(mFlowBox, TRUE);
-			gtk_widget_set_vexpand(mFlowBox, TRUE);
-
-			if (gtk_box_get_center_widget(GTK_BOX(mContent)) == mFlowBox)
-			{
-				gtk_container_remove(GTK_CONTAINER(mContent), mFlowBox);
-				gtk_box_pack_start(GTK_BOX(mContent), mFlowBox, TRUE, TRUE, 0);
-			}
+			GtkWidget* parent = gtk_widget_get_parent(mFlowBox);
+			if (parent != nullptr)
+				gtk_container_remove(GTK_CONTAINER(parent), mFlowBox);
+			gtk_box_set_center_widget(GTK_BOX(mContent), mFlowBox);
 		}
 
 		updateGridLayout();
