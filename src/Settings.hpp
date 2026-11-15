@@ -49,6 +49,7 @@ namespace Settings
 	extern State<bool> forceIconSize;
 	extern State<int> iconSize;
 	extern State<bool> expandDock;
+	extern State<int> dockAlignment;
 
 	extern State<bool> noWindowsListIfSingle;
 	extern State<bool> onlyDisplayVisible;

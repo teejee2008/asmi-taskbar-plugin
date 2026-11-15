@@ -60,6 +60,13 @@ enum IndicatorStyle
 	STYLE_NONE
 };
 
+enum DockAlignment
+{
+	ALIGN_START,
+	ALIGN_END,
+	ALIGN_CENTER
+};
+
 class GroupWindow;
 
 class Group

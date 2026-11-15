@@ -573,7 +573,24 @@
                                   <packing>
                                     <property name="left_attach">0</property>
                                     <property name="top_attach">11</property>
-                                    <property name="width">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkComboBoxText" id="co_dockAlignment">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="hexpand">True</property>
+                                    <property name="halign">end</property>
+                                    <property name="tooltip_text" translatable="yes">Alignment of dock items in the panel</property>
+                                    <items>
+                                      <item translatable="yes">Start</item>
+                                      <item translatable="yes">End</item>
+                                      <item translatable="yes">Center</item>
+                                    </items>
+                                  </object>
+                                  <packing>
+                                    <property name="left_attach">1</property>
+                                    <property name="top_attach">11</property>
                                   </packing>
                                 </child>
                           </object>

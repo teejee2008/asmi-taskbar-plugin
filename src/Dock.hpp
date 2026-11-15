@@ -60,8 +60,10 @@ namespace Dock
 
 	void onPanelResize(int size = -1);
 	void onPanelOrientationChange(GtkOrientation orientation);
+	void updateAlignment();
 
 	extern GtkWidget* mBox;
+	extern GtkWidget* mContainer;
 	extern Store::KeyStore<std::shared_ptr<AppInfo>, std::shared_ptr<Group>> mGroups;
 	extern std::list<Group*> mWindowGroups;
 

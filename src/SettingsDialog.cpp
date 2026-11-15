@@ -139,6 +139,9 @@ namespace SettingsDialog
 		GObject* expandDock = gtk_builder_get_object(builder, "c_expandDock");
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(expandDock), Settings::expandDock);
 
+		GObject* dockAlignment = gtk_builder_get_object(builder, "co_dockAlignment");
+		gtk_combo_box_set_active(GTK_COMBO_BOX(dockAlignment), Settings::dockAlignment);
+
 		GObject* previewWidthButton = gtk_builder_get_object(builder, "previewWidthButton");
 		gtk_spin_button_set_value(GTK_SPIN_BUTTON(previewWidthButton), Settings::previewWidth);
 
@@ -467,6 +470,15 @@ namespace SettingsDialog
 		g_signal_connect(expandDock, "toggled",
 			G_CALLBACK(+[](GtkToggleButton* _expandDock) {
 				Settings::expandDock.set(gtk_toggle_button_get_active(_expandDock));
+			}),
+			nullptr);
+
+		GObject* dockAlignment = gtk_builder_get_object(builder, "co_dockAlignment");
+		gtk_combo_box_set_active(GTK_COMBO_BOX(dockAlignment), Settings::dockAlignment);
+		g_object_bind_property(expandDock, "active", dockAlignment, "sensitive", G_BINDING_SYNC_CREATE);
+		g_signal_connect(dockAlignment, "changed",
+			G_CALLBACK(+[](GtkComboBox* _dockAlignment) {
+				Settings::dockAlignment.set(gtk_combo_box_get_active(_dockAlignment));
 			}),
 			nullptr);
 

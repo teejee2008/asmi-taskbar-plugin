@@ -23,6 +23,7 @@
 namespace Dock
 {
 	GtkWidget* mBox;
+	GtkWidget* mContainer;
 	Store::KeyStore<std::shared_ptr<AppInfo>, std::shared_ptr<Group>> mGroups;
 	std::list<Group*> mWindowGroups;
 
@@ -53,8 +54,48 @@ namespace Dock
 		gtk_drag_dest_set(mBox, GtkDestDefaults(GTK_DEST_DEFAULT_MOTION | GTK_DEST_DEFAULT_DROP), dockDestEntries, 1, GDK_ACTION_COPY);
 		g_signal_connect(G_OBJECT(mBox), "drag-data-received", G_CALLBACK(onDockDragDataReceived), nullptr);
 
+		mContainer = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+		gtk_widget_show(mContainer);
+
 		gtk_widget_show(mBox);
 		drawGroups();
+
+		updateAlignment();
+	}
+
+	void updateAlignment()
+	{
+		if (mContainer == nullptr || mBox == nullptr)
+			return;
+
+		// The parent may hold the last reference to mBox; keep it alive while it
+		// is detached and re-packed into the wrapper.
+		GtkWidget* parent = gtk_widget_get_parent(mBox);
+		if (parent != nullptr)
+		{
+			g_object_ref(mBox);
+			gtk_container_remove(GTK_CONTAINER(parent), mBox);
+		}
+		gtk_box_set_center_widget(GTK_BOX(mContainer), nullptr);
+
+		switch (Settings::dockAlignment)
+		{
+		case ALIGN_END:
+			gtk_box_pack_end(GTK_BOX(mContainer), mBox, false, false, 0);
+			break;
+		case ALIGN_CENTER:
+			gtk_box_set_center_widget(GTK_BOX(mContainer), mBox);
+			break;
+		case ALIGN_START:
+		default:
+			gtk_box_pack_start(GTK_BOX(mContainer), mBox, false, false, 0);
+			break;
+		}
+
+		if (parent != nullptr)
+			g_object_unref(mBox);
+
+		gtk_widget_show(mBox);
 	}
 
 	Group* prepareGroup(std::shared_ptr<AppInfo> appInfo)
@@ -353,6 +394,7 @@ namespace Dock
 	void onPanelOrientationChange(GtkOrientation orientation)
 	{
 		gtk_orientable_set_orientation(GTK_ORIENTABLE(mBox), orientation);
+		gtk_orientable_set_orientation(GTK_ORIENTABLE(mContainer), orientation);
 
 		if (Settings::dockSize)
 		{

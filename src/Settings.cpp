@@ -33,6 +33,7 @@ namespace Settings
 	State<int> iconSize;
 
 	State<bool> expandDock;
+	State<int> dockAlignment;
 
 	State<bool> noWindowsListIfSingle;
 	State<bool> onlyDisplayVisible;
@@ -215,6 +216,7 @@ namespace Settings
 		setBool("forceIconSize", forceIconSize.get());
 		setInt("iconSize", iconSize.get());
 		setBool("expandDock", expandDock.get());
+		setInt("dockAlignment", dockAlignment.get());
 		setBool("noWindowsListIfSingle", noWindowsListIfSingle.get());
 		setBool("onlyDisplayVisible", onlyDisplayVisible.get());
 		setBool("onlyDisplayScreen", onlyDisplayScreen.get());
@@ -364,6 +366,13 @@ namespace Settings
 				setBool("expandDock", _expandDock);
 
 				xfce_panel_plugin_set_expand(Plugin::mXfPlugin, _expandDock);
+			});
+
+		dockAlignment.setup(CLAMP(getInt("dockAlignment", ALIGN_START), ALIGN_START, ALIGN_CENTER),
+			[](int _dockAlignment) -> void {
+				setInt("dockAlignment", _dockAlignment);
+
+				Dock::updateAlignment();
 			});
 
 		showWindowCount.setup(getBool("showWindowCount", false),
@@ -584,6 +593,7 @@ namespace Settings
 		forceIconSize.set(false);
 		iconSize.set(minIconSize);
 		expandDock.set(true);
+		dockAlignment.set(ALIGN_START);
 
 		noWindowsListIfSingle.set(false);
 		onlyDisplayVisible.set(false);
