@@ -50,7 +50,7 @@ update-about-version:
 	echo "update-about-version: set ABOUT_VERSION to $$version"
 
 testrun:
-	make all && sudo make install && xfce4-panel -r
+	sudo make install && xfce4-panel -r
 
 build-source-package:
 	rm -rvf release uninstall temp build debian/asmi-taskbar-plugin debian/.debhelper
