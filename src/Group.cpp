@@ -159,28 +159,21 @@ Group::Group(std::shared_ptr<AppInfo> appInfo, bool pinned) : mPinned(pinned), m
 
 	mButton = GTK_WIDGET(g_object_ref(gtk_button_new()));
 	mImage = gtk_image_new();
-	mLabel = gtk_label_new("");
 	mLauncherLabel = gtk_label_new("");
 	mLauncherCountCssProvider = gtk_css_provider_new();
 	gtk_widget_set_no_show_all(mLauncherLabel, true);
 	GtkWidget* overlay = gtk_overlay_new();
 
-	// The button contains a GtkOverlay, so that the labels can be placed on top of the image.
-	gtk_label_set_use_markup(GTK_LABEL(mLabel), true);
+	// The button contains a GtkOverlay, so that the launcher label can be placed on top of the image.
 	gtk_container_add(GTK_CONTAINER(overlay), mImage);
-	gtk_overlay_add_overlay(GTK_OVERLAY(overlay), mLabel);
 	gtk_overlay_add_overlay(GTK_OVERLAY(overlay), mLauncherLabel);
-	gtk_widget_set_halign(mLabel, GTK_ALIGN_START);
-	gtk_widget_set_valign(mLabel, GTK_ALIGN_START);
 	gtk_widget_set_halign(mLauncherLabel, GTK_ALIGN_END);
 	gtk_widget_set_valign(mLauncherLabel, GTK_ALIGN_START);
-	gtk_overlay_set_overlay_pass_through(GTK_OVERLAY(overlay), mLabel, true);
 	gtk_overlay_set_overlay_pass_through(GTK_OVERLAY(overlay), mLauncherLabel, true);
 	gtk_container_add(GTK_CONTAINER(mButton), overlay);
 
 	Help::Gtk::cssClassAdd(mButton, "flat");
 	Help::Gtk::cssClassAdd(mButton, "group");
-	Help::Gtk::cssClassAdd(mLabel, "window_count");
 	Help::Gtk::cssClassAdd(mLauncherLabel, "launcher_count");
 	gtk_style_context_add_provider(gtk_widget_get_style_context(mLauncherLabel),
 		GTK_STYLE_PROVIDER(mLauncherCountCssProvider), GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
@@ -1291,15 +1284,6 @@ void Group::updateStyle()
 	}
 	else
 		gtk_widget_set_tooltip_text(mButton, mAppInfo->mName.c_str());
-
-	if (mWindowsCount > 2 && Settings::showWindowCount)
-	{
-		gchar* markup = g_strdup_printf("<b>%d</b>", (int)mWindowsCount);
-		gtk_label_set_markup(GTK_LABEL(mLabel), markup);
-		g_free(markup);
-	}
-	else
-		gtk_label_set_markup(GTK_LABEL(mLabel), "");
 }
 
 void Group::setLauncherCount(gint64 count, bool visible)

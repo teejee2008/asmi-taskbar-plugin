@@ -58,7 +58,6 @@ namespace Settings
 	extern State<int> previewWidth;
 	extern State<int> previewHeight;
 	extern State<int> previewGap;
-	extern State<bool> showWindowCount;
 	extern State<bool> disableLauncherCounts;
 	extern State<bool> ungroupWindows;
 	extern State<int> middleButtonBehavior;

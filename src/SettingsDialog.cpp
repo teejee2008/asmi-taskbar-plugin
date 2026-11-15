@@ -82,9 +82,6 @@ namespace SettingsDialog
 		GObject* showPreviews = gtk_builder_get_object(builder, "c_showPreviews");
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(showPreviews), Settings::showPreviews);
 
-		GObject* showWindowCount = gtk_builder_get_object(builder, "c_showWindowCount");
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(showWindowCount), Settings::showWindowCount);
-
 		GObject* disableLauncherCounts = gtk_builder_get_object(builder, "c_disableLauncherCounts");
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(disableLauncherCounts), Settings::disableLauncherCounts);
 
@@ -295,14 +292,6 @@ namespace SettingsDialog
 		{
 			gtk_widget_hide(GTK_WIDGET(showPreviews));
 		}
-
-		GObject* showWindowCount = gtk_builder_get_object(builder, "c_showWindowCount");
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(showWindowCount), Settings::showWindowCount);
-		g_signal_connect(showWindowCount, "toggled",
-			G_CALLBACK(+[](GtkToggleButton* _showWindowCount) {
-				Settings::showWindowCount.set(gtk_toggle_button_get_active(_showWindowCount));
-			}),
-			nullptr);
 
 		GObject* disableLauncherCounts = gtk_builder_get_object(builder, "c_disableLauncherCounts");
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(disableLauncherCounts), Settings::disableLauncherCounts);

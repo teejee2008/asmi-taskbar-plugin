@@ -60,7 +60,6 @@ namespace Settings
 	State<std::list<std::string>> pinnedAppList;
 	State<std::pair<std::list<std::string>, std::list<std::string>>> userSetApps;
 
-	State<bool> showWindowCount;
 	State<bool> disableLauncherCounts;
 	State<bool> ungroupWindows;
 	State<int> dockSize;
@@ -223,7 +222,6 @@ namespace Settings
 		setInt("previewWidth", previewWidth.get());
 		setInt("previewHeight", previewHeight.get());
 		setInt("previewGap", previewGap.get());
-		setBool("showWindowCount", showWindowCount.get());
 		setBool("disableLauncherCounts", disableLauncherCounts.get());
 		setBool("ungroupWindows", ungroupWindows.get());
 		setInt("middleButtonBehavior", middleButtonBehavior.get());
@@ -366,13 +364,6 @@ namespace Settings
 				setInt("dockAlignment", _dockAlignment);
 
 				Dock::updateAlignment();
-			});
-
-		showWindowCount.setup(getBool("showWindowCount", false),
-			[](bool _showWindowCount) -> void {
-				setBool("showWindowCount", _showWindowCount);
-
-				Dock::drawGroups();
 			});
 
 		disableLauncherCounts.setup(getBool("disableLauncherCounts", false),
@@ -595,7 +586,6 @@ namespace Settings
 		previewWidth.set(defPreviewWidth);
 		previewHeight.set(defPreviewHeight);
 		previewGap.set(defPreviewGap);
-		showWindowCount.set(false);
 		disableLauncherCounts.set(false);
 		ungroupWindows.set(false);
 		middleButtonBehavior.set(BEHAVIOR_DO_NOTHING);
