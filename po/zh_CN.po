@@ -1,88 +1,108 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR Xfce
-# This file is distributed under the same license as the xfce-panel-plugins.xfce4-docklike-plugin package.
+# This file is distributed under the same license as the asmi-taskbar-plugin package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-# 
+#
 # Translators:
 # Nick Schermer <nick@xfce.org>, 2026
 # 玉堂白鹤 <yjwork@qq.com>, 2026
-# 
+#
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: xfce-panel-plugins.xfce4-docklike-plugin\n"
-"Report-Msgid-Bugs-To: https://gitlab.xfce.org/\n"
-"POT-Creation-Date: 2026-08-18 12:59+0200\n"
+"Project-Id-Version: asmi-taskbar-plugin\n"
+"Report-Msgid-Bugs-To: https://github.com/teejee2008/asmi-taskbar-plugin/"
+"issues\n"
+"POT-Creation-Date: 2026-11-16 12:16+0530\n"
 "PO-Revision-Date: 2023-02-22 11:02+0000\n"
 "Last-Translator: 玉堂白鹤 <yjwork@qq.com>, 2026\n"
-"Language-Team: Chinese (China) (https://app.transifex.com/xfce/teams/16840/zh_CN/)\n"
+"Language-Team: Chinese (China) (https://app.transifex.com/xfce/teams/16840/"
+"zh_CN/)\n"
+"Language: zh_CN\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: zh_CN\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: src/AppInfos.cpp:354
+#: src/AppInfos.cpp:382
 msgid "Select Launcher"
 msgstr "选择启动器"
 
-#: src/AppInfos.cpp:355
+#: src/AppInfos.cpp:383 src/SettingsDialog.cpp:205
 msgid "_Cancel"
 msgstr "取消(_C)"
 
-#: src/AppInfos.cpp:355
+#: src/AppInfos.cpp:383
 msgid "_Open"
 msgstr "打开(_O)"
 
-#: src/Group.cpp:938
+#: src/Group.cpp:1381
 msgid "Pinned to Dock"
 msgstr "已固定到 Dock"
 
-#: src/Group.cpp:938
+#: src/Group.cpp:1381
 msgid "Pin to Dock"
 msgstr "固定到 Dock"
 
-#: src/Group.cpp:956
+#: src/Group.cpp:1399
 msgid "Add activation shortcut..."
 msgstr "添加激活快捷键..."
 
-#: src/Group.cpp:967
+#: src/Group.cpp:1410
 msgid "Manage activation shortcut..."
 msgstr "管理激活快捷键... "
 
-#: src/Group.cpp:989
+#: src/Group.cpp:1432
+msgid "Launch application"
+msgstr "启动应用程序"
+
+#: src/Group.cpp:1440
 msgid "Edit Launcher..."
 msgstr "编辑启动器..."
 
-#. when a pinned app loses its icon (typically the app is uninstalled) the
-#. user may want to remove it from the dock
-#: src/Group.cpp:1021
+#. when a pinned app loses its icon (typically the app is uninstalled) the user may want to remove it from the dock
+#: src/Group.cpp:1472
 msgid "Remove"
 msgstr "移除"
 
-#. we weren't able to find a launcher for this app, let the user set it
-#. manually
-#: src/Group.cpp:1034
+#. we weren't able to find a launcher for this app, let the user set it manually
+#: src/Group.cpp:1485
 msgid "Select Launcher..."
 msgstr "选择启动器..."
 
-#: src/Group.cpp:1043
+#: src/Group.cpp:1494
 msgid "Create Launcher..."
 msgstr "创建启动器..."
 
-#: src/Group.cpp:1055
+#: src/Group.cpp:1506
 msgid "Window Actions"
 msgstr "窗口操作"
 
-#: src/Group.cpp:1062
+#: src/Group.cpp:1515
+msgid "Minimize"
+msgstr "最小化"
+
+#: src/Group.cpp:1515
+msgid "Minimize all windows"
+msgstr "最小化所有窗口"
+
+#: src/Group.cpp:1526
+msgid "Unminimize"
+msgstr "取消最小化"
+
+#: src/Group.cpp:1526
+msgid "Unminimize all windows"
+msgstr "取消最小化所有窗口"
+
+#: src/Group.cpp:1544
 msgid "Close"
 msgstr "关闭"
 
-#: src/Group.cpp:1062
+#: src/Group.cpp:1544
 msgid "Close All"
 msgstr "全部关闭"
 
-#: src/Plugin.cpp:122
+#: src/Plugin.cpp:136
 msgid "translator-credits"
 msgstr ""
 "Hunt Xu <huntxu@live.cn>, 2009, 2010.\n"
@@ -108,170 +128,266 @@ msgstr "<b>未启用热键。</b>\n"
 msgid ""
 "The &lt;SUPER&gt;+%u combination seems already mapped to another command.\n"
 "Check your Xfce keyboard settings."
-msgstr "&lt;SUPER&gt;+%u 组合似乎已经映射到另一个命令。请检查你的 Xfce 键盘设置。"
+msgstr "&lt;SUPER&gt;+%u 组合似乎已经映射到另一个命令。\n请检查你的 Xfce 键盘设置。"
 
-#: src/docklike.desktop.in:5
-msgid "Docklike Taskbar"
-msgstr "停靠式任务栏"
+#: src/SettingsDialog.cpp:201
+msgid "Reset all settings to their default values?"
+msgstr "将所有设置重置为默认值？"
 
-#: src/docklike.desktop.in:6
+#: src/SettingsDialog.cpp:203
+msgid "This cannot be undone."
+msgstr "此操作无法撤销。"
+
+#: src/SettingsDialog.cpp:206 src/_dialogs.ui:114
+msgid "_Reset"
+msgstr "_重置"
+
+#: src/asmi-taskbar-plugin.desktop.in:4
+msgid "Asmi Taskbar"
+msgstr "Asmi Taskbar"
+
+#: src/asmi-taskbar-plugin.desktop.in:5
 msgid "A modern, minimalist taskbar for Xfce"
 msgstr "现代简约的 Xfce 任务栏"
 
-#: src/_dialogs.ui:54
+#: src/_dialogs.ui:98
 msgid "_Help"
 msgstr "帮助(_H)"
 
-#: src/_dialogs.ui:70
+#: src/_dialogs.ui:129
 msgid "_Close"
 msgstr "关闭(_C)"
 
-#: src/_dialogs.ui:115
-msgid "Don't show the window list for a single window"
-msgstr "不为单个窗口显示窗口列表"
-
-#: src/_dialogs.ui:130
-msgid "Only show applications on the current workspace"
-msgstr "仅显示当前工作区上的应用程序"
-
-#: src/_dialogs.ui:145
-msgid "Only show applications on the current display"
-msgstr "仅显示当前显示器上的应用程序"
-
-#: src/_dialogs.ui:160
-msgid "Show preview thumbnails for open windows"
-msgstr "显示打开窗口的预览缩略图"
-
-#: src/_dialogs.ui:176
-msgid "Show the number of open windows (if more than 2)"
-msgstr "显示打开的窗口数 (如果超过 2 个)"
-
-#: src/_dialogs.ui:192
-msgid "Disable D-Bus launcher counts"
-msgstr "禁用 D-Bus 启动器计数"
-
-#: src/_dialogs.ui:217
-msgid "Middle mouse button:"
-msgstr "鼠标中键:"
-
-#: src/_dialogs.ui:230
-msgid "Close all"
-msgstr "全部关闭"
-
-#: src/_dialogs.ui:231
-msgid "Launch new instance"
-msgstr "启动新实例"
-
-#: src/_dialogs.ui:232
-msgid "Do Nothing"
-msgstr "什么都不做"
-
-#: src/_dialogs.ui:254
-msgid "Behavior"
-msgstr "行为"
-
-#: src/_dialogs.ui:287
+#: src/_dialogs.ui:201
 msgid "Active indicator style:"
 msgstr "活动指示器样式："
 
-#: src/_dialogs.ui:300 src/_dialogs.ui:331
+#: src/_dialogs.ui:214 src/_dialogs.ui:246
 msgid "Bars"
 msgstr "长条"
 
-#: src/_dialogs.ui:301 src/_dialogs.ui:332
+#: src/_dialogs.ui:215 src/_dialogs.ui:247
 msgid "Dots"
 msgstr "点"
 
-#: src/_dialogs.ui:302 src/_dialogs.ui:333
+#: src/_dialogs.ui:216 src/_dialogs.ui:248
 msgid "Rectangles"
 msgstr "矩形"
 
-#: src/_dialogs.ui:303 src/_dialogs.ui:334
+#: src/_dialogs.ui:217 src/_dialogs.ui:249
 msgid "Ciliora"
 msgstr "Ciliora"
 
-#: src/_dialogs.ui:304 src/_dialogs.ui:335
+#: src/_dialogs.ui:218 src/_dialogs.ui:250
+msgid "Segments"
+msgstr "分段"
+
+#: src/_dialogs.ui:219 src/_dialogs.ui:251
 msgid "Circles"
 msgstr "圆圈"
 
-#: src/_dialogs.ui:305 src/_dialogs.ui:336
+#: src/_dialogs.ui:220 src/_dialogs.ui:252 src/_dialogs.ui:278
 msgid "None"
 msgstr "无"
 
-#: src/_dialogs.ui:318
+#: src/_dialogs.ui:233
 msgid "Inactive indicator style:"
 msgstr "非活动指示器样式:"
 
-#: src/_dialogs.ui:349
+#: src/_dialogs.ui:265
+msgid "Indicator window count:"
+msgstr "指示器窗口数："
+
+#: src/_dialogs.ui:279
+msgid "Badge"
+msgstr "徽章"
+
+#: src/_dialogs.ui:280
+msgid "Number"
+msgstr "数字"
+
+#: src/_dialogs.ui:293
 msgid "Indicator orientation:"
 msgstr "指示器方向:"
 
-#: src/_dialogs.ui:361
+#: src/_dialogs.ui:305
 msgid "Automatic"
 msgstr "自动"
 
-#: src/_dialogs.ui:362
+#: src/_dialogs.ui:306
 msgid "Bottom"
 msgstr "底部"
 
-#: src/_dialogs.ui:363
+#: src/_dialogs.ui:307
 msgid "Right"
 msgstr "右边"
 
-#: src/_dialogs.ui:364
+#: src/_dialogs.ui:308
 msgid "Top"
 msgstr "顶部"
 
-#: src/_dialogs.ui:365
+#: src/_dialogs.ui:309
 msgid "Left"
 msgstr "左边"
 
-#: src/_dialogs.ui:375
-msgid "Get indicator color from theme"
-msgstr "从主题获取指示器颜色"
+#: src/_dialogs.ui:319
+msgid "Get indicator color from app icon"
+msgstr "从应用图标获取指示器颜色"
 
-#: src/_dialogs.ui:401
-msgid "Active indicator:"
-msgstr "活动指示器："
+#: src/_dialogs.ui:345
+msgid "Active indicator"
+msgstr "活动指示器"
 
-#: src/_dialogs.ui:425
-msgid "Inactive indicator:"
-msgstr "非活动指示器:"
+#: src/_dialogs.ui:359
+msgid "Inactive indicator"
+msgstr "非活动指示器"
 
-#: src/_dialogs.ui:452
-msgid "Force icon size:"
-msgstr "强制图标大小:"
+#: src/_dialogs.ui:379
+msgid "Indicator spacing:"
+msgstr "指示器间距："
 
-#: src/_dialogs.ui:496
-msgid "Preview width:"
-msgstr "预览宽度:"
+#: src/_dialogs.ui:404
+msgid "Indicator thickness:"
+msgstr "指示器粗细："
 
-#: src/_dialogs.ui:525
-msgid "Preview height:"
-msgstr "预览高度:"
+#: src/_dialogs.ui:429
+msgid "Dock item spacing:"
+msgstr "Dock 项目间距："
 
-#: src/_dialogs.ui:553
+#: src/_dialogs.ui:451
+msgid "Force dock icon size:"
+msgstr "强制 Dock 图标大小："
+
+#: src/_dialogs.ui:495
+msgid "Preview size:"
+msgstr "预览大小："
+
+#: src/_dialogs.ui:516
+msgid "Preview width"
+msgstr "预览宽度"
+
+#: src/_dialogs.ui:531
+msgid "Preview height"
+msgstr "预览高度"
+
+#: src/_dialogs.ui:550
+msgid "Preview gap:"
+msgstr "预览间隙："
+
+#: src/_dialogs.ui:564
+msgid "Gap between panel and previews"
+msgstr "面板与预览之间的间隙"
+
+#: src/_dialogs.ui:573
+msgid "Expand dock in the panel"
+msgstr "在面板中扩展 Dock"
+
+#: src/_dialogs.ui:591
+msgid "Alignment of dock items in the panel"
+msgstr "面板中 Dock 项目的对齐方式"
+
+#: src/_dialogs.ui:593
+msgid "Start"
+msgstr "起始"
+
+#: src/_dialogs.ui:594
+msgid "End"
+msgstr "末尾"
+
+#: src/_dialogs.ui:595
+msgid "Center"
+msgstr "居中"
+
+#: src/_dialogs.ui:615
 msgid "Appearance"
 msgstr "外观"
 
-#: src/_dialogs.ui:583
+#: src/_dialogs.ui:641
+msgid "Don't show the window list for a single window"
+msgstr "不为单个窗口显示窗口列表"
+
+#: src/_dialogs.ui:657
+msgid "Only show applications on the current workspace"
+msgstr "仅显示当前工作区上的应用程序"
+
+#: src/_dialogs.ui:673
+msgid "Only show applications on the current display"
+msgstr "仅显示当前显示器上的应用程序"
+
+#: src/_dialogs.ui:689
+msgid "Show preview thumbnails in the dock menu"
+msgstr "在 Dock 菜单中显示预览缩略图"
+
+#: src/_dialogs.ui:706
+msgid "Disable D-Bus launcher counts"
+msgstr "禁用 D-Bus 启动器计数"
+
+#: src/_dialogs.ui:723
+msgid "Show each window as a separate dock item (ungroup windows)"
+msgstr "将每个窗口显示为单独的 Dock 项目（取消窗口分组）"
+
+#: src/_dialogs.ui:742
+msgid "Middle mouse button:"
+msgstr "鼠标中键:"
+
+#: src/_dialogs.ui:756
+msgid "Close all"
+msgstr "全部关闭"
+
+#: src/_dialogs.ui:757
+msgid "Launch new instance"
+msgstr "启动新实例"
+
+#: src/_dialogs.ui:758
+msgid "Do Nothing"
+msgstr "什么都不做"
+
+#: src/_dialogs.ui:768
+msgid "Enable hot-corner for window overview:"
+msgstr "启用热角以显示窗口概览："
+
+#: src/_dialogs.ui:788
+msgid "Top left"
+msgstr "左上"
+
+#: src/_dialogs.ui:789
+msgid "Top right"
+msgstr "右上"
+
+#: src/_dialogs.ui:790
+msgid "Bottom left"
+msgstr "左下"
+
+#: src/_dialogs.ui:791
+msgid "Bottom right"
+msgstr "右下"
+
+#: src/_dialogs.ui:804
+msgid "Hot-corner activation delay (ms):"
+msgstr "热角激活延迟 (毫秒)："
+
+#: src/_dialogs.ui:853
 msgid "Switch between applications with <SUPER>+[1, 2, ...]"
 msgstr "使用 <SUPER>+[1, 2, ...] 在应用程序之间切换"
 
-#: src/_dialogs.ui:610
+#: src/_dialogs.ui:880
 msgid "Switch to the last window with <SUPER>"
 msgstr "使用 <SUPER> 切换到最后一个窗口"
 
-#: src/_dialogs.ui:626
+#: src/_dialogs.ui:896
 msgid ""
 "The left &lt;SUPER&gt; key seems already mapped to another command.\n"
 "Check your Xfce keyboard settings."
-msgstr "左 &lt;SUPER&gt; 键似乎已经映射到另一个命令。请检查你的 Xfce 键盘设置。"
+msgstr "左 &lt;SUPER&gt; 键似乎已经映射到另一个命令。\n请检查你的 Xfce 键盘设置。"
 
-#: src/_dialogs.ui:638
+#: src/_dialogs.ui:908
 msgid "Manage shortcuts..."
 msgstr "管理快捷键..."
 
-#: src/_dialogs.ui:659
+#: src/_dialogs.ui:929
 msgid "Keyboard hotkeys"
 msgstr "键盘热键"
+
+#: src/_dialogs.ui:945
+msgid "Behavior"
+msgstr "行为"

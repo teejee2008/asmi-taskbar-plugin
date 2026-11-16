@@ -1,90 +1,109 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR Xfce
-# This file is distributed under the same license as the xfce-panel-plugins.xfce4-docklike-plugin package.
+# This file is distributed under the same license as the asmi-taskbar-plugin package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-# 
+#
 # Translators:
 # Arve Eriksson <arve.eriksson@startmail.com>, 2025
 # Påvel Nicklasson <pavel2@frimix.se>, 2025
 # Nick Schermer <nick@xfce.org>, 2026
 # Luna Jernberg <droidbittin@gmail.com>, 2026
-# 
+#
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: xfce-panel-plugins.xfce4-docklike-plugin\n"
-"Report-Msgid-Bugs-To: https://gitlab.xfce.org/\n"
-"POT-Creation-Date: 2026-05-23 12:58+0200\n"
+"Project-Id-Version: asmi-taskbar-plugin\n"
+"Report-Msgid-Bugs-To: https://github.com/teejee2008/asmi-taskbar-plugin/"
+"issues\n"
+"POT-Creation-Date: 2026-11-16 12:16+0530\n"
 "PO-Revision-Date: 2023-02-22 11:02+0000\n"
 "Last-Translator: Luna Jernberg <droidbittin@gmail.com>, 2026\n"
 "Language-Team: Swedish (https://app.transifex.com/xfce/teams/16840/sv/)\n"
+"Language: sv\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: sv\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: src/AppInfos.cpp:354
+#: src/AppInfos.cpp:382
 msgid "Select Launcher"
 msgstr "Välj programstartare"
 
-#: src/AppInfos.cpp:355
+#: src/AppInfos.cpp:383 src/SettingsDialog.cpp:205
 msgid "_Cancel"
 msgstr "_Avbryt"
 
-#: src/AppInfos.cpp:355
+#: src/AppInfos.cpp:383
 msgid "_Open"
 msgstr "_Öppna"
 
-#: src/Group.cpp:861
+#: src/Group.cpp:1381
 msgid "Pinned to Dock"
 msgstr "Fastsatt till Dock"
 
-#: src/Group.cpp:861
+#: src/Group.cpp:1381
 msgid "Pin to Dock"
 msgstr "Fäst till Dock"
 
-#: src/Group.cpp:879
+#: src/Group.cpp:1399
 msgid "Add activation shortcut..."
 msgstr "Lägg till aktiveringsgenväg..."
 
-#: src/Group.cpp:890
+#: src/Group.cpp:1410
 msgid "Manage activation shortcut..."
 msgstr "Hantera aktiveringsgenväg..."
 
-#: src/Group.cpp:912
+#: src/Group.cpp:1432
+msgid "Launch application"
+msgstr "Starta program"
+
+#: src/Group.cpp:1440
 msgid "Edit Launcher..."
 msgstr "Redigera programstartare..."
 
-#. when a pinned app loses its icon (typically the app is uninstalled) the
-#. user may want to remove it from the dock
-#: src/Group.cpp:944
+#. when a pinned app loses its icon (typically the app is uninstalled) the user may want to remove it from the dock
+#: src/Group.cpp:1472
 msgid "Remove"
 msgstr "Ta bort"
 
-#. we weren't able to find a launcher for this app, let the user set it
-#. manually
-#: src/Group.cpp:957
+#. we weren't able to find a launcher for this app, let the user set it manually
+#: src/Group.cpp:1485
 msgid "Select Launcher..."
 msgstr "Välj programstartare..."
 
-#: src/Group.cpp:966
+#: src/Group.cpp:1494
 msgid "Create Launcher..."
 msgstr "Skapa programstartare..."
 
-#: src/Group.cpp:978
+#: src/Group.cpp:1506
 msgid "Window Actions"
 msgstr "Fönsteråtgärder"
 
-#: src/Group.cpp:985
+#: src/Group.cpp:1515
+msgid "Minimize"
+msgstr "Minimera"
+
+#: src/Group.cpp:1515
+msgid "Minimize all windows"
+msgstr "Minimera alla fönster"
+
+#: src/Group.cpp:1526
+msgid "Unminimize"
+msgstr "Återställ"
+
+#: src/Group.cpp:1526
+msgid "Unminimize all windows"
+msgstr "Återställ alla fönster"
+
+#: src/Group.cpp:1544
 msgid "Close"
 msgstr "Stäng"
 
-#: src/Group.cpp:985
+#: src/Group.cpp:1544
 msgid "Close All"
 msgstr "Stäng alla"
 
-#: src/Plugin.cpp:118
+#: src/Plugin.cpp:136
 msgid "translator-credits"
 msgstr "Påvel Nicklasson"
 
@@ -107,169 +126,271 @@ msgid ""
 "The &lt;SUPER&gt;+%u combination seems already mapped to another command.\n"
 "Check your Xfce keyboard settings."
 msgstr ""
-"&lt;SUPER&gt;+%u kombinationen används tydligen redan av ett annat kommando.\n"
+"&lt;SUPER&gt;+%u kombinationen används tydligen redan av ett annat "
+"kommando.\n"
 "Kontrollera dina Xfce-tangentbordsinställningar."
 
-#: src/docklike.desktop.in:5
-msgid "Docklike Taskbar"
-msgstr "Dockliknande aktivitetsfält"
+#: src/SettingsDialog.cpp:201
+msgid "Reset all settings to their default values?"
+msgstr "Återställa alla inställningar till standardvärdena?"
 
-#: src/docklike.desktop.in:6
+#: src/SettingsDialog.cpp:203
+msgid "This cannot be undone."
+msgstr "Detta kan inte ångras."
+
+#: src/SettingsDialog.cpp:206 src/_dialogs.ui:114
+msgid "_Reset"
+msgstr "_Återställ"
+
+#: src/asmi-taskbar-plugin.desktop.in:4
+msgid "Asmi Taskbar"
+msgstr "Asmi Taskbar"
+
+#: src/asmi-taskbar-plugin.desktop.in:5
 msgid "A modern, minimalist taskbar for Xfce"
 msgstr "Ett modernt, minimalistiskt aktivitetsfält för Xfce"
 
-#: src/_dialogs.ui:54
+#: src/_dialogs.ui:98
 msgid "_Help"
 msgstr "_Hjälp"
 
-#: src/_dialogs.ui:70
+#: src/_dialogs.ui:129
 msgid "_Close"
 msgstr "_Stäng"
 
-#: src/_dialogs.ui:115
-msgid "Don't show the window list for a single window"
-msgstr "Visa inte fönsterlistan för ett enda fönster"
-
-#: src/_dialogs.ui:130
-msgid "Only show applications on the current workspace"
-msgstr "Visa endast program på aktuell arbetsyta"
-
-#: src/_dialogs.ui:145
-msgid "Only show applications on the current display"
-msgstr "Visa bara program på aktuell skärm"
-
-#: src/_dialogs.ui:160
-msgid "Show preview thumbnails for open windows"
-msgstr "Visa förhandsgransningstumnaglar för öppna fönster"
-
-#: src/_dialogs.ui:176
-msgid "Show the number of open windows (if more than 2)"
-msgstr "Visa antal öppna fönster (om fler än 2)"
-
 #: src/_dialogs.ui:201
-msgid "Middle mouse button:"
-msgstr "Mitten musknapp: "
-
-#: src/_dialogs.ui:214
-msgid "Close all"
-msgstr "Stäng alla"
-
-#: src/_dialogs.ui:215
-msgid "Launch new instance"
-msgstr "Starta ny instans"
-
-#: src/_dialogs.ui:216
-msgid "Do Nothing"
-msgstr "Gör ingenting"
-
-#: src/_dialogs.ui:238
-msgid "Behavior"
-msgstr "Beteende"
-
-#: src/_dialogs.ui:271
 msgid "Active indicator style:"
 msgstr "Aktiv indikatorstil:"
 
-#: src/_dialogs.ui:284 src/_dialogs.ui:315
+#: src/_dialogs.ui:214 src/_dialogs.ui:246
 msgid "Bars"
 msgstr "Rader"
 
-#: src/_dialogs.ui:285 src/_dialogs.ui:316
+#: src/_dialogs.ui:215 src/_dialogs.ui:247
 msgid "Dots"
 msgstr "Prickar"
 
-#: src/_dialogs.ui:286 src/_dialogs.ui:317
+#: src/_dialogs.ui:216 src/_dialogs.ui:248
 msgid "Rectangles"
 msgstr "Rektanglar"
 
-#: src/_dialogs.ui:287 src/_dialogs.ui:318
+#: src/_dialogs.ui:217 src/_dialogs.ui:249
 msgid "Ciliora"
 msgstr "Ciliora"
 
-#: src/_dialogs.ui:288 src/_dialogs.ui:319
+#: src/_dialogs.ui:218 src/_dialogs.ui:250
+msgid "Segments"
+msgstr "Segment"
+
+#: src/_dialogs.ui:219 src/_dialogs.ui:251
 msgid "Circles"
 msgstr "Cirklar"
 
-#: src/_dialogs.ui:289 src/_dialogs.ui:320
+#: src/_dialogs.ui:220 src/_dialogs.ui:252 src/_dialogs.ui:278
 msgid "None"
 msgstr "Ingen"
 
-#: src/_dialogs.ui:302
+#: src/_dialogs.ui:233
 msgid "Inactive indicator style:"
 msgstr "Inaktiv indikatorstil:"
 
-#: src/_dialogs.ui:333
+#: src/_dialogs.ui:265
+msgid "Indicator window count:"
+msgstr "Antal indikatorfönster:"
+
+#: src/_dialogs.ui:279
+msgid "Badge"
+msgstr "Märke"
+
+#: src/_dialogs.ui:280
+msgid "Number"
+msgstr "Antal"
+
+#: src/_dialogs.ui:293
 msgid "Indicator orientation:"
 msgstr "Indikatororientering:"
 
-#: src/_dialogs.ui:345
+#: src/_dialogs.ui:305
 msgid "Automatic"
 msgstr "Automatisk"
 
-#: src/_dialogs.ui:346
+#: src/_dialogs.ui:306
 msgid "Bottom"
 msgstr "Nederkant"
 
-#: src/_dialogs.ui:347
+#: src/_dialogs.ui:307
 msgid "Right"
 msgstr "Höger"
 
-#: src/_dialogs.ui:348
+#: src/_dialogs.ui:308
 msgid "Top"
 msgstr "Överkant"
 
-#: src/_dialogs.ui:349
+#: src/_dialogs.ui:309
 msgid "Left"
 msgstr "Vänster"
 
+#: src/_dialogs.ui:319
+msgid "Get indicator color from app icon"
+msgstr "Hämta indikatorfärg från appikon"
+
+#: src/_dialogs.ui:345
+msgid "Active indicator"
+msgstr "Aktiv indikator"
+
 #: src/_dialogs.ui:359
-msgid "Get indicator color from theme"
-msgstr "Hämta indikatorfärg från tema"
+msgid "Inactive indicator"
+msgstr "Inaktiv indikator"
 
-#: src/_dialogs.ui:385
-msgid "Active indicator:"
-msgstr "Aktiv indikator:"
+#: src/_dialogs.ui:379
+msgid "Indicator spacing:"
+msgstr "Indikatoravstånd:"
 
-#: src/_dialogs.ui:409
-msgid "Inactive indicator:"
-msgstr "Inaktiv indikator:"
+#: src/_dialogs.ui:404
+msgid "Indicator thickness:"
+msgstr "Indikatortjocklek:"
 
-#: src/_dialogs.ui:436
-msgid "Force icon size:"
-msgstr "Tvinga ikonstorlek:"
+#: src/_dialogs.ui:429
+msgid "Dock item spacing:"
+msgstr "Avstånd mellan dockobjekt:"
 
-#: src/_dialogs.ui:480
-msgid "Preview width:"
-msgstr "Förhandsgranskningsbredd:"
+#: src/_dialogs.ui:451
+msgid "Force dock icon size:"
+msgstr "Tvinga dockikonstorlek:"
 
-#: src/_dialogs.ui:509
-msgid "Preview height:"
-msgstr "Förhandsgranskningshöjd:"
+#: src/_dialogs.ui:495
+msgid "Preview size:"
+msgstr "Förhandsgranskningsstorlek:"
 
-#: src/_dialogs.ui:537
+#: src/_dialogs.ui:516
+msgid "Preview width"
+msgstr "Förhandsgranskningsbredd"
+
+#: src/_dialogs.ui:531
+msgid "Preview height"
+msgstr "Förhandsgranskningshöjd"
+
+#: src/_dialogs.ui:550
+msgid "Preview gap:"
+msgstr "Förhandsgranskningsavstånd:"
+
+#: src/_dialogs.ui:564
+msgid "Gap between panel and previews"
+msgstr "Avstånd mellan panel och förhandsgranskningar"
+
+#: src/_dialogs.ui:573
+msgid "Expand dock in the panel"
+msgstr "Utöka dock i panelen"
+
+#: src/_dialogs.ui:591
+msgid "Alignment of dock items in the panel"
+msgstr "Justering av dockobjekt i panelen"
+
+#: src/_dialogs.ui:593
+msgid "Start"
+msgstr "Början"
+
+#: src/_dialogs.ui:594
+msgid "End"
+msgstr "Slut"
+
+#: src/_dialogs.ui:595
+msgid "Center"
+msgstr "Mitten"
+
+#: src/_dialogs.ui:615
 msgid "Appearance"
 msgstr "Utseende"
 
-#: src/_dialogs.ui:567
+#: src/_dialogs.ui:641
+msgid "Don't show the window list for a single window"
+msgstr "Visa inte fönsterlistan för ett enda fönster"
+
+#: src/_dialogs.ui:657
+msgid "Only show applications on the current workspace"
+msgstr "Visa endast program på aktuell arbetsyta"
+
+#: src/_dialogs.ui:673
+msgid "Only show applications on the current display"
+msgstr "Visa bara program på aktuell skärm"
+
+#: src/_dialogs.ui:689
+msgid "Show preview thumbnails in the dock menu"
+msgstr "Visa förhandsgranskningstumnaglar i dockmenyn"
+
+#: src/_dialogs.ui:706
+msgid "Disable D-Bus launcher counts"
+msgstr "Inaktivera D-Bus-starträknare"
+
+#: src/_dialogs.ui:723
+msgid "Show each window as a separate dock item (ungroup windows)"
+msgstr "Visa varje fönster som ett separat dockobjekt (dela upp fönster)"
+
+#: src/_dialogs.ui:742
+msgid "Middle mouse button:"
+msgstr "Mitten musknapp: "
+
+#: src/_dialogs.ui:756
+msgid "Close all"
+msgstr "Stäng alla"
+
+#: src/_dialogs.ui:757
+msgid "Launch new instance"
+msgstr "Starta ny instans"
+
+#: src/_dialogs.ui:758
+msgid "Do Nothing"
+msgstr "Gör ingenting"
+
+#: src/_dialogs.ui:768
+msgid "Enable hot-corner for window overview:"
+msgstr "Aktivera hörn för fönsteröversikt:"
+
+#: src/_dialogs.ui:788
+msgid "Top left"
+msgstr "Övre vänstra"
+
+#: src/_dialogs.ui:789
+msgid "Top right"
+msgstr "Övre högra"
+
+#: src/_dialogs.ui:790
+msgid "Bottom left"
+msgstr "Nedre vänstra"
+
+#: src/_dialogs.ui:791
+msgid "Bottom right"
+msgstr "Nedre högra"
+
+#: src/_dialogs.ui:804
+msgid "Hot-corner activation delay (ms):"
+msgstr "Fördröjning för hörnaktivering (ms):"
+
+#: src/_dialogs.ui:853
 msgid "Switch between applications with <SUPER>+[1, 2, ...]"
 msgstr "Växla mellan program med<SUPER>+[1, 2, ...]"
 
-#: src/_dialogs.ui:594
+#: src/_dialogs.ui:880
 msgid "Switch to the last window with <SUPER>"
 msgstr "Växla till senaste fönstret med <SUPER>"
 
-#: src/_dialogs.ui:610
+#: src/_dialogs.ui:896
 msgid ""
 "The left &lt;SUPER&gt; key seems already mapped to another command.\n"
 "Check your Xfce keyboard settings."
 msgstr ""
-"Den vänstra &lt;SUPER&gt; tangenten verkar redan vara mappad till ett annat kommando.\n"
+"Den vänstra &lt;SUPER&gt; tangenten verkar redan vara mappad till ett annat "
+"kommando.\n"
 "Kontrollera dina Xfce-tangentbordsinställningar."
 
-#: src/_dialogs.ui:622
+#: src/_dialogs.ui:908
 msgid "Manage shortcuts..."
 msgstr "Hantera genvägar..."
 
-#: src/_dialogs.ui:643
+#: src/_dialogs.ui:929
 msgid "Keyboard hotkeys"
 msgstr "Tangentgenvägar"
+
+#: src/_dialogs.ui:945
+msgid "Behavior"
+msgstr "Beteende"

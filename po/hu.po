@@ -1,91 +1,110 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR Xfce
-# This file is distributed under the same license as the xfce-panel-plugins.xfce4-docklike-plugin package.
+# This file is distributed under the same license as the asmi-taskbar-plugin package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-# 
+#
 # Translators:
 # László Varga, 2025
 # kelemeng <kelemeng@ubuntu.com>, 2025
 # Balázs Meskó <meskobalazs@mailbox.org>, 2025
 # Nick Schermer <nick@xfce.org>, 2026
 # Hrotkó Gábor <hrotko.gabor@gmail.com>, 2026
-# 
+#
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: xfce-panel-plugins.xfce4-docklike-plugin\n"
-"Report-Msgid-Bugs-To: https://gitlab.xfce.org/\n"
-"POT-Creation-Date: 2026-08-18 12:59+0200\n"
+"Project-Id-Version: asmi-taskbar-plugin\n"
+"Report-Msgid-Bugs-To: https://github.com/teejee2008/asmi-taskbar-plugin/"
+"issues\n"
+"POT-Creation-Date: 2026-11-16 12:16+0530\n"
 "PO-Revision-Date: 2023-02-22 11:02+0000\n"
 "Last-Translator: Hrotkó Gábor <hrotko.gabor@gmail.com>, 2026\n"
 "Language-Team: Hungarian (https://app.transifex.com/xfce/teams/16840/hu/)\n"
+"Language: hu\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: hu\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: src/AppInfos.cpp:354
+#: src/AppInfos.cpp:382
 msgid "Select Launcher"
 msgstr "Indító kiválasztása"
 
-#: src/AppInfos.cpp:355
+#: src/AppInfos.cpp:383 src/SettingsDialog.cpp:205
 msgid "_Cancel"
 msgstr "_Mégsem"
 
-#: src/AppInfos.cpp:355
+#: src/AppInfos.cpp:383
 msgid "_Open"
 msgstr "_Megnyitás"
 
-#: src/Group.cpp:938
+#: src/Group.cpp:1381
 msgid "Pinned to Dock"
 msgstr "Rögzítve a dokkon"
 
-#: src/Group.cpp:938
+#: src/Group.cpp:1381
 msgid "Pin to Dock"
 msgstr "Rögzítés a dokkon"
 
-#: src/Group.cpp:956
+#: src/Group.cpp:1399
 msgid "Add activation shortcut..."
 msgstr "Aktiválási gyorsbillentyű hozzáadása..."
 
-#: src/Group.cpp:967
+#: src/Group.cpp:1410
 msgid "Manage activation shortcut..."
 msgstr "Aktiválási gyorsbillentyű kezelése..."
 
-#: src/Group.cpp:989
+#: src/Group.cpp:1432
+msgid "Launch application"
+msgstr "Alkalmazás indítása"
+
+#: src/Group.cpp:1440
 msgid "Edit Launcher..."
 msgstr "Indító szerkesztése..."
 
-#. when a pinned app loses its icon (typically the app is uninstalled) the
-#. user may want to remove it from the dock
-#: src/Group.cpp:1021
+#. when a pinned app loses its icon (typically the app is uninstalled) the user may want to remove it from the dock
+#: src/Group.cpp:1472
 msgid "Remove"
 msgstr "Eltávolítás"
 
-#. we weren't able to find a launcher for this app, let the user set it
-#. manually
-#: src/Group.cpp:1034
+#. we weren't able to find a launcher for this app, let the user set it manually
+#: src/Group.cpp:1485
 msgid "Select Launcher..."
 msgstr "Indító kiválasztása..."
 
-#: src/Group.cpp:1043
+#: src/Group.cpp:1494
 msgid "Create Launcher..."
 msgstr "Indító létrehozása..."
 
-#: src/Group.cpp:1055
+#: src/Group.cpp:1506
 msgid "Window Actions"
 msgstr "Ablakműveletek"
 
-#: src/Group.cpp:1062
+#: src/Group.cpp:1515
+msgid "Minimize"
+msgstr "Minimalizálás"
+
+#: src/Group.cpp:1515
+msgid "Minimize all windows"
+msgstr "Minden ablak minimalizálása"
+
+#: src/Group.cpp:1526
+msgid "Unminimize"
+msgstr "Visszaállítás"
+
+#: src/Group.cpp:1526
+msgid "Unminimize all windows"
+msgstr "Minden ablak visszaállítása"
+
+#: src/Group.cpp:1544
 msgid "Close"
 msgstr "Bezárás"
 
-#: src/Group.cpp:1062
+#: src/Group.cpp:1544
 msgid "Close All"
 msgstr "Összes bezárása"
 
-#: src/Plugin.cpp:122
+#: src/Plugin.cpp:136
 msgid "translator-credits"
 msgstr "Kelemen Gábor <kelemeng at gnome dot hu>"
 
@@ -108,173 +127,268 @@ msgid ""
 "The &lt;SUPER&gt;+%u combination seems already mapped to another command.\n"
 "Check your Xfce keyboard settings."
 msgstr ""
-"Úgy tűnik hogy a &lt;SUPER&gt;+%u billentyű már egy másik parancshoz van rendelve.\n"
+"Úgy tűnik hogy a &lt;SUPER&gt;+%u billentyű már egy másik parancshoz van "
+"rendelve.\n"
 "Ellenőrizze az Xfce billentyűzetbeállításait."
 
-#: src/docklike.desktop.in:5
-msgid "Docklike Taskbar"
-msgstr "Docklike tálca"
+#: src/SettingsDialog.cpp:201
+msgid "Reset all settings to their default values?"
+msgstr "Minden beállítás visszaállítása az alapértelmezett értékekre?"
 
-#: src/docklike.desktop.in:6
+#: src/SettingsDialog.cpp:203
+msgid "This cannot be undone."
+msgstr "Ez nem vonható vissza."
+
+#: src/SettingsDialog.cpp:206 src/_dialogs.ui:114
+msgid "_Reset"
+msgstr "_Visszaállítás"
+
+#: src/asmi-taskbar-plugin.desktop.in:4
+msgid "Asmi Taskbar"
+msgstr "Asmi Taskbar"
+
+#: src/asmi-taskbar-plugin.desktop.in:5
 msgid "A modern, minimalist taskbar for Xfce"
 msgstr "Modern, minimalista tálca Xfce-hez"
 
-#: src/_dialogs.ui:54
+#: src/_dialogs.ui:98
 msgid "_Help"
 msgstr "_Súgó"
 
-#: src/_dialogs.ui:70
+#: src/_dialogs.ui:129
 msgid "_Close"
 msgstr "_Bezárás"
 
-#: src/_dialogs.ui:115
-msgid "Don't show the window list for a single window"
-msgstr "Ne jelenítse meg az ablaklistát egyetlen ablak esetén"
-
-#: src/_dialogs.ui:130
-msgid "Only show applications on the current workspace"
-msgstr "Csak az aktuális munkaterületen lévő alkalmazások megjelenítése"
-
-#: src/_dialogs.ui:145
-msgid "Only show applications on the current display"
-msgstr "Csak az aktuális kijelzőn lévő alkalmazások megjelenítése"
-
-#: src/_dialogs.ui:160
-msgid "Show preview thumbnails for open windows"
-msgstr "Előnézeti bélyegképek megjelenítése a megnyitott ablakokhoz"
-
-#: src/_dialogs.ui:176
-msgid "Show the number of open windows (if more than 2)"
-msgstr "A megnyitott ablakok számának megjelenítése (ha több mint 2)"
-
-#: src/_dialogs.ui:192
-msgid "Disable D-Bus launcher counts"
-msgstr "A D-Bus indítószámlálók letiltása"
-
-#: src/_dialogs.ui:217
-msgid "Middle mouse button:"
-msgstr "Középső egérgomb:"
-
-#: src/_dialogs.ui:230
-msgid "Close all"
-msgstr "Összes bezárása"
-
-#: src/_dialogs.ui:231
-msgid "Launch new instance"
-msgstr "Új példány indítása"
-
-#: src/_dialogs.ui:232
-msgid "Do Nothing"
-msgstr "Ne tegyen semmit"
-
-#: src/_dialogs.ui:254
-msgid "Behavior"
-msgstr "Viselkedés"
-
-#: src/_dialogs.ui:287
+#: src/_dialogs.ui:201
 msgid "Active indicator style:"
 msgstr "Aktív jelző stílusa:"
 
-#: src/_dialogs.ui:300 src/_dialogs.ui:331
+#: src/_dialogs.ui:214 src/_dialogs.ui:246
 msgid "Bars"
 msgstr "Sávok"
 
-#: src/_dialogs.ui:301 src/_dialogs.ui:332
+#: src/_dialogs.ui:215 src/_dialogs.ui:247
 msgid "Dots"
 msgstr "Pontok"
 
-#: src/_dialogs.ui:302 src/_dialogs.ui:333
+#: src/_dialogs.ui:216 src/_dialogs.ui:248
 msgid "Rectangles"
 msgstr "Téglalapok"
 
-#: src/_dialogs.ui:303 src/_dialogs.ui:334
+#: src/_dialogs.ui:217 src/_dialogs.ui:249
 msgid "Ciliora"
 msgstr "Ciliora"
 
-#: src/_dialogs.ui:304 src/_dialogs.ui:335
+#: src/_dialogs.ui:218 src/_dialogs.ui:250
+msgid "Segments"
+msgstr "Szegmensek"
+
+#: src/_dialogs.ui:219 src/_dialogs.ui:251
 msgid "Circles"
 msgstr "Körök"
 
-#: src/_dialogs.ui:305 src/_dialogs.ui:336
+#: src/_dialogs.ui:220 src/_dialogs.ui:252 src/_dialogs.ui:278
 msgid "None"
 msgstr "Nincs"
 
-#: src/_dialogs.ui:318
+#: src/_dialogs.ui:233
 msgid "Inactive indicator style:"
 msgstr "Inaktív jelző stílusa:"
 
-#: src/_dialogs.ui:349
+#: src/_dialogs.ui:265
+msgid "Indicator window count:"
+msgstr "Jelző ablakainak száma:"
+
+#: src/_dialogs.ui:279
+msgid "Badge"
+msgstr "Jelvény"
+
+#: src/_dialogs.ui:280
+msgid "Number"
+msgstr "Szám"
+
+#: src/_dialogs.ui:293
 msgid "Indicator orientation:"
 msgstr "Jelző tájolása:"
 
-#: src/_dialogs.ui:361
+#: src/_dialogs.ui:305
 msgid "Automatic"
 msgstr "Automatikus"
 
-#: src/_dialogs.ui:362
+#: src/_dialogs.ui:306
 msgid "Bottom"
 msgstr "Lent"
 
-#: src/_dialogs.ui:363
+#: src/_dialogs.ui:307
 msgid "Right"
 msgstr "Jobbra"
 
-#: src/_dialogs.ui:364
+#: src/_dialogs.ui:308
 msgid "Top"
 msgstr "Fent"
 
-#: src/_dialogs.ui:365
+#: src/_dialogs.ui:309
 msgid "Left"
 msgstr "Balra"
 
-#: src/_dialogs.ui:375
-msgid "Get indicator color from theme"
-msgstr "A jelző színének átvétele a témából"
+#: src/_dialogs.ui:319
+msgid "Get indicator color from app icon"
+msgstr "Jelző színének átvétele az alkalmazás ikonjáról"
 
-#: src/_dialogs.ui:401
-msgid "Active indicator:"
-msgstr "Aktív jelző:"
+#: src/_dialogs.ui:345
+msgid "Active indicator"
+msgstr "Aktív jelző"
 
-#: src/_dialogs.ui:425
-msgid "Inactive indicator:"
-msgstr "Inaktív jelző:"
+#: src/_dialogs.ui:359
+msgid "Inactive indicator"
+msgstr "Inaktív jelző"
 
-#: src/_dialogs.ui:452
-msgid "Force icon size:"
-msgstr "Ikonméret kényszerítése:"
+#: src/_dialogs.ui:379
+msgid "Indicator spacing:"
+msgstr "Jelző távolsága:"
 
-#: src/_dialogs.ui:496
-msgid "Preview width:"
-msgstr "Előnézet szélessége:"
+#: src/_dialogs.ui:404
+msgid "Indicator thickness:"
+msgstr "Jelző vastagsága:"
 
-#: src/_dialogs.ui:525
-msgid "Preview height:"
-msgstr "Előnézet magassága:"
+#: src/_dialogs.ui:429
+msgid "Dock item spacing:"
+msgstr "Dock elemek távolsága:"
 
-#: src/_dialogs.ui:553
+#: src/_dialogs.ui:451
+msgid "Force dock icon size:"
+msgstr "Dock ikonméret kényszerítése:"
+
+#: src/_dialogs.ui:495
+msgid "Preview size:"
+msgstr "Előnézet mérete:"
+
+#: src/_dialogs.ui:516
+msgid "Preview width"
+msgstr "Előnézet szélessége"
+
+#: src/_dialogs.ui:531
+msgid "Preview height"
+msgstr "Előnézet magassága"
+
+#: src/_dialogs.ui:550
+msgid "Preview gap:"
+msgstr "Előnézet távolsága:"
+
+#: src/_dialogs.ui:564
+msgid "Gap between panel and previews"
+msgstr "Rés a panel és az előnézetek között"
+
+#: src/_dialogs.ui:573
+msgid "Expand dock in the panel"
+msgstr "Dock kiterjesztése a panelen"
+
+#: src/_dialogs.ui:591
+msgid "Alignment of dock items in the panel"
+msgstr "A dock elemek igazítása a panelen"
+
+#: src/_dialogs.ui:593
+msgid "Start"
+msgstr "Eleje"
+
+#: src/_dialogs.ui:594
+msgid "End"
+msgstr "Vége"
+
+#: src/_dialogs.ui:595
+msgid "Center"
+msgstr "Középre"
+
+#: src/_dialogs.ui:615
 msgid "Appearance"
 msgstr "Megjelenés"
 
-#: src/_dialogs.ui:583
+#: src/_dialogs.ui:641
+msgid "Don't show the window list for a single window"
+msgstr "Ne jelenítse meg az ablaklistát egyetlen ablak esetén"
+
+#: src/_dialogs.ui:657
+msgid "Only show applications on the current workspace"
+msgstr "Csak az aktuális munkaterületen lévő alkalmazások megjelenítése"
+
+#: src/_dialogs.ui:673
+msgid "Only show applications on the current display"
+msgstr "Csak az aktuális kijelzőn lévő alkalmazások megjelenítése"
+
+#: src/_dialogs.ui:689
+msgid "Show preview thumbnails in the dock menu"
+msgstr "Előnézeti bélyegképek megjelenítése a dock menüben"
+
+#: src/_dialogs.ui:706
+msgid "Disable D-Bus launcher counts"
+msgstr "A D-Bus indítószámlálók letiltása"
+
+#: src/_dialogs.ui:723
+msgid "Show each window as a separate dock item (ungroup windows)"
+msgstr "Minden ablak megjelenítése külön dock elemként (ablakok csoportosításának feloldása)"
+
+#: src/_dialogs.ui:742
+msgid "Middle mouse button:"
+msgstr "Középső egérgomb:"
+
+#: src/_dialogs.ui:756
+msgid "Close all"
+msgstr "Összes bezárása"
+
+#: src/_dialogs.ui:757
+msgid "Launch new instance"
+msgstr "Új példány indítása"
+
+#: src/_dialogs.ui:758
+msgid "Do Nothing"
+msgstr "Ne tegyen semmit"
+
+#: src/_dialogs.ui:768
+msgid "Enable hot-corner for window overview:"
+msgstr "Forró sarok engedélyezése az ablakáttekintéshez:"
+
+#: src/_dialogs.ui:788
+msgid "Top left"
+msgstr "Balra fent"
+
+#: src/_dialogs.ui:789
+msgid "Top right"
+msgstr "Jobbra fent"
+
+#: src/_dialogs.ui:790
+msgid "Bottom left"
+msgstr "Balra lent"
+
+#: src/_dialogs.ui:791
+msgid "Bottom right"
+msgstr "Jobbra lent"
+
+#: src/_dialogs.ui:804
+msgid "Hot-corner activation delay (ms):"
+msgstr "Forró sarok aktiválási késleltetése (ms):"
+
+#: src/_dialogs.ui:853
 msgid "Switch between applications with <SUPER>+[1, 2, ...]"
 msgstr "Váltás az alkalmazások között a <SUPER>+[1, 2, ...] billentyűkkel"
 
-#: src/_dialogs.ui:610
+#: src/_dialogs.ui:880
 msgid "Switch to the last window with <SUPER>"
 msgstr "Váltás az utolsó ablakra a <SUPER> billentyűvel"
 
-#: src/_dialogs.ui:626
+#: src/_dialogs.ui:896
 msgid ""
 "The left &lt;SUPER&gt; key seems already mapped to another command.\n"
 "Check your Xfce keyboard settings."
-msgstr ""
-"Úgy tűnik, hogy a bal oldali <SUPER> billentyű már egy másik parancshoz van rendelve.\n"
-"Ellenőrizze az Xfce billentyűzetbeállításait."
+msgstr "Úgy tűnik, hogy a bal oldali &lt;SUPER&gt; billentyű már egy másik parancshoz van rendelve.\nEllenőrizze az Xfce billentyűzetbeállításait."
 
-#: src/_dialogs.ui:638
+#: src/_dialogs.ui:908
 msgid "Manage shortcuts..."
 msgstr "Gyorsbillentyűk kezelése..."
 
-#: src/_dialogs.ui:659
+#: src/_dialogs.ui:929
 msgid "Keyboard hotkeys"
 msgstr "Billentyűparancsok"
+
+#: src/_dialogs.ui:945
+msgid "Behavior"
+msgstr "Viselkedés"

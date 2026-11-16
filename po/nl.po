@@ -1,89 +1,108 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR Xfce
-# This file is distributed under the same license as the xfce-panel-plugins.xfce4-docklike-plugin package.
+# This file is distributed under the same license as the asmi-taskbar-plugin package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-# 
+#
 # Translators:
 # Xfce Bot <transifex@xfce.org>, 2025
 # Nick Schermer <nick@xfce.org>, 2026
 # Pjotr <pjotrvertaalt@gmail.com>, 2026
-# 
+#
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: xfce-panel-plugins.xfce4-docklike-plugin\n"
-"Report-Msgid-Bugs-To: https://gitlab.xfce.org/\n"
-"POT-Creation-Date: 2026-08-18 12:59+0200\n"
+"Project-Id-Version: asmi-taskbar-plugin\n"
+"Report-Msgid-Bugs-To: https://github.com/teejee2008/asmi-taskbar-plugin/"
+"issues\n"
+"POT-Creation-Date: 2026-11-16 12:16+0530\n"
 "PO-Revision-Date: 2023-02-22 11:02+0000\n"
 "Last-Translator: Pjotr <pjotrvertaalt@gmail.com>, 2026\n"
 "Language-Team: Dutch (https://app.transifex.com/xfce/teams/16840/nl/)\n"
+"Language: nl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: nl\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: src/AppInfos.cpp:354
+#: src/AppInfos.cpp:382
 msgid "Select Launcher"
 msgstr "Starter kiezen"
 
-#: src/AppInfos.cpp:355
+#: src/AppInfos.cpp:383 src/SettingsDialog.cpp:205
 msgid "_Cancel"
 msgstr "_Afbreken"
 
-#: src/AppInfos.cpp:355
+#: src/AppInfos.cpp:383
 msgid "_Open"
 msgstr "_Openen"
 
-#: src/Group.cpp:938
+#: src/Group.cpp:1381
 msgid "Pinned to Dock"
 msgstr "Vastgemaakt aan Dok"
 
-#: src/Group.cpp:938
+#: src/Group.cpp:1381
 msgid "Pin to Dock"
 msgstr "Vastmaken aan Dok"
 
-#: src/Group.cpp:956
+#: src/Group.cpp:1399
 msgid "Add activation shortcut..."
 msgstr "Activatie-sneltoets toevoegen..."
 
-#: src/Group.cpp:967
+#: src/Group.cpp:1410
 msgid "Manage activation shortcut..."
 msgstr "Activatie-sneltoets beheren..."
 
-#: src/Group.cpp:989
+#: src/Group.cpp:1432
+msgid "Launch application"
+msgstr "Toepassing starten"
+
+#: src/Group.cpp:1440
 msgid "Edit Launcher..."
 msgstr "Starter bewerken..."
 
-#. when a pinned app loses its icon (typically the app is uninstalled) the
-#. user may want to remove it from the dock
-#: src/Group.cpp:1021
+#. when a pinned app loses its icon (typically the app is uninstalled) the user may want to remove it from the dock
+#: src/Group.cpp:1472
 msgid "Remove"
 msgstr "Verwijderen"
 
-#. we weren't able to find a launcher for this app, let the user set it
-#. manually
-#: src/Group.cpp:1034
+#. we weren't able to find a launcher for this app, let the user set it manually
+#: src/Group.cpp:1485
 msgid "Select Launcher..."
 msgstr "Starter kiezen..."
 
-#: src/Group.cpp:1043
+#: src/Group.cpp:1494
 msgid "Create Launcher..."
 msgstr "Starter maken..."
 
-#: src/Group.cpp:1055
+#: src/Group.cpp:1506
 msgid "Window Actions"
 msgstr "Vensteracties"
 
-#: src/Group.cpp:1062
+#: src/Group.cpp:1515
+msgid "Minimize"
+msgstr "Minimaliseren"
+
+#: src/Group.cpp:1515
+msgid "Minimize all windows"
+msgstr "Alle vensters minimaliseren"
+
+#: src/Group.cpp:1526
+msgid "Unminimize"
+msgstr "Herstellen"
+
+#: src/Group.cpp:1526
+msgid "Unminimize all windows"
+msgstr "Alle vensters herstellen"
+
+#: src/Group.cpp:1544
 msgid "Close"
 msgstr "Sluiten"
 
-#: src/Group.cpp:1062
+#: src/Group.cpp:1544
 msgid "Close All"
 msgstr "Alles sluiten"
 
-#: src/Plugin.cpp:122
+#: src/Plugin.cpp:136
 msgid "translator-credits"
 msgstr "Pjotr <pjotrvertaalt@gmail.com>"
 
@@ -106,173 +125,271 @@ msgid ""
 "The &lt;SUPER&gt;+%u combination seems already mapped to another command.\n"
 "Check your Xfce keyboard settings."
 msgstr ""
-"De combinatie &lt;SUPER&gt;+%u lijkt reeds te zijn toegewezen aan een andere opdracht. \n"
+"De combinatie &lt;SUPER&gt;+%u lijkt reeds te zijn toegewezen aan een andere "
+"opdracht. \n"
 "Kijk de instellingen na van uw Xfce-toetsenbord."
 
-#: src/docklike.desktop.in:5
-msgid "Docklike Taskbar"
-msgstr "Taakbalk die op Dock lijkt"
+#: src/SettingsDialog.cpp:201
+msgid "Reset all settings to their default values?"
+msgstr "Alle instellingen naar hun standaardwaarden terugzetten?"
 
-#: src/docklike.desktop.in:6
+#: src/SettingsDialog.cpp:203
+msgid "This cannot be undone."
+msgstr "Dit kan niet ongedaan worden gemaakt."
+
+#: src/SettingsDialog.cpp:206 src/_dialogs.ui:114
+msgid "_Reset"
+msgstr "_Herstellen"
+
+#: src/asmi-taskbar-plugin.desktop.in:4
+msgid "Asmi Taskbar"
+msgstr "Asmi Taskbar"
+
+#: src/asmi-taskbar-plugin.desktop.in:5
 msgid "A modern, minimalist taskbar for Xfce"
 msgstr "Een moderne, minimalistische taakbalk voor Xfce"
 
-#: src/_dialogs.ui:54
+#: src/_dialogs.ui:98
 msgid "_Help"
 msgstr "_Hulp"
 
-#: src/_dialogs.ui:70
+#: src/_dialogs.ui:129
 msgid "_Close"
 msgstr "_Sluiten"
 
-#: src/_dialogs.ui:115
-msgid "Don't show the window list for a single window"
-msgstr "Toon de vensterlijst niet voor een enkel venster"
-
-#: src/_dialogs.ui:130
-msgid "Only show applications on the current workspace"
-msgstr "Toon alleen toepassingen op de huidige werkruimte"
-
-#: src/_dialogs.ui:145
-msgid "Only show applications on the current display"
-msgstr "Toon alleen toepassingen op het huidige scherm"
-
-#: src/_dialogs.ui:160
-msgid "Show preview thumbnails for open windows"
-msgstr "Voorbeeldminiaturen weergeven voor geopende vensters"
-
-#: src/_dialogs.ui:176
-msgid "Show the number of open windows (if more than 2)"
-msgstr "Toon het aantal geopende vensters (indien meer dan 2)"
-
-#: src/_dialogs.ui:192
-msgid "Disable D-Bus launcher counts"
-msgstr "Startertellingen van D-Bus uitschakelen"
-
-#: src/_dialogs.ui:217
-msgid "Middle mouse button:"
-msgstr "Middelste muisknop:"
-
-#: src/_dialogs.ui:230
-msgid "Close all"
-msgstr "Alles sluiten"
-
-#: src/_dialogs.ui:231
-msgid "Launch new instance"
-msgstr "Start nieuwe instantie"
-
-#: src/_dialogs.ui:232
-msgid "Do Nothing"
-msgstr "Niets doen"
-
-#: src/_dialogs.ui:254
-msgid "Behavior"
-msgstr "Gedrag"
-
-#: src/_dialogs.ui:287
+#: src/_dialogs.ui:201
 msgid "Active indicator style:"
 msgstr "Stijl van actieve indicator:"
 
-#: src/_dialogs.ui:300 src/_dialogs.ui:331
+#: src/_dialogs.ui:214 src/_dialogs.ui:246
 msgid "Bars"
 msgstr "Balken"
 
-#: src/_dialogs.ui:301 src/_dialogs.ui:332
+#: src/_dialogs.ui:215 src/_dialogs.ui:247
 msgid "Dots"
 msgstr "Stippen"
 
-#: src/_dialogs.ui:302 src/_dialogs.ui:333
+#: src/_dialogs.ui:216 src/_dialogs.ui:248
 msgid "Rectangles"
 msgstr "Vierkanten"
 
-#: src/_dialogs.ui:303 src/_dialogs.ui:334
+#: src/_dialogs.ui:217 src/_dialogs.ui:249
 msgid "Ciliora"
 msgstr "Ciliora"
 
-#: src/_dialogs.ui:304 src/_dialogs.ui:335
+#: src/_dialogs.ui:218 src/_dialogs.ui:250
+msgid "Segments"
+msgstr "Segmenten"
+
+#: src/_dialogs.ui:219 src/_dialogs.ui:251
 msgid "Circles"
 msgstr "Cirkels"
 
-#: src/_dialogs.ui:305 src/_dialogs.ui:336
+#: src/_dialogs.ui:220 src/_dialogs.ui:252 src/_dialogs.ui:278
 msgid "None"
 msgstr "Geen"
 
-#: src/_dialogs.ui:318
+#: src/_dialogs.ui:233
 msgid "Inactive indicator style:"
 msgstr "Stijl van inactieve indicator:"
 
-#: src/_dialogs.ui:349
+#: src/_dialogs.ui:265
+msgid "Indicator window count:"
+msgstr "Aantal vensters in indicator:"
+
+#: src/_dialogs.ui:279
+msgid "Badge"
+msgstr "Badge"
+
+#: src/_dialogs.ui:280
+msgid "Number"
+msgstr "Getal"
+
+#: src/_dialogs.ui:293
 msgid "Indicator orientation:"
 msgstr "Oriëntatie van indicator:"
 
-#: src/_dialogs.ui:361
+#: src/_dialogs.ui:305
 msgid "Automatic"
 msgstr "Automatisch"
 
-#: src/_dialogs.ui:362
+#: src/_dialogs.ui:306
 msgid "Bottom"
 msgstr "Onder"
 
-#: src/_dialogs.ui:363
+#: src/_dialogs.ui:307
 msgid "Right"
 msgstr "Rechts"
 
-#: src/_dialogs.ui:364
+#: src/_dialogs.ui:308
 msgid "Top"
 msgstr "Boven"
 
-#: src/_dialogs.ui:365
+#: src/_dialogs.ui:309
 msgid "Left"
 msgstr "Links"
 
-#: src/_dialogs.ui:375
-msgid "Get indicator color from theme"
-msgstr "Verkrijg de indicatorkleur vanuit het thema"
+#: src/_dialogs.ui:319
+msgid "Get indicator color from app icon"
+msgstr "Indicatorkleur van app-pictogram overnemen"
 
-#: src/_dialogs.ui:401
-msgid "Active indicator:"
-msgstr "Actieve indicator:"
+#: src/_dialogs.ui:345
+msgid "Active indicator"
+msgstr "Actieve indicator"
 
-#: src/_dialogs.ui:425
-msgid "Inactive indicator:"
-msgstr "Inactieve indicator:"
+#: src/_dialogs.ui:359
+msgid "Inactive indicator"
+msgstr "Inactieve indicator"
 
-#: src/_dialogs.ui:452
-msgid "Force icon size:"
-msgstr "Forceer pictogramgrootte:"
+#: src/_dialogs.ui:379
+msgid "Indicator spacing:"
+msgstr "Indicatieafstand:"
 
-#: src/_dialogs.ui:496
-msgid "Preview width:"
-msgstr "Voorbeeldbreedte:"
+#: src/_dialogs.ui:404
+msgid "Indicator thickness:"
+msgstr "Indicatiedikte:"
 
-#: src/_dialogs.ui:525
-msgid "Preview height:"
-msgstr "Voorbeeldhoogte:"
+#: src/_dialogs.ui:429
+msgid "Dock item spacing:"
+msgstr "Afstand tussen dockitems:"
 
-#: src/_dialogs.ui:553
+#: src/_dialogs.ui:451
+msgid "Force dock icon size:"
+msgstr "Pictogramgrootte van dock forceren:"
+
+#: src/_dialogs.ui:495
+msgid "Preview size:"
+msgstr "Voorbeeldgrootte:"
+
+#: src/_dialogs.ui:516
+msgid "Preview width"
+msgstr "Voorbeeldbreedte"
+
+#: src/_dialogs.ui:531
+msgid "Preview height"
+msgstr "Voorbeeldhoogte"
+
+#: src/_dialogs.ui:550
+msgid "Preview gap:"
+msgstr "Voorbeeldruimte:"
+
+#: src/_dialogs.ui:564
+msgid "Gap between panel and previews"
+msgstr "Ruimte tussen paneel en voorbeelden"
+
+#: src/_dialogs.ui:573
+msgid "Expand dock in the panel"
+msgstr "Dock in het paneel uitbreiden"
+
+#: src/_dialogs.ui:591
+msgid "Alignment of dock items in the panel"
+msgstr "Uitlijning van dockitems in het paneel"
+
+#: src/_dialogs.ui:593
+msgid "Start"
+msgstr "Begin"
+
+#: src/_dialogs.ui:594
+msgid "End"
+msgstr "Einde"
+
+#: src/_dialogs.ui:595
+msgid "Center"
+msgstr "Midden"
+
+#: src/_dialogs.ui:615
 msgid "Appearance"
 msgstr "Uiterlijk"
 
-#: src/_dialogs.ui:583
+#: src/_dialogs.ui:641
+msgid "Don't show the window list for a single window"
+msgstr "Toon de vensterlijst niet voor een enkel venster"
+
+#: src/_dialogs.ui:657
+msgid "Only show applications on the current workspace"
+msgstr "Toon alleen toepassingen op de huidige werkruimte"
+
+#: src/_dialogs.ui:673
+msgid "Only show applications on the current display"
+msgstr "Toon alleen toepassingen op het huidige scherm"
+
+#: src/_dialogs.ui:689
+msgid "Show preview thumbnails in the dock menu"
+msgstr "Voorbeeldminiaturen in het dockmenu tonen"
+
+#: src/_dialogs.ui:706
+msgid "Disable D-Bus launcher counts"
+msgstr "Startertellingen van D-Bus uitschakelen"
+
+#: src/_dialogs.ui:723
+msgid "Show each window as a separate dock item (ungroup windows)"
+msgstr "Elk venster als apart dockitem tonen (vensters niet groeperen)"
+
+#: src/_dialogs.ui:742
+msgid "Middle mouse button:"
+msgstr "Middelste muisknop:"
+
+#: src/_dialogs.ui:756
+msgid "Close all"
+msgstr "Alles sluiten"
+
+#: src/_dialogs.ui:757
+msgid "Launch new instance"
+msgstr "Start nieuwe instantie"
+
+#: src/_dialogs.ui:758
+msgid "Do Nothing"
+msgstr "Niets doen"
+
+#: src/_dialogs.ui:768
+msgid "Enable hot-corner for window overview:"
+msgstr "Hot-corner voor vensteroverzicht inschakelen:"
+
+#: src/_dialogs.ui:788
+msgid "Top left"
+msgstr "Linksboven"
+
+#: src/_dialogs.ui:789
+msgid "Top right"
+msgstr "Rechtsboven"
+
+#: src/_dialogs.ui:790
+msgid "Bottom left"
+msgstr "Linksonder"
+
+#: src/_dialogs.ui:791
+msgid "Bottom right"
+msgstr "Rechtsonder"
+
+#: src/_dialogs.ui:804
+msgid "Hot-corner activation delay (ms):"
+msgstr "Vertraging voor activering van hot-corner (ms):"
+
+#: src/_dialogs.ui:853
 msgid "Switch between applications with <SUPER>+[1, 2, ...]"
 msgstr "Wissel tussen applicaties met <SUPER>+[1, 2, ...]"
 
-#: src/_dialogs.ui:610
+#: src/_dialogs.ui:880
 msgid "Switch to the last window with <SUPER>"
-msgstr "Wissel naar het laatste venster met"
+msgstr "Wissel naar het laatste venster met <SUPER>"
 
-#: src/_dialogs.ui:626
+#: src/_dialogs.ui:896
 msgid ""
 "The left &lt;SUPER&gt; key seems already mapped to another command.\n"
 "Check your Xfce keyboard settings."
 msgstr ""
-"De linker &lt;SUPER&gt; toets lijkt reeds te zijn toegewezen aan een andere opdracht.\n"
+"De linker &lt;SUPER&gt; toets lijkt reeds te zijn toegewezen aan een andere "
+"opdracht.\n"
 "Kijk de instellingen van uw Xfce-toetsenbord na."
 
-#: src/_dialogs.ui:638
+#: src/_dialogs.ui:908
 msgid "Manage shortcuts..."
 msgstr "Sneltoetsen beheren..."
 
-#: src/_dialogs.ui:659
+#: src/_dialogs.ui:929
 msgid "Keyboard hotkeys"
 msgstr "Sneltoetsen"
+
+#: src/_dialogs.ui:945
+msgid "Behavior"
+msgstr "Gedrag"

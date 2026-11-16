@@ -1,270 +1,390 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR Xfce
-# This file is distributed under the same license as the xfce-panel-plugins.xfce4-docklike-plugin package.
+# This file is distributed under the same license as the asmi-taskbar-plugin package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-# 
+#
 # Translators:
 # Nick Schermer <nick@xfce.org>, 2025
 # Xfce Bot <transifex@xfce.org>, 2025
 # Ivica  Kolić <ikoli@yahoo.com>, 2026
-# 
+#
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: xfce-panel-plugins.xfce4-docklike-plugin\n"
-"Report-Msgid-Bugs-To: https://gitlab.xfce.org/\n"
-"POT-Creation-Date: 2026-05-23 12:58+0200\n"
+"Project-Id-Version: asmi-taskbar-plugin\n"
+"Report-Msgid-Bugs-To: https://github.com/teejee2008/asmi-taskbar-plugin/"
+"issues\n"
+"POT-Creation-Date: 2026-11-16 12:16+0530\n"
 "PO-Revision-Date: 2023-02-22 11:02+0000\n"
 "Last-Translator: Ivica  Kolić <ikoli@yahoo.com>, 2026\n"
 "Language-Team: Croatian (https://app.transifex.com/xfce/teams/16840/hr/)\n"
+"Language: hr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: hr\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 
-#: src/AppInfos.cpp:354
+#: src/AppInfos.cpp:382
 msgid "Select Launcher"
-msgstr ""
+msgstr "Odaberi pokretač"
 
-#: src/AppInfos.cpp:355
+#: src/AppInfos.cpp:383 src/SettingsDialog.cpp:205
 msgid "_Cancel"
 msgstr "_Otkaži"
 
-#: src/AppInfos.cpp:355
+#: src/AppInfos.cpp:383
 msgid "_Open"
 msgstr "_Otvori"
 
-#: src/Group.cpp:861
+#: src/Group.cpp:1381
 msgid "Pinned to Dock"
-msgstr ""
+msgstr "Prikvačeno na dok"
 
-#: src/Group.cpp:861
+#: src/Group.cpp:1381
 msgid "Pin to Dock"
-msgstr ""
+msgstr "Prikvači na dok"
 
-#: src/Group.cpp:879
+#: src/Group.cpp:1399
 msgid "Add activation shortcut..."
-msgstr ""
+msgstr "Dodaj prečac aktivacije..."
 
-#: src/Group.cpp:890
+#: src/Group.cpp:1410
 msgid "Manage activation shortcut..."
-msgstr ""
+msgstr "Upravljaj prečacem aktivacije..."
 
-#: src/Group.cpp:912
+#: src/Group.cpp:1432
+msgid "Launch application"
+msgstr "Pokreni aplikaciju"
+
+#: src/Group.cpp:1440
 msgid "Edit Launcher..."
-msgstr ""
+msgstr "Uredi pokretač..."
 
-#. when a pinned app loses its icon (typically the app is uninstalled) the
-#. user may want to remove it from the dock
-#: src/Group.cpp:944
+#. when a pinned app loses its icon (typically the app is uninstalled) the user may want to remove it from the dock
+#: src/Group.cpp:1472
 msgid "Remove"
 msgstr "Ukloni"
 
-#. we weren't able to find a launcher for this app, let the user set it
-#. manually
-#: src/Group.cpp:957
+#. we weren't able to find a launcher for this app, let the user set it manually
+#: src/Group.cpp:1485
 msgid "Select Launcher..."
-msgstr ""
+msgstr "Odaberi pokretač..."
 
-#: src/Group.cpp:966
+#: src/Group.cpp:1494
 msgid "Create Launcher..."
-msgstr ""
+msgstr "Stvori pokretač..."
 
-#: src/Group.cpp:978
+#: src/Group.cpp:1506
 msgid "Window Actions"
-msgstr ""
+msgstr "Radnje prozora"
 
-#: src/Group.cpp:985
+#: src/Group.cpp:1515
+msgid "Minimize"
+msgstr "Minimiziraj"
+
+#: src/Group.cpp:1515
+msgid "Minimize all windows"
+msgstr "Minimiziraj sve prozore"
+
+#: src/Group.cpp:1526
+msgid "Unminimize"
+msgstr "Vrati"
+
+#: src/Group.cpp:1526
+msgid "Unminimize all windows"
+msgstr "Vrati sve prozore"
+
+#: src/Group.cpp:1544
 msgid "Close"
 msgstr "Zatvori"
 
-#: src/Group.cpp:985
+#: src/Group.cpp:1544
 msgid "Close All"
 msgstr "Zatvori sve"
 
-#: src/Plugin.cpp:118
+#: src/Plugin.cpp:136
 msgid "translator-credits"
 msgstr "Ivica Kolić <ikoli@yahoo.com>"
 
 #: src/SettingsDialog.cpp:39
 #, c-format
 msgid "<b>Only the first %u hotkeys are enabled.</b>\n"
-msgstr ""
+msgstr "<b>Omogućeni su samo prvi %u prečaci.</b>\n"
 
 #: src/SettingsDialog.cpp:46
 msgid "<b>Only the first hotkey is enabled.</b>\n"
-msgstr ""
+msgstr "<b>Omogućen je samo prvi prečac.</b>\n"
 
 #: src/SettingsDialog.cpp:50
 msgid "<b>No hotkeys enabled.</b>\n"
-msgstr ""
+msgstr "<b>Nijedan prečac nije omogućen.</b>\n"
 
 #: src/SettingsDialog.cpp:54
 #, c-format
 msgid ""
 "The &lt;SUPER&gt;+%u combination seems already mapped to another command.\n"
 "Check your Xfce keyboard settings."
-msgstr ""
+msgstr "Kombinacija &lt;SUPER&gt;+%u izgleda da je već pridružena drugoj naredbi.\nProvjerite postavke tipkovnice u Xfceu."
 
-#: src/docklike.desktop.in:5
-msgid "Docklike Taskbar"
-msgstr ""
+#: src/SettingsDialog.cpp:201
+msgid "Reset all settings to their default values?"
+msgstr "Vratiti sve postavke na zadane vrijednosti?"
 
-#: src/docklike.desktop.in:6
+#: src/SettingsDialog.cpp:203
+msgid "This cannot be undone."
+msgstr "Ovo se ne može poništiti."
+
+#: src/SettingsDialog.cpp:206 src/_dialogs.ui:114
+msgid "_Reset"
+msgstr "_Vrati"
+
+#: src/asmi-taskbar-plugin.desktop.in:4
+msgid "Asmi Taskbar"
+msgstr "Asmi Taskbar"
+
+#: src/asmi-taskbar-plugin.desktop.in:5
 msgid "A modern, minimalist taskbar for Xfce"
 msgstr "Moderna, minimalistička programska traka za Xfce"
 
-#: src/_dialogs.ui:54
+#: src/_dialogs.ui:98
 msgid "_Help"
 msgstr "_Pomoć"
 
-#: src/_dialogs.ui:70
+#: src/_dialogs.ui:129
 msgid "_Close"
 msgstr "_Zatvori"
 
-#: src/_dialogs.ui:115
-msgid "Don't show the window list for a single window"
-msgstr "Ne prikazujte popis prozora za jedan prozor"
-
-#: src/_dialogs.ui:130
-msgid "Only show applications on the current workspace"
-msgstr "Prikaži samo aplikacije iz trenutnog radnog prostora"
-
-#: src/_dialogs.ui:145
-msgid "Only show applications on the current display"
-msgstr "Prikaži samo programe s trenutnog zaslona"
-
-#: src/_dialogs.ui:160
-msgid "Show preview thumbnails for open windows"
-msgstr "Prikaži minijature pregleda za otvorene prozore"
-
-#: src/_dialogs.ui:176
-msgid "Show the number of open windows (if more than 2)"
-msgstr "Prikaži broj otvorenih prozora (ako je veći od 2)"
-
 #: src/_dialogs.ui:201
-msgid "Middle mouse button:"
-msgstr ""
-
-#: src/_dialogs.ui:214
-msgid "Close all"
-msgstr "Zatvori sve"
-
-#: src/_dialogs.ui:215
-msgid "Launch new instance"
-msgstr ""
-
-#: src/_dialogs.ui:216
-msgid "Do Nothing"
-msgstr ""
-
-#: src/_dialogs.ui:238
-msgid "Behavior"
-msgstr "Ponašanje"
-
-#: src/_dialogs.ui:271
 msgid "Active indicator style:"
-msgstr ""
+msgstr "Stil aktivnog pokazatelja:"
 
-#: src/_dialogs.ui:284 src/_dialogs.ui:315
+#: src/_dialogs.ui:214 src/_dialogs.ui:246
 msgid "Bars"
 msgstr "Trake"
 
-#: src/_dialogs.ui:285 src/_dialogs.ui:316
+#: src/_dialogs.ui:215 src/_dialogs.ui:247
 msgid "Dots"
 msgstr "Točkice"
 
-#: src/_dialogs.ui:286 src/_dialogs.ui:317
+#: src/_dialogs.ui:216 src/_dialogs.ui:248
 msgid "Rectangles"
 msgstr "Pravokutnici"
 
-#: src/_dialogs.ui:287 src/_dialogs.ui:318
+#: src/_dialogs.ui:217 src/_dialogs.ui:249
 msgid "Ciliora"
-msgstr ""
+msgstr "Ciliora"
 
-#: src/_dialogs.ui:288 src/_dialogs.ui:319
+#: src/_dialogs.ui:218 src/_dialogs.ui:250
+msgid "Segments"
+msgstr "Segmenti"
+
+#: src/_dialogs.ui:219 src/_dialogs.ui:251
 msgid "Circles"
-msgstr ""
+msgstr "Krugovi"
 
-#: src/_dialogs.ui:289 src/_dialogs.ui:320
+#: src/_dialogs.ui:220 src/_dialogs.ui:252 src/_dialogs.ui:278
 msgid "None"
 msgstr "Nijedna"
 
-#: src/_dialogs.ui:302
+#: src/_dialogs.ui:233
 msgid "Inactive indicator style:"
-msgstr ""
+msgstr "Stil neaktivnog pokazatelja:"
 
-#: src/_dialogs.ui:333
+#: src/_dialogs.ui:265
+msgid "Indicator window count:"
+msgstr "Broj prozora pokazatelja:"
+
+#: src/_dialogs.ui:279
+msgid "Badge"
+msgstr "Značka"
+
+#: src/_dialogs.ui:280
+msgid "Number"
+msgstr "Broj"
+
+#: src/_dialogs.ui:293
 msgid "Indicator orientation:"
 msgstr "Orijentacija indikatora:"
 
-#: src/_dialogs.ui:345
+#: src/_dialogs.ui:305
 msgid "Automatic"
 msgstr "Automatski"
 
-#: src/_dialogs.ui:346
+#: src/_dialogs.ui:306
 msgid "Bottom"
 msgstr "Dno"
 
-#: src/_dialogs.ui:347
+#: src/_dialogs.ui:307
 msgid "Right"
 msgstr "Pravo"
 
-#: src/_dialogs.ui:348
+#: src/_dialogs.ui:308
 msgid "Top"
 msgstr "Vrh"
 
-#: src/_dialogs.ui:349
+#: src/_dialogs.ui:309
 msgid "Left"
 msgstr "Lijevo"
 
+#: src/_dialogs.ui:319
+msgid "Get indicator color from app icon"
+msgstr "Preuzmi boju pokazatelja s ikone aplikacije"
+
+#: src/_dialogs.ui:345
+msgid "Active indicator"
+msgstr "Aktivni pokazatelj"
+
 #: src/_dialogs.ui:359
-msgid "Get indicator color from theme"
-msgstr ""
+msgid "Inactive indicator"
+msgstr "Neaktivni pokazatelj"
 
-#: src/_dialogs.ui:385
-msgid "Active indicator:"
-msgstr "Aktivni pokazatelj "
+#: src/_dialogs.ui:379
+msgid "Indicator spacing:"
+msgstr "Razmak pokazatelja:"
 
-#: src/_dialogs.ui:409
-msgid "Inactive indicator:"
-msgstr "Neaktivni pokazatelj:"
+#: src/_dialogs.ui:404
+msgid "Indicator thickness:"
+msgstr "Debljina pokazatelja:"
 
-#: src/_dialogs.ui:436
-msgid "Force icon size:"
-msgstr "Prisiliti veličinu ikona:"
+#: src/_dialogs.ui:429
+msgid "Dock item spacing:"
+msgstr "Razmak stavki doka:"
 
-#: src/_dialogs.ui:480
-msgid "Preview width:"
-msgstr ""
+#: src/_dialogs.ui:451
+msgid "Force dock icon size:"
+msgstr "Prisili veličinu ikona doka:"
 
-#: src/_dialogs.ui:509
-msgid "Preview height:"
-msgstr ""
+#: src/_dialogs.ui:495
+msgid "Preview size:"
+msgstr "Veličina pregleda:"
 
-#: src/_dialogs.ui:537
+#: src/_dialogs.ui:516
+msgid "Preview width"
+msgstr "Širina pregleda"
+
+#: src/_dialogs.ui:531
+msgid "Preview height"
+msgstr "Visina pregleda"
+
+#: src/_dialogs.ui:550
+msgid "Preview gap:"
+msgstr "Razmak pregleda:"
+
+#: src/_dialogs.ui:564
+msgid "Gap between panel and previews"
+msgstr "Razmak između ploče i pregleda"
+
+#: src/_dialogs.ui:573
+msgid "Expand dock in the panel"
+msgstr "Proširi dok na ploči"
+
+#: src/_dialogs.ui:591
+msgid "Alignment of dock items in the panel"
+msgstr "Poravnanje stavki doka na ploči"
+
+#: src/_dialogs.ui:593
+msgid "Start"
+msgstr "Početak"
+
+#: src/_dialogs.ui:594
+msgid "End"
+msgstr "Kraj"
+
+#: src/_dialogs.ui:595
+msgid "Center"
+msgstr "Sredina"
+
+#: src/_dialogs.ui:615
 msgid "Appearance"
 msgstr "Izgled"
 
-#: src/_dialogs.ui:567
+#: src/_dialogs.ui:641
+msgid "Don't show the window list for a single window"
+msgstr "Ne prikazujte popis prozora za jedan prozor"
+
+#: src/_dialogs.ui:657
+msgid "Only show applications on the current workspace"
+msgstr "Prikaži samo aplikacije iz trenutnog radnog prostora"
+
+#: src/_dialogs.ui:673
+msgid "Only show applications on the current display"
+msgstr "Prikaži samo programe s trenutnog zaslona"
+
+#: src/_dialogs.ui:689
+msgid "Show preview thumbnails in the dock menu"
+msgstr "Prikaži minijature pregleda u izborniku doka"
+
+#: src/_dialogs.ui:706
+msgid "Disable D-Bus launcher counts"
+msgstr "Onemogući brojanje D-Bus pokretača"
+
+#: src/_dialogs.ui:723
+msgid "Show each window as a separate dock item (ungroup windows)"
+msgstr "Prikaži svaki prozor kao zasebnu stavku doka (razgrupiraj prozore)"
+
+#: src/_dialogs.ui:742
+msgid "Middle mouse button:"
+msgstr "Srednja tipka miša:"
+
+#: src/_dialogs.ui:756
+msgid "Close all"
+msgstr "Zatvori sve"
+
+#: src/_dialogs.ui:757
+msgid "Launch new instance"
+msgstr "Pokreni novu instancu"
+
+#: src/_dialogs.ui:758
+msgid "Do Nothing"
+msgstr "Ne radi ništa"
+
+#: src/_dialogs.ui:768
+msgid "Enable hot-corner for window overview:"
+msgstr "Omogući vrući kut za pregled prozora:"
+
+#: src/_dialogs.ui:788
+msgid "Top left"
+msgstr "Gore lijevo"
+
+#: src/_dialogs.ui:789
+msgid "Top right"
+msgstr "Gore desno"
+
+#: src/_dialogs.ui:790
+msgid "Bottom left"
+msgstr "Dolje lijevo"
+
+#: src/_dialogs.ui:791
+msgid "Bottom right"
+msgstr "Dolje desno"
+
+#: src/_dialogs.ui:804
+msgid "Hot-corner activation delay (ms):"
+msgstr "Kašnjenje aktivacije vrućeg kuta (ms):"
+
+#: src/_dialogs.ui:853
 msgid "Switch between applications with <SUPER>+[1, 2, ...]"
 msgstr "Prebacivanje između aplikacija pomoću <SUPER> + [1, 2, ...]"
 
-#: src/_dialogs.ui:594
+#: src/_dialogs.ui:880
 msgid "Switch to the last window with <SUPER>"
 msgstr "Prebacite se na zadnji prozor pomoću <SUPER>"
 
-#: src/_dialogs.ui:610
+#: src/_dialogs.ui:896
 msgid ""
 "The left &lt;SUPER&gt; key seems already mapped to another command.\n"
 "Check your Xfce keyboard settings."
-msgstr ""
+msgstr "Lijeva tipka &lt;SUPER&gt; izgleda da je već pridružena drugoj naredbi.\nProvjerite postavke tipkovnice u Xfceu."
 
-#: src/_dialogs.ui:622
+#: src/_dialogs.ui:908
 msgid "Manage shortcuts..."
-msgstr ""
+msgstr "Upravljaj prečacima..."
 
-#: src/_dialogs.ui:643
+#: src/_dialogs.ui:929
 msgid "Keyboard hotkeys"
 msgstr "Tipkovni prečaci"
+
+#: src/_dialogs.ui:945
+msgid "Behavior"
+msgstr "Ponašanje"
